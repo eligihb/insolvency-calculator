@@ -41,6 +41,8 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            position: relative;
+            min-height: 700px;
             display: grid;
             grid-template-columns: 1fr 1fr;
         }
@@ -315,8 +317,8 @@
         <header>
             <h1>מחשבון צו תשלומים</h1>
         </header>
-        
-        <div id="inputScreen" class="screen active">
+
+        <div class="inputs-column">
             <form id="calculatorForm">
                 <section class="form-section">
                     <h2>פרטי התא המשפחתי</h2>
@@ -560,7 +562,7 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
+                const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
 
