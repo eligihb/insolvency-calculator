@@ -304,7 +304,7 @@
             <h1>מחשבון צו תשלומים</h1>
         </header>
 
-        <div id="inputScreen" class="screen active">
+        <div class="inputs-column">
             <form id="calculatorForm">
                 <section class="form-section">
                     <h2>פרטי התא המשפחתי</h2>
@@ -404,14 +404,13 @@
                         </div>
                     </div>
                 </section>
-                <button type="button" id="showResultsBtn" class="btn-navigation">הצג תוצאות</button>
             </form>
              <div id="special-note">
                 <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
             </div>
         </div>
         
-        <div id="resultsScreen" class="screen">
+        <div class="results-column">
             <section class="results-section">
                 <h2 style="text-align: center;">תוצאות החישוב</h2>
                 <div class="result-item side-by-side">
@@ -467,7 +466,6 @@
                     <span class="value" id="finalPaymentResult"></span>
                 </div>
             </section>
-            <button type="button" id="showInputsBtn" class="btn-navigation">חזור להזנה</button>
         </div>
     </div>
     
@@ -507,11 +505,7 @@
             const allowanceFieldsEl = document.getElementById('allowanceFields');
             const alimonyButtonEl = document.getElementById('alimonyButton');
             const alimonyFieldsEl = document.getElementById('alimonyFields');
-            const showResultsBtn = document.getElementById('showResultsBtn');
-            const showInputsBtn = document.getElementById('showInputsBtn');
-            const inputScreen = document.getElementById('inputScreen');
-            const resultsScreen = document.getElementById('resultsScreen');
-
+            
             const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
             const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
             const otherIncomeDebtorLabelEl = document.getElementById('otherIncomeDebtorLabel');
@@ -548,7 +542,7 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
+                const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
 
