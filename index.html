@@ -1,5 +1,4 @@
-# Create a complete, ready-to-open HTML file that includes all fixes & extras.
-html = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -262,7 +261,6 @@ html = r"""<!DOCTYPE html>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // === קבועים וטבלאות עזר ===
       const lookupData = {
         "יחיד/נשוי חי בנפרד": { kids: 0, livingCost: 4556 },
         "רווק/גרוש/אלמן + ילד": { kids: 1, livingCost: 6056 },
@@ -280,7 +278,6 @@ html = r"""<!DOCTYPE html>
       };
       const childAllowanceData = { 0:0, 1:169, 2:383, 3:597, 4:811, 5:980, 6:1149, 7:1318, 8:1487, 9:1656, 10:1825 };
 
-      // === DOM ===
       const form = document.getElementById('calculatorForm');
       const inputs = form.querySelectorAll('input, select');
       const statusEl = document.getElementById('status');
@@ -297,7 +294,6 @@ html = r"""<!DOCTYPE html>
       const printBtn = document.getElementById('printBtn');
       const specialNoteEl = document.getElementById('special-note');
 
-      // קלטים מספריים
       const salaryDebtorEl = document.getElementById('salaryDebtor');
       const salaryPartnerEl = document.getElementById('salaryPartner');
       const otherIncomeDebtorEl = document.getElementById('otherIncomeDebtor');
@@ -308,13 +304,11 @@ html = r"""<!DOCTYPE html>
       const childcareExpensesEl = document.getElementById('childcareExpenses');
       const alimonyExpensesEl = document.getElementById('alimonyExpenses');
 
-      // תוויות
       const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
       const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
       const otherIncomeDebtorLabelEl = document.getElementById('otherIncomeDebtorLabel');
       const otherIncomePartnerLabelEl = document.getElementById('otherIncomePartnerLabel');
 
-      // תוצאות
       const baseLivingCostResultEl = document.getElementById('baseLivingCostResult');
       const socialSecurityAllowanceEl = document.getElementById('socialSecurityAllowance');
       const disposableIncomeResultEl = document.getElementById('disposableIncomeResult');
@@ -326,14 +320,12 @@ html = r"""<!DOCTYPE html>
       const proposedPaymentsDisplayEl = document.getElementById('proposedPaymentsDisplay');
       const finalPaymentDisplayEl = document.getElementById('finalPaymentDisplay');
 
-      // עזר
       const formatCurrency = (value) => {
         if (typeof value !== 'number' || isNaN(value)) return new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS',minimumFractionDigits:0}).format(0);
         return new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS',minimumFractionDigits:0}).format(value);
       };
       const roundDownToNearest10 = (num) => Math.floor((num||0) / 10) * 10;
 
-      // === UI & תוויות ===
       const updateLabelsAndUI = () => {
         const status = statusEl.value || "";
         const isSingle = status.includes('יחיד') || status.includes('רווק');
@@ -341,28 +333,23 @@ html = r"""<!DOCTYPE html>
         const isMaleDebtor = debtorMaleEl.checked;
         const isJoint = jointProceedingEl.checked;
 
-        // רדיו: הדגשה
         document.querySelectorAll('.radio-button-label').forEach(l => l.classList.remove('checked'));
         if (debtorMaleEl.checked) document.querySelector('label[for="debtor-male"]').classList.add('checked');
         if (debtorFemaleEl.checked) document.querySelector('label[for="debtor-female"]').classList.add('checked');
         jointProceedingLabelEl.classList.toggle('checked', isJoint);
 
-        // הצג/הסתר שדות בן/בת זוג
         const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
         const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
         if (salaryPartnerGroup) salaryPartnerGroup.style.display = treatAsSingle ? 'none' : 'flex';
         if (otherIncomePartnerGroup) otherIncomePartnerGroup.style.display = treatAsSingle ? 'none' : 'flex';
 
-        // הצג/הסתר אפשרות "הליך משותף"
         const jointProceedingGroup = document.getElementById('joint-proceeding-group');
         jointProceedingGroup.style.display = treatAsSingle ? 'none' : 'flex';
 
-        // הצג/הסתר תצוגת שני תשלומים
         proposedPaymentsDisplayEl.style.display = (isJoint && !treatAsSingle) ? 'grid' : 'none';
         finalPaymentDisplayEl.querySelector('.label').textContent =
           (isJoint && !treatAsSingle) ? 'תשלום חודשי לתא משפחתי:' : 'תשלום חודשי (חייב/ת):';
 
-        // עדכון טקסטים למגדר
         if (treatAsSingle){
           salaryDebtorLabelEl.textContent = 'הכנסה (חייב/ת)';
           otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
@@ -379,7 +366,6 @@ html = r"""<!DOCTYPE html>
         }
       };
 
-      // === חישוב ===
       const calculate = () => {
         const B2_status = statusEl.value || "";
         const B4_salaryDebtor = parseFloat(salaryDebtorEl.value) || 0;
@@ -402,12 +388,10 @@ html = r"""<!DOCTYPE html>
         const isSingleFamily = B2_status.includes('יחיד') || B2_status.includes('רווק');
         specialNoteEl.style.display = (!isSingleFamily && B4_salaryDebtor === 0) ? 'block' : 'none';
 
-        // יחס הכנסה של כל צד (רק שכר + הכנסות אחרות; בלי קצבת ילדים)
         const totalIncomeForRatio = B4_salaryDebtor + B6_otherIncomeDebtor + C4_salaryPartner + C6_otherIncomePartner;
         const B10_debtorRatio = totalIncomeForRatio > 0 ? (B4_salaryDebtor + B6_otherIncomeDebtor) / totalIncomeForRatio : 0;
         const C10_partnerRatio = totalIncomeForRatio > 0 ? (C4_salaryPartner + C6_otherIncomePartner) / totalIncomeForRatio : 0;
 
-        // סכומים כוללים
         const totalIncomes = B4_salaryDebtor + C4_salaryPartner + B5_childAllowance +
                              B6_otherIncomeDebtor + C6_otherIncomePartner +
                              debtorAllowanceVal + partnerAllowanceVal;
@@ -423,7 +407,6 @@ html = r"""<!DOCTYPE html>
           disposableIncomeResultEl.textContent = formatCurrency(B11_disposableIncome);
         }
 
-        // חישוב תשלומים
         let debtorPay = 0, partnerPay = 0;
         const isJointProceeding = jointProceedingEl.checked;
 
@@ -447,7 +430,6 @@ html = r"""<!DOCTYPE html>
         finalPaymentResultEl.textContent = formatCurrency(finalTotal);
       };
 
-      // === שמירת נתונים מקומית (localStorage) ===
       const LS_KEY = 'insolvency_form_v1';
       const saveToLS = () => {
         const data = {};
@@ -478,10 +460,9 @@ html = r"""<!DOCTYPE html>
               el.value = val ?? '';
             }
           });
-        }catch(e){/* ignore */}
+        }catch(e){}
       };
 
-      // === ולידציה קלה: הימנעות משלילי/NaN ===
       form.querySelectorAll('input[type="number"]').forEach(inp => {
         inp.addEventListener('input', () => {
           if (inp.value === ''){ saveToLS(); updateLabelsAndUI(); calculate(); return; }
@@ -491,7 +472,6 @@ html = r"""<!DOCTYPE html>
         });
       });
 
-      // === מאזינים ===
       form.addEventListener('input', () => { saveToLS(); updateLabelsAndUI(); calculate(); });
       statusEl.addEventListener('change', () => { saveToLS(); updateLabelsAndUI(); calculate(); });
       debtorMaleEl.addEventListener('change', () => { saveToLS(); updateLabelsAndUI(); calculate(); });
@@ -505,14 +485,13 @@ html = r"""<!DOCTYPE html>
         alimonyFieldsEl.style.display = alimonyFieldsEl.style.display === 'none' ? 'block' : 'none';
       });
 
-      resetBtn.addEventListener('click', () => {
+      document.getElementById('resetBtn').addEventListener('click', () => {
         form.reset();
         localStorage.removeItem(LS_KEY);
         updateLabelsAndUI(); calculate();
       });
-      printBtn.addEventListener('click', () => window.print());
+      document.getElementById('printBtn').addEventListener('click', () => window.print());
 
-      // === אתחול ===
       loadFromLS();
       updateLabelsAndUI();
       calculate();
@@ -520,7 +499,3 @@ html = r"""<!DOCTYPE html>
   </script>
 </body>
 </html>
-"""
-with open('/mnt/data/insolvency_calculator_full.html','w', encoding='utf-8') as f:
-    f.write(html)
-'/mnt/data/insolvency_calculator_full.html'
