@@ -178,17 +178,21 @@
             color: var(--primary-color);
         }
 
-        .result-item.disposable-income .value {
-             color: var(--secondary-color);
-             font-size: 1.5em;
-             font-weight: bold;
-             text-align: center;
-             width: 100%;
-        }
-
         .result-item.disposable-income {
             display: block;
             text-align: center;
+        }
+
+        .result-item.disposable-income .value {
+            color: var(--secondary-color);
+            font-size: 1.5em;
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .result-item.total .value {
+            color: var(--danger-color);
         }
         
         .input-pair-inline {
@@ -412,7 +416,7 @@
                 </section>
             </form>
              <div id="special-note">
-                <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
+                <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינינום בסך 4,600 ש"ח.
             </div>
         </div>
         
@@ -441,7 +445,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item disposable-income" style="text-align: center;">
+                <div class="result-item disposable-income">
                     <span class="label">הכנסה פנויה לתא המשפחתי:</span>
                     <span class="value" id="disposableIncomeResult"></span>
                 </div>
@@ -553,7 +557,6 @@
                 const isJoint = jointProceedingEl.checked;
                 
                 // Toggle visibility of debtor selection group and joint proceeding button
-                debtorSelectionGroup.style.display = 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
                 
