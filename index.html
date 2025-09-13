@@ -296,6 +296,8 @@
             cursor: pointer;
             font-size: 1.1em;
             align-self: center;
+            width: 100%;
+            margin-top: auto; /* Push to the bottom */
         }
 
         @media (max-width: 768px) {
@@ -354,7 +356,7 @@
                                 <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
                             </select>
                         </div>
-                        <div class="debtor-selection-group" id="debtor-selection" style="display: none;">
+                        <div class="debtor-selection-group" id="debtor-selection">
                             <label>מי בהליך?</label>
                             <div class="debtor-selection-options">
                                 <input class="radio-button-input" type="radio" id="debtor-male" name="debtor-gender" value="חייב" checked>
@@ -363,7 +365,7 @@
                                 <label class="radio-button-label" for="debtor-female">חייבת</label>
                             </div>
                         </div>
-                        <div class="joint-proceeding-group" id="joint-proceeding-group" style="display: none;">
+                        <div class="joint-proceeding-group" id="joint-proceeding-group">
                             <label for="jointProceeding" id="jointProceedingLabel">שני בני הזוג בהליך?</label>
                             <input type="checkbox" id="jointProceeding">
                         </div>
@@ -613,19 +615,13 @@
                     }
                 }
 
-                // Hide or show payment fields based on joint proceeding status
-                if (isJoint) {
-                    proposedPaymentsDisplayEl.style.display = 'grid';
-                    finalPaymentDisplayEl.style.display = 'block';
-                    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי לתא משפחתי:';
+                // Update payment field labels
+                if (isMaleDebtor) {
+                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב):';
+                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בת זוג):';
                 } else {
-                    proposedPaymentsDisplayEl.style.display = 'none';
-                    finalPaymentDisplayEl.style.display = 'block';
-                    if (isSingle) {
-                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
-                    } else {
-                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
-                    }
+                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייבת):';
+                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן זוג):';
                 }
             };
 
