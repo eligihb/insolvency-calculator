@@ -36,18 +36,17 @@
 
         .calculator-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             background-color: var(--container-bg);
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            position: relative;
-            min-height: 700px;
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
         }
 
         header {
+            grid-column: 1 / -1;
             background-color: var(--primary-color);
             color: white;
             padding: 20px;
@@ -59,28 +58,19 @@
             font-size: 1.8em;
         }
         
-        .screen {
+        main {
             padding: 25px;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            transition: transform 0.5s ease-in-out;
-            transform: translateX(100%);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            display: grid;
+            gap: 30px;
         }
 
-        .screen.active {
-            transform: translateX(0);
+        .inputs-column {
+            padding: 25px;
+            border-left: 1px solid var(--border-color);
         }
 
-        #inputScreen {
-            transform: translateX(0);
-        }
-        #resultsScreen {
+        .results-column {
+            padding: 25px;
             background-color: var(--result-bg);
         }
 
@@ -90,6 +80,7 @@
         }
 
         .form-section h2 {
+            grid-column: 1 / -1;
             margin: 0 0 10px 0;
             color: var(--primary-color);
             border-bottom: 2px solid var(--secondary-color);
@@ -133,6 +124,10 @@
             color: var(--primary-color);
         }
 
+        .results-section {
+            padding: 0;
+        }
+        
         .results-section h2 {
              margin: 0 0 20px 0;
              color: var(--primary-color);
@@ -482,7 +477,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -578,7 +573,7 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
+                const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
 
@@ -628,21 +623,6 @@
                     partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן זוג):';
                     debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייבת):';
                     partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן זוג):';
-                }
-
-                // Hide or show payment fields based on joint proceeding status
-                if (isJoint) {
-                    proposedPaymentsDisplayEl.style.display = 'grid';
-                    finalPaymentDisplayEl.style.display = 'block';
-                    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי לתא משפחתי:';
-                } else {
-                    proposedPaymentsDisplayEl.style.display = 'none';
-                    finalPaymentDisplayEl.style.display = 'block';
-                    if (isSingle) {
-                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
-                    } else {
-                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
-                    }
                 }
             };
 
@@ -736,16 +716,6 @@
                 input.addEventListener('input', () => {
                     updateLabelsAndUI();
                 });
-            });
-            salaryDebtorEl.addEventListener('input', (e) => {
-                const input = e.target;
-                if (input.value === '') {
-                    input.classList.add('empty-input');
-                } else {
-                    input.classList.remove('empty-input');
-                }
-                updateLabelsAndUI();
-                calculate();
             });
 
             document.getElementById('status').addEventListener('change', updateLabelsAndUI);
