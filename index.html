@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מחשבון חדלות פירעון (גרסה 2.2)</title>
+    <title>מחשבון חדלות פירעון</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
@@ -35,14 +35,17 @@
 
         .calculator-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             background-color: var(--container-bg);
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
         }
 
         header {
+            grid-column: 1 / -1;
             background-color: var(--primary-color);
             color: white;
             padding: 20px;
@@ -60,6 +63,16 @@
             gap: 30px;
         }
 
+        .inputs-column {
+            padding: 25px;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .results-column {
+            padding: 25px;
+            background-color: var(--result-bg);
+        }
+
         .form-section {
             display: grid;
             gap: 20px;
@@ -74,15 +87,10 @@
             font-size: 1.4em;
         }
         
-        .input-pair {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        
         .input-group {
             display: flex;
             flex-direction: column;
+            width: 100%;
         }
         
         .input-group label {
@@ -116,9 +124,7 @@
         }
 
         .results-section {
-            background-color: var(--result-bg);
-            padding: 25px;
-            border-top: 2px solid var(--border-color);
+            padding: 0;
         }
         
         .results-section h2 {
@@ -139,10 +145,10 @@
         .result-item:last-child {
             border-bottom: none;
         }
-        
+
         .result-item.side-by-side {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
             justify-items: center;
             text-align: center;
@@ -170,6 +176,12 @@
         .result-item.total .value {
             color: var(--primary-color);
         }
+        
+        .input-pair-inline {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
 
         #special-note {
             background-color: #fff3cd;
@@ -183,30 +195,72 @@
 
         .debtor-selection-group {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
         }
-
-        .debtor-selection-group label {
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--label-color);
-        }
-
+        
         .debtor-selection-options {
             display: flex;
-            gap: 15px;
-            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-button-label {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            font-weight: normal;
+        }
+        
+        .radio-button-label.checked {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .radio-button-input {
+            display: none;
+        }
+
+        #jointProceedingLabel {
+             background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            font-weight: normal;
+            display: inline-block;
+        }
+        #jointProceedingLabel.checked {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        #jointProceeding {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                grid-template-columns: 1fr;
+            }
+            .inputs-column {
+                border-left: none;
+            }
         }
     </style>
 </head>
 <body>
-
     <div class="calculator-container">
         <header>
-            <h1>מחשבון צו תשלומים (גרסה 2.2)</h1>
+            <h1>מחשבון צו תשלומים</h1>
         </header>
-        
-        <main>
+
+        <div class="inputs-column">
             <form id="calculatorForm">
                 <section class="form-section">
                     <h2>פרטי התא המשפחתי</h2>
@@ -229,17 +283,17 @@
                             <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
                         </select>
                     </div>
-                     <div class="input-group debtor-selection-group" id="debtor-selection" style="display: none;">
+                     <div class="debtor-selection-group" id="debtor-selection" style="display: none;">
                         <label>מי בהליך?</label>
                         <div class="debtor-selection-options">
-                            <input type="radio" id="debtor-male" name="debtor-gender" value="חייב" checked>
-                            <label for="debtor-male">חייב</label>
-                            <input type="radio" id="debtor-female" name="debtor-gender" value="חייבת">
-                            <label for="debtor-female">חייבת</label>
+                            <input class="radio-button-input" type="radio" id="debtor-male" name="debtor-gender" value="חייב" checked>
+                            <label class="radio-button-label" for="debtor-male">חייב</label>
+                            <input class="radio-button-input" type="radio" id="debtor-female" name="debtor-gender" value="חייבת">
+                            <label class="radio-button-label" for="debtor-female">חייבת</label>
                         </div>
                     </div>
-                    <div class="input-group">
-                        <label for="jointProceeding">שני בני הזוג בהליך?</label>
+                    <div class="debtor-selection-group">
+                        <label for="jointProceeding" id="jointProceedingLabel">שני בני הזוג בהליך?</label>
                         <input type="checkbox" id="jointProceeding">
                     </div>
                 </section>
@@ -248,86 +302,122 @@
                     <h2>הכנסות והוצאות התא המשפחתי (₪)</h2>
                     <div class="input-pair">
                         <div class="input-group">
-                            <label id="salaryDebtorLabel">משכורת (חייב)</label>
-                            <input type="number" id="salaryDebtor" placeholder="אנא הזן משכורת" value="">
+                            <label id="salaryDebtorLabel">הכנסה (חייב)</label>
+                            <input type="number" id="salaryDebtor" placeholder="הזן הכנסה" value="">
                         </div>
                         <div class="input-group">
-                            <label id="salaryPartnerLabel">משכורת (בת זוג)</label>
-                            <input type="number" id="salaryPartner" placeholder="אנא הזן משכורת" value="">
+                            <label id="salaryPartnerLabel">הכנסה (בת זוג)</label>
+                            <input type="number" id="salaryPartner" placeholder="הזן הכנסה" value="">
                         </div>
                     </div>
                     <div class="input-pair">
                          <div class="input-group">
                             <label id="otherIncomeDebtorLabel">הכנסות אחרות (חייב)</label>
-                            <input type="number" id="otherIncomeDebtor" placeholder="אנא הזן הכנסות אחרות" value="">
+                            <input type="number" id="otherIncomeDebtor" placeholder="הזן הכנסות אחרות" value="">
                         </div>
                         <div class="input-group">
                             <label id="otherIncomePartnerLabel">הכנסות אחרות (בת זוג)</label>
-                            <input type="number" id="otherIncomePartner" placeholder="אנא הזן הכנסות אחרות" value="">
+                            <input type="number" id="otherIncomePartner" placeholder="הזן הכנסות אחרות" value="">
                         </div>
+                    </div>
+                    <button type="button" id="allowanceButton" class="btn btn-secondary mt-3">הכנסות מקצבאות</button>
+                    <div id="allowanceFields" style="display: none;">
+                        <div class="input-pair">
+                             <div class="input-group">
+                                <label for="debtorAllowance">קצבה (חייב/ת)</label>
+                                <input type="number" id="debtorAllowance" placeholder="הזן קצבה" value="">
+                            </div>
+                            <div class="input-group">
+                                <label for="partnerAllowance">קצבה (בן/בת זוג)</label>
+                                <input type="number" id="partnerAllowance" placeholder="הזן קצבה" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="input-group">
+                        <label for="baseLivingCost">הסכום הבסיסי למחיה בכבוד (מחושב)</label>
+                        <input type="text" id="baseLivingCost" class="readonly-display" readonly>
                     </div>
                     <div class="input-pair">
                         <div class="input-group">
                             <label>הוצאות חריגות (רפואיות וכו')</label>
-                            <input type="number" id="unusualExpenses" placeholder="אנא הזן הוצאות חריגות" value="">
+                            <input type="number" id="unusualExpenses" placeholder="הזן הוצאות" value="">
                         </div>
                         <div class="input-group">
                             <label>הוצאות טיפול וצהרונים</label>
-                            <input type="number" id="childcareExpenses" placeholder="אנא הזן הוצאות" value="">
+                            <input type="number" id="childcareExpenses" placeholder="הזן הוצאות" value="">
                         </div>
                     </div>
-                    <div class="input-pair">
-                         <div class="input-group">
-                            <label>הוצאות מזונות</label>
-                            <input type="number" id="alimonyExpenses" placeholder="אנא הזן הוצאות מזונות" value="">
-                        </div>
-                        <div class="input-group">
-                            <label>הסכום הבסיסי למחיה (מחושב)</label>
-                            <input type="text" id="baseLivingCost" class="readonly-display" readonly>
-                        </div>
-                    </div>
-                </section>
-                
-                <section class="results-section">
-                    <h2>תוצאות החישוב</h2>
-                    <div class="result-item">
-                        <span class="label">הכנסה פנויה של התא המשפחתי:</span>
-                        <span class="value" id="disposableIncomeResult"></span>
-                    </div>
-                    <hr>
-                    <div class="result-item side-by-side">
-                        <div class="value-group">
-                            <span class="label" id="debtorIncomeRatioLabel">אחוז הכנסה (חייב):</span>
-                            <span class="value" id="debtorIncomeRatio"></span>
-                        </div>
-                        <div class="value-group">
-                            <span class="label" id="partnerIncomeRatioLabel">אחוז הכנסה (בת זוג):</span>
-                            <span class="value" id="partnerIncomeRatio"></span>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="result-item side-by-side">
-                        <div class="value-group">
-                            <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
-                            <span class="value" id="debtorPaymentResult"></span>
-                        </div>
-                        <div class="value-group">
-                            <span class="label" id="partnerPaymentLabel">תשלום מוצע (בת זוג):</span>
-                            <span class="value" id="partnerPaymentResult"></span>
-                        </div>
-                    </div>
-                    <div class="result-item total">
-                        <span class="label">תשלום לתא משפחתי בחדל"פ:</span>
-                        <span class="value" id="finalPaymentResult"></span>
+                     <div class="input-group">
+                        <label>הוצאות מזונות</label>
+                        <input type="number" id="alimonyExpenses" placeholder="הזן הוצאות מזונות" value="">
                     </div>
                 </section>
             </form>
              <div id="special-note">
                 <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
             </div>
-        </main>
+        </div>
+        
+        <div class="results-column">
+            <section class="results-section">
+                <h2>תוצאות החישוב</h2>
+                <div class="result-item side-by-side">
+                    <div class="value-group">
+                        <span class="label">קצבת ביטוח לאומי:</span>
+                        <span class="value" id="socialSecurityAllowance"></span>
+                    </div>
+                    <div class="value-group">
+                        <span class="label">סך הכנסות:</span>
+                        <span class="value" id="totalIncomeResult"></span>
+                    </div>
+                </div>
+                <hr>
+                <div class="result-item side-by-side">
+                    <div class="value-group">
+                        <span class="label" id="livingCostLabel">דמי מחייה בכבוד:</span>
+                        <span class="value" id="baseLivingCostResult"></span>
+                    </div>
+                    <div class="value-group">
+                        <span class="label">סך הוצאות:</span>
+                        <span class="value" id="totalExpensesResult"></span>
+                    </div>
+                </div>
+                <hr>
+                <div class="result-item">
+                    <span class="label">הכנסה פנויה לתא המשפחתי:</span>
+                    <span class="value" id="disposableIncomeResult"></span>
+                </div>
+                <hr>
+                <div class="result-item side-by-side">
+                    <div class="value-group">
+                        <span class="label" id="debtorIncomeRatioLabel">אחוז הכנסה (חייב):</span>
+                        <span class="value" id="debtorIncomeRatio"></span>
+                    </div>
+                    <div class="value-group">
+                        <span class="label" id="partnerIncomeRatioLabel">אחוז הכנסה (בת זוג):</span>
+                        <span class="value" id="partnerIncomeRatio"></span>
+                    </div>
+                </div>
+                <hr>
+                <div class="result-item side-by-side">
+                    <div class="value-group">
+                        <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
+                        <span class="value" id="debtorPaymentResult"></span>
+                    </div>
+                    <div class="value-group">
+                        <span class="label" id="partnerPaymentLabel">תשלום מוצע (בת זוג):</span>
+                        <span class="value" id="partnerPaymentResult"></span>
+                    </div>
+                </div>
+                <div class="result-item total">
+                    <span class="label">תשלום חודשי לתא המשפחתי:</span>
+                    <span class="value" id="finalPaymentResult"></span>
+                </div>
+            </section>
+        </div>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const lookupData = {
@@ -345,12 +435,14 @@
             };
             
             const form = document.getElementById('calculatorForm');
-            const inputs = form.querySelectorAll('input, select, input[type="checkbox"], input[type="radio"]');
+            const inputs = form.querySelectorAll('input, select');
             
             const salaryDebtorEl = document.getElementById('salaryDebtor');
             const salaryPartnerEl = document.getElementById('salaryPartner');
             const otherIncomeDebtorEl = document.getElementById('otherIncomeDebtor');
             const otherIncomePartnerEl = document.getElementById('otherIncomePartner');
+            const debtorAllowanceEl = document.getElementById('debtorAllowance');
+            const partnerAllowanceEl = document.getElementById('partnerAllowance');
             const unusualExpensesEl = document.getElementById('unusualExpenses');
             const childcareExpensesEl = document.getElementById('childcareExpenses');
             const alimonyExpensesEl = document.getElementById('alimonyExpenses');
@@ -358,6 +450,8 @@
             const debtorMaleEl = document.getElementById('debtor-male');
             const debtorFemaleEl = document.getElementById('debtor-female');
             const jointProceedingEl = document.getElementById('jointProceeding');
+            const allowanceButtonEl = document.getElementById('allowanceButton');
+            const allowanceFieldsEl = document.getElementById('allowanceFields');
             
             const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
             const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
@@ -368,7 +462,7 @@
             const debtorPaymentLabelEl = document.getElementById('debtorPaymentLabel');
             const partnerPaymentLabelEl = document.getElementById('partnerPaymentLabel');
             
-            const baseLivingCostEl = document.getElementById('baseLivingCost');
+            const baseLivingCostEl = document.getElementById('baseLivingCostResult');
             const socialSecurityAllowanceEl = document.getElementById('socialSecurityAllowance');
             const disposableIncomeResultEl = document.getElementById('disposableIncomeResult');
             const debtorIncomeRatioEl = document.getElementById('debtorIncomeRatio');
@@ -378,6 +472,9 @@
             const finalPaymentResultEl = document.getElementById('finalPaymentResult');
             const specialNoteEl = document.getElementById('special-note');
             const debtorSelectionGroup = document.getElementById('debtor-selection');
+            const totalIncomeResultEl = document.getElementById('totalIncomeResult');
+            const totalExpensesResultEl = document.getElementById('totalExpensesResult');
+            const jointProceedingLabelEl = document.getElementById('jointProceedingLabel');
 
             const formatCurrency = (value) => {
                 if (typeof value !== 'number' || isNaN(value)) return '0 ₪';
@@ -394,26 +491,29 @@
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
 
-                // Toggle debtor selection and partner fields for single/family status
+                document.querySelectorAll('.radio-button-label').forEach(label => label.classList.remove('checked'));
+                if (debtorMaleEl.checked) document.querySelector('label[for="debtor-male"]').classList.add('checked');
+                if (debtorFemaleEl.checked) document.querySelector('label[for="debtor-female"]').classList.add('checked');
+                jointProceedingLabelEl.classList.toggle('checked', isJoint);
+
                 debtorSelectionGroup.style.display = isSingle ? 'none' : 'flex';
-                salaryPartnerEl.style.display = isSingle ? 'none' : 'flex';
-                otherIncomePartnerEl.style.display = isSingle ? 'none' : 'flex';
                 
-                // Update labels
                 if (isSingle) {
-                    salaryDebtorLabelEl.textContent = 'משכורת (חייב/ת)';
+                    salaryDebtorLabelEl.textContent = 'הכנסה (חייב/ת)';
                     otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
-                    salaryPartnerEl.value = '';
-                    otherIncomePartnerEl.value = '';
+                    salaryPartnerEl.style.display = 'none';
+                    otherIncomePartnerEl.style.display = 'none';
                     
                     debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייב/ת):';
                     partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן/בת זוג):';
                     debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב/ת):';
                     partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן/בת זוג):';
                 } else {
+                    salaryPartnerEl.style.display = 'flex';
+                    otherIncomePartnerEl.style.display = 'flex';
                     if (isMaleDebtor) {
-                        salaryDebtorLabelEl.textContent = 'משכורת (חייב)';
-                        salaryPartnerLabelEl.textContent = isJoint ? 'משכורת (בת זוג חייבת)' : 'משכורת (בת זוג)';
+                        salaryDebtorLabelEl.textContent = 'הכנסה (חייב)';
+                        salaryPartnerLabelEl.textContent = isJoint ? 'הכנסה (בת זוג חייבת)' : 'הכנסה (בת זוג)';
                         otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב)';
                         otherIncomePartnerLabelEl.textContent = isJoint ? 'הכנסות אחרות (בת זוג חייבת)' : 'הכנסות אחרות (בת זוג)';
                         debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייב):';
@@ -421,8 +521,8 @@
                         debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב):';
                         partnerPaymentLabelEl.textContent = isJoint ? 'תשלום מוצע (בת זוג חייבת):' : 'תשלום מוצע (בת זוג):';
                     } else {
-                        salaryDebtorLabelEl.textContent = 'משכורת (חייבת)';
-                        salaryPartnerLabelEl.textContent = isJoint ? 'משכורת (בן זוג חייב)' : 'משכורת (בן זוג)';
+                        salaryDebtorLabelEl.textContent = 'הכנסה (חייבת)';
+                        salaryPartnerLabelEl.textContent = isJoint ? 'הכנסה (בן זוג חייב)' : 'הכנסה (בן זוג)';
                         otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייבת)';
                         otherIncomePartnerLabelEl.textContent = isJoint ? 'הכנסות אחרות (בן זוג חייב)' : 'הכנסות אחרות (בן זוג)';
                         debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייבת):';
@@ -439,6 +539,8 @@
                 const C4_salaryPartner = parseFloat(salaryPartnerEl.value) || 0;
                 const B6_otherIncomeDebtor = parseFloat(otherIncomeDebtorEl.value) || 0;
                 const C6_otherIncomePartner = parseFloat(otherIncomePartnerEl.value) || 0;
+                const debtorAllowanceVal = parseFloat(debtorAllowanceEl.value) || 0;
+                const partnerAllowanceVal = parseFloat(partnerAllowanceEl.value) || 0;
                 const B7_unusualExpenses = parseFloat(unusualExpensesEl.value) || 0;
                 const B8_childcareExpenses = parseFloat(childcareExpensesEl.value) || 0;
                 const B9_alimonyExpenses = parseFloat(alimonyExpensesEl.value) || 0;
@@ -446,10 +548,10 @@
                 const statusData = lookupData[B2_status] || { kids: 0, livingCost: 0 };
                 const B3_baseLivingCost = statusData.livingCost;
                 const B5_childAllowance = childAllowanceData[statusData.kids] || 0;
-                
+
                 baseLivingCostEl.textContent = formatCurrency(B3_baseLivingCost);
                 socialSecurityAllowanceEl.textContent = formatCurrency(B5_childAllowance);
-
+                
                 specialNoteEl.style.display = (B4_salaryDebtor === 0 && !statusEl.value.includes('רווק') && !statusEl.value.includes('יחיד')) ? 'block' : 'none';
 
                 let B10_debtorRatio = 0;
@@ -466,8 +568,12 @@
                 debtorIncomeRatioEl.textContent = `${(B10_debtorRatio * 100).toFixed(1)}%`;
                 partnerIncomeRatioEl.textContent = `${(C10_partnerRatio * 100).toFixed(1)}%`;
                 
-                const totalIncomes = B4_salaryDebtor + C4_salaryPartner + B5_childAllowance + B6_otherIncomeDebtor + C6_otherIncomePartner;
+                const totalIncomes = B4_salaryDebtor + C4_salaryPartner + B5_childAllowance + B6_otherIncomeDebtor + C6_otherIncomePartner + debtorAllowanceVal + partnerAllowanceVal;
+                totalIncomeResultEl.textContent = formatCurrency(totalIncomes);
+
                 const totalExpenses = B3_baseLivingCost + B7_unusualExpenses + B8_childcareExpenses + B9_alimonyExpenses;
+                totalExpensesResultEl.textContent = formatCurrency(totalExpenses);
+
                 const B11_disposableIncome = totalIncomes - totalExpenses;
                 
                 disposableIncomeResultEl.textContent = B11_disposableIncome < 0 ? 'אין הכנסה פנויה' : formatCurrency(B11_disposableIncome);
@@ -492,7 +598,8 @@
                     B13_finalPayment = Math.max(0, B12_debtorPayment);
                 } else if (isJointProceeding) {
                     if (B11_disposableIncome > 0) {
-                        B13_finalPayment = roundDownToNearest10(Math.max(0, B11_disposableIncome - C12_partnerPayment) / 2);
+                         const partnerPaymentForCalc = (C10_partnerRatio > 0) ? C12_partnerPayment : 0;
+                        B13_finalPayment = roundDownToNearest10(Math.max(0, B11_disposableIncome - partnerPaymentForCalc) / 2);
                     }
                 } else {
                     B13_finalPayment = Math.max(0, B12_debtorPayment);
@@ -506,6 +613,10 @@
                     updateLabelsAndUI();
                     calculate();
                 });
+            });
+
+            allowanceButtonEl.addEventListener('click', () => {
+                allowanceFieldsEl.style.display = allowanceFieldsEl.style.display === 'none' ? 'grid' : 'none';
             });
             
             updateLabelsAndUI();
