@@ -36,17 +36,16 @@
 
         .calculator-container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 800px;
             background-color: var(--container-bg);
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            position: relative;
+            min-height: 700px;
         }
 
         header {
-            grid-column: 1 / -1;
             background-color: var(--primary-color);
             color: white;
             padding: 20px;
@@ -58,19 +57,28 @@
             font-size: 1.8em;
         }
         
-        main {
+        .screen {
             padding: 25px;
-            display: grid;
-            gap: 30px;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transition: transform 0.5s ease-in-out;
+            transform: translateX(100%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .inputs-column {
-            padding: 25px;
-            border-left: 1px solid var(--border-color);
+        .screen.active {
+            transform: translateX(0);
         }
 
-        .results-column {
-            padding: 25px;
+        #inputScreen {
+            transform: translateX(0);
+        }
+        #resultsScreen {
             background-color: var(--result-bg);
         }
 
@@ -80,7 +88,6 @@
         }
 
         .form-section h2 {
-            grid-column: 1 / -1;
             margin: 0 0 10px 0;
             color: var(--primary-color);
             border-bottom: 2px solid var(--secondary-color);
@@ -124,10 +131,6 @@
             color: var(--primary-color);
         }
 
-        .results-section {
-            padding: 0;
-        }
-        
         .results-section h2 {
              margin: 0 0 20px 0;
              color: var(--primary-color);
@@ -284,6 +287,16 @@
             color: orange;
         }
 
+        .btn-navigation {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            align-self: center;
+        }
 
         @media (max-width: 768px) {
             .calculator-container {
@@ -316,8 +329,8 @@
         <header>
             <h1>מחשבון צו תשלומים</h1>
         </header>
-
-        <div class="inputs-column">
+        
+        <div id="inputScreen" class="screen active">
             <form id="calculatorForm">
                 <section class="form-section">
                     <h2>פרטי התא המשפחתי</h2>
@@ -341,7 +354,7 @@
                                 <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
                             </select>
                         </div>
-                        <div class="debtor-selection-group" id="debtor-selection">
+                        <div class="debtor-selection-group" id="debtor-selection" style="display: none;">
                             <label>מי בהליך?</label>
                             <div class="debtor-selection-options">
                                 <input class="radio-button-input" type="radio" id="debtor-male" name="debtor-gender" value="חייב" checked>
@@ -350,7 +363,7 @@
                                 <label class="radio-button-label" for="debtor-female">חייבת</label>
                             </div>
                         </div>
-                        <div class="joint-proceeding-group" id="joint-proceeding-group">
+                        <div class="joint-proceeding-group" id="joint-proceeding-group" style="display: none;">
                             <label for="jointProceeding" id="jointProceedingLabel">שני בני הזוג בהליך?</label>
                             <input type="checkbox" id="jointProceeding">
                         </div>
@@ -380,7 +393,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="allowanceButton" class="btn btn-secondary mt-3">הכנסות מקצבאות</button>
+                        <button type="button" id="allowanceButton" class="btn-secondary">הכנסות מקצבאות</button>
                     </div>
                     <div id="allowanceFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -406,7 +419,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="alimonyButton" class="btn btn-secondary mt-3">הוצאות מזונות</button>
+                        <button type="button" id="alimonyButton" class="btn-secondary">הוצאות מזונות</button>
                     </div>
                     <div id="alimonyFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -417,15 +430,16 @@
                         </div>
                     </div>
                 </section>
+                <button type="button" id="showResultsBtn" class="btn-navigation">הצג תוצאות</button>
             </form>
              <div id="special-note">
                 <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
             </div>
         </div>
         
-        <div class="results-column">
+        <div id="resultsScreen" class="screen">
             <section class="results-section">
-                <h2 style="text-align: center;">תוצאות החישוב</h2>
+                <h2>תוצאות החישוב</h2>
                 <div class="result-item side-by-side">
                     <div class="value-group">
                         <span class="label">קצבת ביטוח לאומי:</span>
@@ -479,6 +493,7 @@
                     <span class="value" id="finalPaymentResult"></span>
                 </div>
             </section>
+            <button type="button" id="showInputsBtn" class="btn-navigation">חזור להזנה</button>
         </div>
     </div>
     
@@ -518,7 +533,11 @@
             const allowanceFieldsEl = document.getElementById('allowanceFields');
             const alimonyButtonEl = document.getElementById('alimonyButton');
             const alimonyFieldsEl = document.getElementById('alimonyFields');
-            
+            const showResultsBtn = document.getElementById('showResultsBtn');
+            const showInputsBtn = document.getElementById('showInputsBtn');
+            const inputScreen = document.getElementById('inputScreen');
+            const resultsScreen = document.getElementById('resultsScreen');
+
             const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
             const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
             const otherIncomeDebtorLabelEl = document.getElementById('otherIncomeDebtorLabel');
@@ -558,12 +577,12 @@
                 const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
-                
+
                 // Toggle visibility of debtor selection group and joint proceeding button
-                debtorSelectionGroup.style.display = 'flex';
+                debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
-                
+
                 // Toggle partner fields for single/family status
                 const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
                 const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
@@ -593,7 +612,7 @@
                         otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בן זוג)';
                     }
                 }
-                
+
                 // Hide or show payment fields based on joint proceeding status
                 if (isJoint) {
                     proposedPaymentsDisplayEl.style.display = 'grid';
@@ -685,51 +704,37 @@
                 finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
             };
 
-            // Event Listeners for updating UI and calculations
+            showResultsBtn.addEventListener('click', () => {
+                inputScreen.classList.remove('active');
+                resultsScreen.classList.add('active');
+                calculate();
+            });
+
+            showInputsBtn.addEventListener('click', () => {
+                resultsScreen.classList.remove('active');
+                inputScreen.classList.add('active');
+            });
+
             inputs.forEach(input => {
                 input.addEventListener('input', () => {
                     updateLabelsAndUI();
-                    calculate();
                 });
             });
-            salaryDebtorEl.addEventListener('input', (e) => {
-                const input = e.target;
-                if (input.value === '') {
-                    input.classList.add('empty-input');
-                } else {
-                    input.classList.remove('empty-input');
-                }
-                updateLabelsAndUI();
-                calculate();
-            });
 
-            document.getElementById('status').addEventListener('change', () => {
-                updateLabelsAndUI();
-                calculate();
-            });
-            document.getElementById('debtor-male').addEventListener('change', () => {
-                updateLabelsAndUI();
-                calculate();
-            });
-            document.getElementById('debtor-female').addEventListener('change', () => {
-                updateLabelsAndUI();
-                calculate();
-            });
-            document.getElementById('jointProceeding').addEventListener('change', () => {
-                 updateLabelsAndUI();
-                 calculate();
-            });
+            document.getElementById('status').addEventListener('change', updateLabelsAndUI);
+            document.getElementById('debtor-male').addEventListener('change', updateLabelsAndUI);
+            document.getElementById('debtor-female').addEventListener('change', updateLabelsAndUI);
+            document.getElementById('jointProceeding').addEventListener('change', updateLabelsAndUI);
 
             allowanceButtonEl.addEventListener('click', () => {
                 allowanceFieldsEl.style.display = allowanceFieldsEl.style.display === 'none' ? 'grid' : 'none';
-                calculate();
             });
             
             alimonyButtonEl.addEventListener('click', () => {
-                alimonyFieldsEl.style.display = alimonyFieldsEl.style.display === 'none' ? 'block' : 'none';
-                calculate();
+                alimonyFieldsEl.style.display = alimonyFieldsEl.style.display === 'none' ? 'grid' : 'none';
             });
-
+            
+            // Initial call
             updateLabelsAndUI();
             calculate();
         });
