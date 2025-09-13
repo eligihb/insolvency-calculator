@@ -193,16 +193,16 @@
             display: none;
         }
 
-        .debtor-selection-group {
+        .top-section-compact {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 15px;
             margin-bottom: 15px;
         }
-        
         .debtor-selection-options {
             display: flex;
             gap: 10px;
+            flex-wrap: nowrap;
         }
 
         .radio-button-label {
@@ -252,7 +252,8 @@
                 border-left: none;
             }
             .top-section-compact {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 15px;
             }
             .debtor-selection-group, .joint-proceeding-group {
