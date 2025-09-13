@@ -236,12 +236,19 @@
             display: inline-block;
         }
         #jointProceedingLabel.checked {
-            background-color: var(--secondary-color);
+            background-color: var(--danger-color); /* Updated to red */
             color: white;
-            border-color: var(--secondary-color);
+            border-color: var(--danger-color);
         }
         #jointProceeding {
             display: none;
+        }
+        .top-section-buttons-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         @media (max-width: 768px) {
@@ -512,7 +519,7 @@
                 const isJoint = jointProceedingEl.checked;
                 
                 // Toggle visibility of debtor selection group and joint proceeding button
-                debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
+                debtorSelectionGroup.style.display = 'flex'; // Always visible
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
                 
