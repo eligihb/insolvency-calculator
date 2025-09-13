@@ -36,16 +36,17 @@
 
         .calculator-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             background-color: var(--container-bg);
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
         }
 
         header {
+            grid-column: 1 / -1;
             background-color: var(--primary-color);
             color: white;
             padding: 20px;
@@ -63,12 +64,23 @@
             gap: 30px;
         }
 
+        .inputs-column {
+            padding: 25px;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .results-column {
+            padding: 25px;
+            background-color: var(--result-bg);
+        }
+
         .form-section {
             display: grid;
             gap: 20px;
         }
 
         .form-section h2 {
+            grid-column: 1 / -1;
             margin: 0 0 10px 0;
             color: var(--primary-color);
             border-bottom: 2px solid var(--secondary-color);
@@ -272,6 +284,7 @@
             color: orange;
         }
 
+
         @media (max-width: 768px) {
             .calculator-container {
                 grid-template-columns: 1fr;
@@ -367,7 +380,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="allowanceButton" class="btn-secondary">הכנסות מקצבאות</button>
+                        <button type="button" id="allowanceButton" class="btn btn-secondary mt-3">הכנסות מקצבאות</button>
                     </div>
                     <div id="allowanceFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -393,7 +406,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="alimonyButton" class="btn-secondary">הוצאות מזונות</button>
+                        <button type="button" id="alimonyButton" class="btn btn-secondary mt-3">הוצאות מזונות</button>
                     </div>
                     <div id="alimonyFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -404,14 +417,13 @@
                         </div>
                     </div>
                 </section>
-                <button type="button" id="showResultsBtn" class="btn-navigation">הצג תוצאות</button>
             </form>
              <div id="special-note">
                 <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
             </div>
         </div>
         
-        <div id="resultsScreen" class="screen">
+        <div class="results-column">
             <section class="results-section">
                 <h2 style="text-align: center;">תוצאות החישוב</h2>
                 <div class="result-item side-by-side">
@@ -452,7 +464,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -467,7 +479,6 @@
                     <span class="value" id="finalPaymentResult"></span>
                 </div>
             </section>
-            <button type="button" id="showInputsBtn" class="btn-navigation">חזור להזנה</button>
         </div>
     </div>
     
@@ -507,11 +518,7 @@
             const allowanceFieldsEl = document.getElementById('allowanceFields');
             const alimonyButtonEl = document.getElementById('alimonyButton');
             const alimonyFieldsEl = document.getElementById('alimonyFields');
-            const showResultsBtn = document.getElementById('showResultsBtn');
-            const showInputsBtn = document.getElementById('showInputsBtn');
-            const inputScreen = document.getElementById('inputScreen');
-            const resultsScreen = document.getElementById('resultsScreen');
-
+            
             const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
             const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
             const otherIncomeDebtorLabelEl = document.getElementById('otherIncomeDebtorLabel');
@@ -551,23 +558,25 @@
                 const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
+                
+                // Toggle visibility of debtor selection group and joint proceeding button
+                debtorSelectionGroup.style.display = 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
+                jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
+                
+                // Toggle partner fields for single/family status
+                const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
+                const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
+                if (salaryPartnerGroup) salaryPartnerGroup.style.display = isSingle ? 'none' : 'flex';
+                if (otherIncomePartnerGroup) otherIncomePartnerGroup.style.display = isSingle ? 'none' : 'flex';
 
-                if (isSingle) {
-                    salaryPartnerEl.closest('.input-group').style.display = 'none';
-                    otherIncomePartnerEl.closest('.input-group').style.display = 'none';
-                    jointProceedingGroup.style.display = 'none';
-                } else {
-                    salaryPartnerEl.closest('.input-group').style.display = 'flex';
-                    otherIncomePartnerEl.closest('.input-group').style.display = 'flex';
-                    jointProceedingGroup.style.display = 'flex';
-                }
-
+                // Update button styles
                 document.querySelectorAll('.radio-button-label').forEach(label => label.classList.remove('checked'));
                 if (debtorMaleEl.checked) document.querySelector('label[for="debtor-male"]').classList.add('checked');
                 if (debtorFemaleEl.checked) document.querySelector('label[for="debtor-female"]').classList.add('checked');
                 jointProceedingLabelEl.classList.toggle('checked', isJoint);
 
+                // Update labels
                 if (isSingle) {
                     salaryDebtorLabelEl.textContent = 'הכנסה (חייב/ת)';
                     otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
@@ -585,18 +594,7 @@
                     }
                 }
                 
-                if (isMaleDebtor) {
-                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב):';
-                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בת זוג):';
-                    debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייב):';
-                    partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בת זוג):';
-                } else {
-                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייבת):';
-                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן זוג):';
-                    debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייבת):';
-                    partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן זוג):';
-                }
-
+                // Hide or show payment fields based on joint proceeding status
                 if (isJoint) {
                     proposedPaymentsDisplayEl.style.display = 'grid';
                     finalPaymentDisplayEl.style.display = 'block';
@@ -604,7 +602,11 @@
                 } else {
                     proposedPaymentsDisplayEl.style.display = 'none';
                     finalPaymentDisplayEl.style.display = 'block';
-                    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
+                    if (isSingle) {
+                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
+                    } else {
+                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
+                    }
                 }
             };
 
@@ -683,37 +685,51 @@
                 finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
             };
 
-            showResultsBtn.addEventListener('click', () => {
-                inputScreen.classList.remove('active');
-                resultsScreen.classList.add('active');
-                calculate();
-            });
-
-            showInputsBtn.addEventListener('click', () => {
-                resultsScreen.classList.remove('active');
-                inputScreen.classList.add('active');
-            });
-
+            // Event Listeners for updating UI and calculations
             inputs.forEach(input => {
                 input.addEventListener('input', () => {
                     updateLabelsAndUI();
+                    calculate();
                 });
             });
+            salaryDebtorEl.addEventListener('input', (e) => {
+                const input = e.target;
+                if (input.value === '') {
+                    input.classList.add('empty-input');
+                } else {
+                    input.classList.remove('empty-input');
+                }
+                updateLabelsAndUI();
+                calculate();
+            });
 
-            document.getElementById('status').addEventListener('change', updateLabelsAndUI);
-            document.getElementById('debtor-male').addEventListener('change', updateLabelsAndUI);
-            document.getElementById('debtor-female').addEventListener('change', updateLabelsAndUI);
-            document.getElementById('jointProceeding').addEventListener('change', updateLabelsAndUI);
+            document.getElementById('status').addEventListener('change', () => {
+                updateLabelsAndUI();
+                calculate();
+            });
+            document.getElementById('debtor-male').addEventListener('change', () => {
+                updateLabelsAndUI();
+                calculate();
+            });
+            document.getElementById('debtor-female').addEventListener('change', () => {
+                updateLabelsAndUI();
+                calculate();
+            });
+            document.getElementById('jointProceeding').addEventListener('change', () => {
+                 updateLabelsAndUI();
+                 calculate();
+            });
 
             allowanceButtonEl.addEventListener('click', () => {
                 allowanceFieldsEl.style.display = allowanceFieldsEl.style.display === 'none' ? 'grid' : 'none';
+                calculate();
             });
             
             alimonyButtonEl.addEventListener('click', () => {
-                alimonyFieldsEl.style.display = alimonyFieldsEl.style.display === 'none' ? 'grid' : 'none';
+                alimonyFieldsEl.style.display = alimonyFieldsEl.style.display === 'none' ? 'block' : 'none';
+                calculate();
             });
-            
-            // Initial call
+
             updateLabelsAndUI();
             calculate();
         });
