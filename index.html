@@ -477,6 +477,8 @@
             const jointProceedingLabelEl = document.getElementById('jointProceedingLabel');
             const proposedPaymentsDisplayEl = document.getElementById('proposedPaymentsDisplay');
             const finalPaymentDisplayEl = document.getElementById('finalPaymentDisplay');
+            const alimonyFieldsEl = document.getElementById('alimonyFields');
+            const alimonyButtonEl = document.getElementById('alimonyButton');
 
             const formatCurrency = (value) => {
                 if (typeof value !== 'number' || isNaN(value)) return '0 ₪';
@@ -493,46 +495,54 @@
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
 
+                // Toggle debtor selection for single/family status
+                debtorSelectionGroup.style.display = isSingle ? 'none' : 'flex';
+                
+                // Update button styles
                 document.querySelectorAll('.radio-button-label').forEach(label => label.classList.remove('checked'));
                 if (debtorMaleEl.checked) document.querySelector('label[for="debtor-male"]').classList.add('checked');
                 if (debtorFemaleEl.checked) document.querySelector('label[for="debtor-female"]').classList.add('checked');
                 jointProceedingLabelEl.classList.toggle('checked', isJoint);
 
-                debtorSelectionGroup.style.display = isSingle ? 'none' : 'flex';
-
+                // Update labels
                 if (isSingle) {
                     salaryDebtorLabelEl.textContent = 'הכנסה (חייב/ת)';
                     otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
                     salaryPartnerEl.style.display = 'none';
                     otherIncomePartnerEl.style.display = 'none';
+                    
+                    debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייב/ת):';
+                    partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן/בת זוג):';
+                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב/ת):';
+                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן/בת זוג):';
+                    proposedPaymentsDisplayEl.style.display = 'none';
+                    finalPaymentDisplayEl.style.display = 'block';
                 } else {
                     salaryPartnerEl.style.display = 'flex';
                     otherIncomePartnerEl.style.display = 'flex';
+
+                    // Toggle display of payment fields based on joint proceeding status
+                    proposedPaymentsDisplayEl.style.display = isJoint ? 'grid' : 'none';
+                    finalPaymentDisplayEl.style.display = 'block';
+
                     if (isMaleDebtor) {
                         salaryDebtorLabelEl.textContent = 'הכנסה (חייב)';
                         salaryPartnerLabelEl.textContent = 'הכנסה (בת זוג)';
                         otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב)';
                         otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בת זוג)';
+                        debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייב):';
+                        partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בת זוג):';
+                        debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב):';
+                        partnerPaymentLabelEl.textContent = 'תשלום מוצע (בת זוג):';
                     } else {
                         salaryDebtorLabelEl.textContent = 'הכנסה (חייבת)';
                         salaryPartnerLabelEl.textContent = 'הכנסה (בן זוג)';
                         otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייבת)';
                         otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בן זוג)';
-                    }
-                }
-                
-                // Hide or show payment fields based on joint proceeding status
-                if (isJoint) {
-                    proposedPaymentsDisplayEl.style.display = 'grid';
-                    finalPaymentDisplayEl.style.display = 'block';
-                    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי לתא המשפחתי:';
-                } else {
-                    proposedPaymentsDisplayEl.style.display = 'none';
-                    finalPaymentDisplayEl.style.display = 'block';
-                    if (isSingle) {
-                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
-                    } else {
-                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
+                        debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייבת):';
+                        partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן זוג):';
+                        debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייבת):';
+                        partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן זוג):';
                     }
                 }
             };
