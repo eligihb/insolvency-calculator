@@ -251,6 +251,14 @@
             .inputs-column {
                 border-left: none;
             }
+            .top-section-compact {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .debtor-selection-group, .joint-proceeding-group {
+                justify-content: flex-start;
+                margin-bottom: 0;
+            }
         }
     </style>
 </head>
@@ -293,7 +301,7 @@
                                 <label class="radio-button-label" for="debtor-female">חייבת</label>
                             </div>
                         </div>
-                        <div class="joint-proceeding-group">
+                        <div class="joint-proceeding-group" id="joint-proceeding-group">
                             <label for="jointProceeding" id="jointProceedingLabel">שני בני הזוג בהליך?</label>
                             <input type="checkbox" id="jointProceeding">
                         </div>
@@ -407,7 +415,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -498,12 +506,14 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק');
+                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
                 
-                // Toggle visibility of debtor selection group
-                debtorSelectionGroup.style.display = isSingle ? 'none' : 'flex';
+                // Toggle visibility of debtor selection group and joint proceeding button
+                debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
+                const jointProceedingGroup = document.getElementById('joint-proceeding-group');
+                jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
                 
                 // Toggle partner fields for single/family status
                 const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
