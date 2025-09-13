@@ -193,12 +193,15 @@
             display: none;
         }
 
-        .top-section-compact {
+        .top-section-buttons-container {
             display: flex;
             align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 15px;
         }
+
         .debtor-selection-options {
             display: flex;
             gap: 10px;
@@ -236,19 +239,30 @@
             display: inline-block;
         }
         #jointProceedingLabel.checked {
-            background-color: var(--danger-color); /* Updated to red */
+            background-color: var(--danger-color);
             color: white;
             border-color: var(--danger-color);
         }
         #jointProceeding {
             display: none;
         }
-        .top-section-buttons-container {
+        
+        .result-group {
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            gap: 5px;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+        }
+        .result-group .label {
+            font-weight: 500;
+        }
+        .result-group .value {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--accent-color);
+        }
+        .result-section .h2 {
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -267,6 +281,13 @@
                 justify-content: flex-start;
                 margin-bottom: 0;
             }
+            .top-section-buttons-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .input-group, .debtor-selection-group, .joint-proceeding-group {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -280,7 +301,7 @@
             <form id="calculatorForm">
                 <section class="form-section">
                     <h2>פרטי התא המשפחתי</h2>
-                    <div class="top-section-compact">
+                    <div class="top-section-buttons-container">
                         <div class="input-group">
                             <label for="status">סטטוס משפחתי</label>
                             <select id="status">
@@ -309,7 +330,7 @@
                                 <label class="radio-button-label" for="debtor-female">חייבת</label>
                             </div>
                         </div>
-                        <div class="joint-proceeding-group" id="joint-proceeding-group">
+                        <div class="joint-proceeding-group" id="joint-proceeding-group" style="display: none;">
                             <label for="jointProceeding" id="jointProceedingLabel">שני בני הזוג בהליך?</label>
                             <input type="checkbox" id="jointProceeding">
                         </div>
@@ -384,12 +405,7 @@
         
         <div class="results-column">
             <section class="results-section">
-                <h2>תוצאות החישוב</h2>
-                <div class="result-item">
-                    <span class="label">הכנסה פנויה לתא המשפחתי:</span>
-                    <span class="value" id="disposableIncomeResult"></span>
-                </div>
-                <hr>
+                <h2 style="text-align: center;">תוצאות החישוב</h2>
                 <div class="result-item side-by-side">
                     <div class="value-group">
                         <span class="label">קצבת ביטוח לאומי:</span>
@@ -412,6 +428,11 @@
                     </div>
                 </div>
                 <hr>
+                <div class="result-item" style="text-align: center;">
+                    <span class="label">הכנסה פנויה לתא המשפחתי:</span>
+                    <span class="value" id="disposableIncomeResult"></span>
+                </div>
+                <hr>
                 <div class="result-item side-by-side">
                     <div class="value-group">
                         <span class="label" id="debtorIncomeRatioLabel">אחוז הכנסה (חייב):</span>
@@ -423,7 +444,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -519,7 +540,7 @@
                 const isJoint = jointProceedingEl.checked;
                 
                 // Toggle visibility of debtor selection group and joint proceeding button
-                debtorSelectionGroup.style.display = 'flex'; // Always visible
+                debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
                 
