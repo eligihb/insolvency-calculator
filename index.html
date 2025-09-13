@@ -284,7 +284,6 @@
             color: orange;
         }
 
-
         @media (max-width: 768px) {
             .calculator-container {
                 grid-template-columns: 1fr;
@@ -317,7 +316,7 @@
             <h1>מחשבון צו תשלומים</h1>
         </header>
 
-        <div class="inputs-column">
+        <div id="inputScreen" class="screen active">
             <form id="calculatorForm">
                 <section class="form-section">
                     <h2>פרטי התא המשפחתי</h2>
@@ -380,7 +379,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="allowanceButton" class="btn btn-secondary mt-3">הכנסות מקצבאות</button>
+                        <button type="button" id="allowanceButton" class="btn-secondary">הכנסות מקצבאות</button>
                     </div>
                     <div id="allowanceFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -406,7 +405,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="alimonyButton" class="btn btn-secondary mt-3">הוצאות מזונות</button>
+                        <button type="button" id="alimonyButton" class="btn-secondary">הוצאות מזונות</button>
                     </div>
                     <div id="alimonyFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -558,12 +557,12 @@
                 const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
-                
+
                 // Toggle visibility of debtor selection group and joint proceeding button
                 debtorSelectionGroup.style.display = 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
-                
+
                 // Toggle partner fields for single/family status
                 const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
                 const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
@@ -594,6 +593,19 @@
                     }
                 }
                 
+                // Update payment field labels
+                if (isMaleDebtor) {
+                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב):';
+                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בת זוג):';
+                    debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייב):';
+                    partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בת זוג):';
+                } else {
+                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייבת):';
+                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן זוג):';
+                    debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייבת):';
+                    partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן זוג):';
+                }
+
                 // Hide or show payment fields based on joint proceeding status
                 if (isJoint) {
                     proposedPaymentsDisplayEl.style.display = 'grid';
