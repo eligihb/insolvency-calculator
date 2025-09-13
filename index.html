@@ -464,7 +464,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -555,11 +555,12 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
+                const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
                 
                 // Toggle visibility of debtor selection group and joint proceeding button
+                debtorSelectionGroup.style.display = 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
                 
