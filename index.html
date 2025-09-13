@@ -362,6 +362,11 @@
         <div class="results-column">
             <section class="results-section">
                 <h2>תוצאות החישוב</h2>
+                <div class="result-item">
+                    <span class="label">הכנסה פנויה לתא המשפחתי:</span>
+                    <span class="value" id="disposableIncomeResult"></span>
+                </div>
+                <hr>
                 <div class="result-item side-by-side">
                     <div class="value-group">
                         <span class="label">קצבת ביטוח לאומי:</span>
@@ -382,11 +387,6 @@
                         <span class="label">סך הוצאות:</span>
                         <span class="value" id="totalExpensesResult"></span>
                     </div>
-                </div>
-                <hr>
-                <div class="result-item">
-                    <span class="label">הכנסה פנויה לתא המשפחתי:</span>
-                    <span class="value" id="disposableIncomeResult"></span>
                 </div>
                 <hr>
                 <div class="result-item side-by-side">
@@ -561,7 +561,7 @@
                 const B3_baseLivingCost = statusData.livingCost;
                 const B5_childAllowance = childAllowanceData[statusData.kids] || 0;
 
-                baseLivingCostResultEl.textContent = formatCurrency(B3_baseLivingCost);
+                document.getElementById('baseLivingCost').value = formatCurrency(B3_baseLivingCost);
                 socialSecurityAllowanceEl.textContent = formatCurrency(B5_childAllowance);
                 
                 specialNoteEl.style.display = (B4_salaryDebtor === 0 && !statusEl.value.includes('רווק') && !statusEl.value.includes('יחיד')) ? 'block' : 'none';
