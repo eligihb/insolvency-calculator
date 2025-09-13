@@ -303,7 +303,7 @@
         <header>
             <h1>מחשבון צו תשלומים</h1>
         </header>
-
+        
         <div class="inputs-column">
             <form id="calculatorForm">
                 <section class="form-section">
@@ -542,15 +542,15 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק');
+                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
-
+                
                 // Toggle visibility of debtor selection group and joint proceeding button
                 debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
-
+                
                 // Toggle partner fields for single/family status
                 const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
                 const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
@@ -684,24 +684,6 @@
                 
                 finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
             };
-
-            // Event Listeners for updating UI and calculations
-            inputs.forEach(input => {
-                input.addEventListener('input', () => {
-                    updateLabelsAndUI();
-                    calculate();
-                });
-            });
-            salaryDebtorEl.addEventListener('input', (e) => {
-                const input = e.target;
-                if (input.value === '') {
-                    input.classList.add('empty-input');
-                } else {
-                    input.classList.remove('empty-input');
-                }
-                updateLabelsAndUI();
-                calculate();
-            });
 
             document.getElementById('status').addEventListener('change', () => {
                 updateLabelsAndUI();
