@@ -19,6 +19,7 @@
             --accent-color: #ee9b00;
             --result-bg: #e9f5f5;
             --danger-color: #ae2012;
+            --blue-color: #007bff;
         }
 
         body {
@@ -174,17 +175,13 @@
             color: var(--accent-color);
         }
         
-        .result-item.total .value {
-            color: var(--primary-color);
-        }
-
         .result-item.disposable-income {
             display: block;
             text-align: center;
         }
 
         .result-item.disposable-income .value {
-            color: var(--secondary-color);
+            color: var(--blue-color);
             font-size: 1.5em;
             font-weight: bold;
             display: block;
@@ -193,6 +190,7 @@
 
         .result-item.total .value {
             color: var(--danger-color);
+            font-size: 1.5em;
         }
         
         .input-pair-inline {
@@ -281,6 +279,11 @@
         .result-section .h2 {
             text-align: center;
         }
+
+        .debtor-income-input.empty-input {
+            color: orange;
+        }
+
 
         @media (max-width: 768px) {
             .calculator-container {
@@ -416,7 +419,7 @@
                 </section>
             </form>
              <div id="special-note">
-                <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינינום בסך 4,600 ש"ח.
+                <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
             </div>
         </div>
         
@@ -461,7 +464,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -552,7 +555,7 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק');
+                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
                 
@@ -687,6 +690,16 @@
                     updateLabelsAndUI();
                     calculate();
                 });
+            });
+            salaryDebtorEl.addEventListener('input', (e) => {
+                const input = e.target;
+                if (input.value === '') {
+                    input.classList.add('empty-input');
+                } else {
+                    input.classList.remove('empty-input');
+                }
+                updateLabelsAndUI();
+                calculate();
             });
 
             document.getElementById('status').addEventListener('change', () => {
