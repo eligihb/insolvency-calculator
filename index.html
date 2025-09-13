@@ -293,7 +293,7 @@
                                 <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
                             </select>
                         </div>
-                        <div class="debtor-selection-group" id="debtor-selection" style="display: none;">
+                        <div class="debtor-selection-group" id="debtor-selection">
                             <label>מי בהליך?</label>
                             <div class="debtor-selection-options">
                                 <input class="radio-button-input" type="radio" id="debtor-male" name="debtor-gender" value="חייב" checked>
@@ -550,7 +550,7 @@
                 if (isJoint) {
                     proposedPaymentsDisplayEl.style.display = 'grid';
                     finalPaymentDisplayEl.style.display = 'block';
-                    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי לתא המשפחתי:';
+                    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי לתא משפחתי:';
                 } else {
                     proposedPaymentsDisplayEl.style.display = 'none';
                     finalPaymentDisplayEl.style.display = 'block';
