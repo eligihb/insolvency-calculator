@@ -284,19 +284,6 @@
             color: orange;
         }
 
-        .btn-navigation {
-            padding: 10px 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            align-self: center;
-            width: 100%;
-            margin-top: auto;
-        }
-
         @media (max-width: 768px) {
             .calculator-container {
                 grid-template-columns: 1fr;
@@ -576,25 +563,23 @@
                 const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
-
-                // Toggle visibility of debtor selection group and joint proceeding button
-                debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
-                jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
 
-                // Toggle partner fields for single/family status
-                const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
-                const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
-                if (salaryPartnerGroup) salaryPartnerGroup.style.display = isSingle ? 'none' : 'flex';
-                if (otherIncomePartnerGroup) otherIncomePartnerGroup.style.display = isSingle ? 'none' : 'flex';
+                if (isSingle) {
+                    salaryPartnerEl.style.display = 'none';
+                    otherIncomePartnerEl.style.display = 'none';
+                    jointProceedingGroup.style.display = 'none';
+                } else {
+                    salaryPartnerEl.style.display = 'flex';
+                    otherIncomePartnerEl.style.display = 'flex';
+                    jointProceedingGroup.style.display = 'flex';
+                }
 
-                // Update button styles
                 document.querySelectorAll('.radio-button-label').forEach(label => label.classList.remove('checked'));
                 if (debtorMaleEl.checked) document.querySelector('label[for="debtor-male"]').classList.add('checked');
                 if (debtorFemaleEl.checked) document.querySelector('label[for="debtor-female"]').classList.add('checked');
                 jointProceedingLabelEl.classList.toggle('checked', isJoint);
-
-                // Update labels
+                
                 if (isSingle) {
                     salaryDebtorLabelEl.textContent = 'הכנסה (חייב/ת)';
                     otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
@@ -623,6 +608,21 @@
                     partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן זוג):';
                     debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייבת):';
                     partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן זוג):';
+                }
+
+                // Hide or show payment fields based on joint proceeding status
+                if (isJoint) {
+                    proposedPaymentsDisplayEl.style.display = 'grid';
+                    finalPaymentDisplayEl.style.display = 'block';
+                    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי לתא משפחתי:';
+                } else {
+                    proposedPaymentsDisplayEl.style.display = 'none';
+                    finalPaymentDisplayEl.style.display = 'block';
+                    if (isSingle) {
+                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
+                    } else {
+                        finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי (חייב/ת):';
+                    }
                 }
             };
 
