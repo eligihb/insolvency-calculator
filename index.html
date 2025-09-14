@@ -404,10 +404,14 @@
                         </div>
                     </div>
                 </section>
+                <button type="button" id="showResultsBtn" class="btn-navigation">הצג תוצאות</button>
             </form>
+             <div id="special-note">
+                <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
+            </div>
         </div>
         
-        <div class="results-column">
+        <div id="resultsScreen" class="screen">
             <section class="results-section">
                 <h2 style="text-align: center;">תוצאות החישוב</h2>
                 <div class="result-item side-by-side">
@@ -448,7 +452,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -463,6 +467,7 @@
                     <span class="value" id="finalPaymentResult"></span>
                 </div>
             </section>
+            <button type="button" id="showInputsBtn" class="btn-navigation">חזור להזנה</button>
         </div>
     </div>
     
