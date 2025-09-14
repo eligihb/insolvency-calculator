@@ -58,6 +58,12 @@
             font-size: 1.8em;
         }
         
+        main {
+            padding: 25px;
+            display: grid;
+            gap: 30px;
+        }
+
         .inputs-column {
             padding: 25px;
             border-left: 1px solid var(--border-color);
@@ -278,6 +284,7 @@
             color: orange;
         }
 
+
         @media (max-width: 768px) {
             .calculator-container {
                 grid-template-columns: 1fr;
@@ -309,7 +316,7 @@
         <header>
             <h1>מחשבון צו תשלומים</h1>
         </header>
-        
+
         <div class="inputs-column">
             <form id="calculatorForm">
                 <section class="form-section">
@@ -373,7 +380,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="allowanceButton" class="btn-secondary">הכנסות מקצבאות</button>
+                        <button type="button" id="allowanceButton" class="btn btn-secondary mt-3">הכנסות מקצבאות</button>
                     </div>
                     <div id="allowanceFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -399,7 +406,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <button type="button" id="alimonyButton" class="btn-secondary">הוצאות מזונות</button>
+                        <button type="button" id="alimonyButton" class="btn btn-secondary mt-3">הוצאות מזונות</button>
                     </div>
                     <div id="alimonyFields" style="display: none;">
                         <div class="input-pair-inline">
@@ -410,14 +417,13 @@
                         </div>
                     </div>
                 </section>
-                <button type="button" id="showResultsBtn" class="btn-navigation">הצג תוצאות</button>
             </form>
              <div id="special-note">
                 <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
             </div>
         </div>
         
-        <div id="resultsScreen" class="screen">
+        <div class="results-column">
             <section class="results-section">
                 <h2 style="text-align: center;">תוצאות החישוב</h2>
                 <div class="result-item side-by-side">
@@ -458,7 +464,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -473,7 +479,6 @@
                     <span class="value" id="finalPaymentResult"></span>
                 </div>
             </section>
-            <button type="button" id="showInputsBtn" class="btn-navigation">חזור להזנה</button>
         </div>
     </div>
     
@@ -550,12 +555,12 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
+                const isSingle = status.includes('יחיד') || status.includes('רווק');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
                 
                 // Toggle visibility of debtor selection group and joint proceeding button
-                debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
+                debtorSelectionGroup.style.display = 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
                 
@@ -589,19 +594,6 @@
                     }
                 }
                 
-                // Update payment field labels
-                if (isMaleDebtor) {
-                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייב):';
-                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בת זוג):';
-                    debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייב):';
-                    partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בת זוג):';
-                } else {
-                    debtorPaymentLabelEl.textContent = 'תשלום מוצע (חייבת):';
-                    partnerPaymentLabelEl.textContent = 'תשלום מוצע (בן זוג):';
-                    debtorIncomeRatioLabelEl.textContent = 'אחוז הכנסה (חייבת):';
-                    partnerIncomeRatioLabelEl.textContent = 'אחוז הכנסה (בן זוג):';
-                }
-
                 // Hide or show payment fields based on joint proceeding status
                 if (isJoint) {
                     proposedPaymentsDisplayEl.style.display = 'grid';
