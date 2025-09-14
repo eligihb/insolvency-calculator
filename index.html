@@ -36,16 +36,17 @@
 
         .calculator-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             background-color: var(--container-bg);
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
         }
 
         header {
+            grid-column: 1 / -1;
             background-color: var(--primary-color);
             color: white;
             padding: 20px;
@@ -57,10 +58,14 @@
             font-size: 1.8em;
         }
         
-        main {
+        .inputs-column {
             padding: 25px;
-            display: grid;
-            gap: 30px;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .results-column {
+            padding: 25px;
+            background-color: var(--result-bg);
         }
 
         .form-section {
@@ -69,6 +74,7 @@
         }
 
         .form-section h2 {
+            grid-column: 1 / -1;
             margin: 0 0 10px 0;
             color: var(--primary-color);
             border-bottom: 2px solid var(--secondary-color);
@@ -303,7 +309,7 @@
         <header>
             <h1>מחשבון צו תשלומים</h1>
         </header>
-
+        
         <div class="inputs-column">
             <form id="calculatorForm">
                 <section class="form-section">
@@ -544,15 +550,15 @@
 
             const updateLabelsAndUI = () => {
                 const status = statusEl.value;
-                const isSingle = status.includes('יחיד') || status.includes('רווק');
+                const isSingle = status.includes('יחיד') || status.includes('רווק') || status.includes('אלמן') || status.includes('גרוש');
                 const isMaleDebtor = debtorMaleEl.checked;
                 const isJoint = jointProceedingEl.checked;
-
+                
                 // Toggle visibility of debtor selection group and joint proceeding button
                 debtorSelectionGroup.style.display = isSingle ? 'flex' : 'flex';
                 const jointProceedingGroup = document.getElementById('joint-proceeding-group');
                 jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
-
+                
                 // Toggle partner fields for single/family status
                 const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
                 const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
