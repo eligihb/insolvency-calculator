@@ -315,7 +315,7 @@
         <header>
             <h1>מחשבון צו תשלומים</h1>
         </header>
-
+        
         <div class="inputs-column">
             <form id="calculatorForm">
                 <section class="form-section">
@@ -416,14 +416,10 @@
                         </div>
                     </div>
                 </section>
-                <button type="button" id="showResultsBtn" class="btn-navigation">הצג תוצאות</button>
             </form>
-             <div id="special-note">
-                <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
-            </div>
         </div>
         
-        <div id="resultsScreen" class="screen">
+        <div class="results-column">
             <section class="results-section">
                 <h2 style="text-align: center;">תוצאות החישוב</h2>
                 <div class="result-item side-by-side">
@@ -464,7 +460,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="result-item side-by-side" id="proposedPaymentsDisplay" style="display: none;">
+                <div class="result-item side-by-side" id="proposedPaymentsDisplay">
                     <div class="value-group">
                         <span class="label" id="debtorPaymentLabel">תשלום מוצע (חייב):</span>
                         <span class="value" id="debtorPaymentResult"></span>
@@ -479,7 +475,9 @@
                     <span class="value" id="finalPaymentResult"></span>
                 </div>
             </section>
-            <button type="button" id="showInputsBtn" class="btn-navigation">חזור להזנה</button>
+             <div id="special-note">
+                <strong>הערה:</strong> לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ-3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 4,600 ש"ח.
+            </div>
         </div>
     </div>
     
@@ -519,11 +517,7 @@
             const allowanceFieldsEl = document.getElementById('allowanceFields');
             const alimonyButtonEl = document.getElementById('alimonyButton');
             const alimonyFieldsEl = document.getElementById('alimonyFields');
-            const showResultsBtn = document.getElementById('showResultsBtn');
-            const showInputsBtn = document.getElementById('showInputsBtn');
-            const inputScreen = document.getElementById('inputScreen');
-            const resultsScreen = document.getElementById('resultsScreen');
-
+            
             const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
             const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
             const otherIncomeDebtorLabelEl = document.getElementById('otherIncomeDebtorLabel');
