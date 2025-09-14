@@ -654,7 +654,7 @@
                 debtorIncomeRatioEl.textContent = `${(B10_debtorRatio * 100).toFixed(1)}%`;
                 partnerIncomeRatioEl.textContent = `${(C10_partnerRatio * 100).toFixed(1)}%`;
                 
-                const totalIncomes = B4_salaryDebtor + C4_salaryPartner + B5_childAllowance + B6_otherIncomeDebtor + C6_otherIncomePartner + debtorAllowanceVal + partnerAllowanceVal;
+                const totalIncomes = B4_salaryDebtor + B6_otherIncomeDebtor + C4_salaryPartner + C6_otherIncomePartner + B5_childAllowance + debtorAllowanceVal + partnerAllowanceVal;
                 totalIncomeResultEl.textContent = formatCurrency(totalIncomes);
 
                 const totalExpenses = B3_baseLivingCost + B7_unusualExpenses + B8_childcareExpenses + B9_alimonyExpenses;
