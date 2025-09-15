@@ -297,18 +297,17 @@
       const isSingle = status.includes('יחיד') || status.includes('רווק');
       const isJoint = jointProceedingEl.checked;
 
-      // קריאה גולמית: שמאל = בן/בת זוג, ימין = חייב/ת
-      const A_salary = parseFloat(salaryDebtorEl.value) || 0;
-      const B_salary = parseFloat(salaryPartnerEl.value) || 0;
-      const A_other  = parseFloat(otherIncomeDebtorEl.value) || 0;
-      const B_other  = parseFloat(otherIncomePartnerEl.value) || 0;
-      const A_allow  = parseFloat(debtorAllowanceEl.value) || 0;
-      const B_allow  = parseFloat(partnerAllowanceEl.value) || 0;
+    // קריאה גולמית: שמאל = בן/בת זוג, ימין = חייב/ת
+const A_salary = parseFloat(salaryDebtorEl.value) || 0;
+const B_salary = parseFloat(salaryPartnerEl.value) || 0;
+const A_other  = parseFloat(otherIncomeDebtorEl.value) || 0;
+const B_other  = parseFloat(otherIncomePartnerEl.value) || 0;
+const A_allow  = parseFloat(debtorAllowanceEl.value) || 0;
+const B_allow  = parseFloat(partnerAllowanceEl.value) || 0;
 
-      // מיפוי קבוע
-      let debtorSalary = B_salary, debtorOther = B_other, debtorAllow = B_allow;
-      let partnerSalary = A_salary, partnerOther = A_other, partnerAllow = A_allow;
-      if (isSingle) { partnerSalary = 0; partnerOther = 0; partnerAllow = 0; }
+// מיפוי קבוע
+let debtorSalary = B_salary, debtorOther = B_other, debtorAllow = B_allow;
+let partnerSalary = A_salary, partnerOther = A_other, partnerAllow = A_allow;
 
       // עלויות בסיס
       const statusData = lookupData[status] || { kids:0, livingCost:0 };
@@ -360,6 +359,59 @@
       }
       finalPaymentResultEl.textContent = formatCurrency(final);
     };
+const updateLabelsAndUI = () => {
+  const status = statusEl.value || '';
+  const isSingle = status.includes('יחיד') || status.includes('רווק');
+  const isMaleDebtor = debtorMaleEl.checked;
+  const isJoint = jointProceedingEl.checked;
+
+  debtorSelectionGroup.style.display = 'flex';
+  document.getElementById('joint-proceeding-group').style.display = isSingle ? 'none' : 'flex';
+
+  // RTL: הפריט הראשון ברשת (השדות עם ...Debtor) הוא בעמודה הימנית => חייב/ת
+  // הפריט השני (...Partner) הוא בעמודה השמאלית => בן/בת זוג
+  if (isSingle) {
+    salaryDebtorLabelEl.textContent = 'הכנסה (חייב/ת)';
+    otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
+    salaryPartnerLabelEl.textContent = 'הכנסה (בן/בת זוג)';
+    otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בן/בת זוג)';
+  } else if (isMaleDebtor) {
+    salaryDebtorLabelEl.textContent = 'הכנסה (חייב)';
+    otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב)';
+    salaryPartnerLabelEl.textContent = 'הכנסה (בת זוג)';
+    otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בת זוג)';
+  } else {
+    salaryDebtorLabelEl.textContent = 'הכנסה (חייבת)';
+    otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייבת)';
+    salaryPartnerLabelEl.textContent = 'הכנסה (בן זוג)';
+    otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בן זוג)';
+  }
+
+  // עדכון תוויות הקצבאות כך שהימין (label[for="debtorAllowance"]) הוא חייב/ת
+  const debtorAllowanceLbl = document.querySelector('label[for="debtorAllowance"]');
+  const partnerAllowanceLbl = document.querySelector('label[for="partnerAllowance"]');
+  if (debtorAllowanceLbl && partnerAllowanceLbl) {
+    debtorAllowanceLbl.textContent = isSingle ? 'קצבה (חייב/ת)' : (isMaleDebtor ? 'קצבה (חייב)' : 'קצבה (חייבת)');
+    partnerAllowanceLbl.textContent = isSingle ? 'קצבה (בן/בת זוג)' : (isMaleDebtor ? 'קצבה (בת זוג)' : 'קצבה (בן זוג)');
+  }
+
+  // תוויות בתוצאות
+  debtorIncomeRatioLabelEl.textContent  = `אחוז הכנסה (${isSingle ? 'חייב/ת' : (isMaleDebtor ? 'חייב' : 'חייבת')}):`;
+  partnerIncomeRatioLabelEl.textContent = `אחוז הכנסה (${isSingle ? 'בן/בת זוג' : (isMaleDebtor ? 'בת זוג' : 'בן זוג')}):`;
+  debtorPaymentLabelEl.textContent      = `תשלום מוצע (${isSingle ? 'חייב/ת' : (isMaleDebtor ? 'חייב' : 'חייבת')}):`;
+  partnerPaymentLabelEl.textContent     = `תשלום מוצע (${isSingle ? 'בן/בת זוג' : (isMaleDebtor ? 'בת זוג' : 'בן זוג')}):`;
+
+  if (isJoint) {
+    proposedPaymentsDisplayEl.style.display = 'grid';
+    finalPaymentDisplayEl.style.display = 'block';
+    finalPaymentDisplayEl.querySelector('.label').textContent = 'תשלום חודשי לתא משפחתי:';
+  } else {
+    proposedPaymentsDisplayEl.style.display = 'none';
+    finalPaymentDisplayEl.style.display = 'block';
+    finalPaymentDisplayEl.querySelector('.label').textContent =
+      `תשלום חודשי (${isSingle ? 'חייב/ת' : (isMaleDebtor ? 'חייב' : 'חייבת')}):`;
+  }
+};
 
     // מאזינים
     inputs.forEach(el => el.addEventListener('input', () => { updateLabelsAndUI(); calculate(); }));
