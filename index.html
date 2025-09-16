@@ -7,9 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- לצילום מסך PNG -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
-    :root {
-      --primary-color:#005f73;--secondary-color:#0a9396;--background-color:#f4f4f4;--container-bg:#ffffff;
+    :root{
+      --primary-color:#005f73;--secondary-color:#0a9396;--background-color:#f4f4f4;--container-bg:#fff;
       --text-color:#333;--label-color:#555;--border-color:#ddd;--accent-color:#ee9b00;--result-bg:#e9f5f5;
       --danger-color:#ae2012;--blue-color:#007bff;
     }
@@ -17,9 +19,9 @@
       margin:0;padding:20px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
     .calculator-container{width:100%;max-width:1000px;background:var(--container-bg);border-radius:12px;
       box-shadow:0 4px 15px rgba(0,0,0,.1);overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
-    header{grid-column:1 / -1;background:var(--primary-color);color:#fff;padding:20px;text-align:center}
+    header{grid-column:1/-1;background:var(--primary-color);color:#fff;padding:20px;text-align:center}
     header h1{margin:0;font-size:1.8em}
-    .version{font-size:.85em;font-weight:500;opacity:.95;margin-inline-start:.4rem;white-space:nowrap}
+    .version{font-size:.75em;font-weight:500;opacity:.9;margin-inline-start:.5rem;white-space:nowrap}
 
     .inputs-column{padding:25px;border-left:1px solid var(--border-color)}
     .results-column{padding:25px;background:var(--result-bg)}
@@ -28,13 +30,14 @@
       border-bottom:2px solid var(--secondary-color);padding-bottom:8px;font-size:1.4em}
     .input-group{display:flex;flex-direction:column;width:100%}
     .input-group label{font-weight:500;margin-bottom:8px;color:var(--label-color);display:flex;align-items:center;gap:.5rem}
-    .input-group input,.input-group select{width:100%;padding:10px;border:1px solid var(--border-color);
-      border-radius:6px;font-size:1em;box-sizing:border-box;transition:border-color .3s, box-shadow .3s}
-    .input-group input:focus,.input-group select:focus{outline:none;border-color:var(--secondary-color);
+    .input-group input,.input-group select, .input-group textarea{width:100%;padding:10px;border:1px solid var(--border-color);
+      border-radius:6px;font-size:1em;box-sizing:border-box;transition:border-color .3s, box-shadow .3s;background:#fff}
+    .input-group textarea{min-height:80px;resize:vertical}
+    .input-group input:focus,.input-group select:focus,.input-group textarea:focus{outline:none;border-color:var(--secondary-color);
       box-shadow:0 0 0 3px rgba(10,147,150,.2)}
     .input-group input.readonly-display{background:#e9ecef;font-weight:bold;color:var(--primary-color)}
 
-    /* כפתור "?" והפופאבר */
+    /* אייקון "?" והפופאבר */
     .info-btn{
       line-height:1;border:none;cursor:pointer;border-radius:50%;
       width:20px;height:20px;font-size:.85em;font-weight:700;
@@ -65,8 +68,8 @@
 
     /* זוגות שדות – החייב/ת תמיד בשמאל, בן/בת זוג בימין */
     .input-pair-inline{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    .input-group.debtor  {grid-column:1}
-    .input-group.partner {grid-column:2}
+    .input-group.debtor{grid-column:1}
+    .input-group.partner{grid-column:2}
 
     #special-note{background:#fff3cd;border:1px solid #ffeeba;color:#856404;padding:15px;border-radius:6px;
       margin-top:20px;display:none}
@@ -82,19 +85,31 @@
     #jointProceeding{display:none}
     .debtor-income-input.empty-input{color:orange}
 
-    /* אזור פעולות ו“פרטי דו״ח/הערה” מתקפלים */
-    .actions-meta{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
-    .actions-bar{display:flex;gap:10px;justify-content:flex-start;align-items:center;flex-wrap:wrap}
-    .action-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #cbd5e1;background:#ffffff;border-radius:10px;padding:8px 12px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+    /* ===== סרגל פעולות ובלוקים מתקפלים (בעמודת התוצאות) ===== */
+    .actions-wrap{margin-bottom:12px}
+    .actions-bar{
+      display:flex;gap:10px;align-items:center;
+      flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;
+      padding-bottom:6px
+    }
+    .action-btn{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid #cbd5e1;background:#fff;
+      border-radius:10px;padding:8px 12px;cursor:pointer;
+      box-shadow:0 2px 6px rgba(0,0,0,.05);white-space:nowrap
+    }
     .action-btn:hover{background:#f8fafc}
-    .action-btn .ico{font-size:1.05em}
-    .email-note{display:none;background:#fff7d6;border:1px solid #ffe6a8;color:#3b2f00;border-radius:10px;padding:8px 10px;font-size:.9em}
-
-    .meta-row,.notes-row{display:none}
-    .meta-row.open,.notes-row.open{display:grid}
-    .meta-row{grid-template-columns:1fr 1fr 1fr;gap:12px}
-    .meta-small{font-size:.9em}
-    .notes-row{grid-template-columns:1fr;gap:6px}
+    .action-ico{font-size:1.05em}
+    .email-tip{
+      display:none;background:#fff7d6;border:1px solid #ffe6a8;color:#3b2f00;
+      border-radius:10px;padding:8px 10px;font-size:.9em;margin-top:6px
+    }
+    .collapsible[hidden]{display:none}
+    .collapsible{
+      background:#fff;border:1px solid #e5e7eb;border-radius:10px;
+      padding:10px;margin-top:8px
+    }
+    .collapsible .meta-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
     .notes-counter{font-size:.85em;color:#666;align-self:flex-end}
 
     @media (max-width:768px){
@@ -105,26 +120,37 @@
       .input-group,.debtor-selection-group,.joint-proceeding-group{width:100%}
       .input-pair-inline{grid-template-columns:1fr}
       .input-group.debtor,.input-group.partner{grid-column:auto}
-      .meta-row{grid-template-columns:1fr}
+      .collapsible .meta-row{grid-template-columns:1fr}
+    }
+
+    /* הדפסה */
+    @media print{
+      .inputs-column{display:none}
+      body{padding:0;background:#fff}
+      header{padding:16px}
+      .actions-wrap,.email-tip{display:none!important}
+      .results-column{background:#fff}
+      input,select,textarea{border:none !important;box-shadow:none !important}
+      .notes-counter{display:none}
     }
   </style>
 </head>
 <body>
 
-  <div class="calculator-container" id="calcRoot">
+  <div class="calculator-container">
     <header>
       <h1>
         מחשבון צו תשלומים
-        <span class="version">(מעודכן ל-<span id="currentYear"></span>)</span>
+        <span class="version">· מעודכן ל-<span id="currentYear"></span></span>
       </h1>
     </header>
 
+    <!-- עמודת קלט (ימין) -->
     <div class="inputs-column">
       <form id="calculatorForm">
         <section class="form-section">
           <h2>פרטי התא המשפחתי</h2>
           <div class="top-section-buttons-container">
-
             <div class="input-group">
               <select id="status" aria-label="סטטוס משפחתי">
                 <option value="" selected disabled>סטטוס משפחתי — בחר סטטוס...</option>
@@ -170,7 +196,8 @@
               <label id="salaryDebtorLabel">
                 <span class="label-text">הכנסה (חייב)</span>
                 <button type="button" class="info-btn" aria-label="מידע על השדה"
-                        data-info='ממוצע נטו תלושי שכר<br>לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ 3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
+                        data-info='ממוצע נטו תלושי שכר
+לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ 3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
               </label>
               <input type="number" id="salaryDebtor" placeholder="הזן הכנסה" value="">
             </div>
@@ -178,7 +205,8 @@
               <label id="salaryPartnerLabel">
                 <span class="label-text">הכנסה (בת זוג)</span>
                 <button type="button" class="info-btn" aria-label="מידע על השדה"
-                        data-info='ממוצע נטו תלושי שכר.<br>במקרה שבן הזוג לא עובד ייקבע תשלום מדורג בהתבסס על הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
+                        data-info='ממוצע נטו תלושי שכר.
+במקרה שבן הזוג לא עובד ייקבע תשלום מדורג בהתבסס על הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
               </label>
               <input type="number" id="salaryPartner" placeholder="הזן הכנסה" value="">
             </div>
@@ -246,48 +274,53 @@
       </div>
     </div>
 
+    <!-- עמודת תוצאות (שמאל) -->
     <div class="results-column">
 
-      <!-- כפתורים + פרטי דו"ח/הערה -->
-      <div class="actions-meta">
-        <div class="actions-bar">
-          <button type="button" class="action-btn" id="printPngBtn" title="צילום/הדפסה">
-            <span class="ico">🖼️</span> צילום/הדפסה
+      <!-- סרגל פעולות + בלוקים מתקפלים -->
+      <div class="actions-wrap">
+        <div class="actions-bar" id="actionsBar">
+          <button type="button" class="action-btn" id="btnPrint" title="צילום מסך והדפסה">
+            <span class="action-ico">🖼️</span> הדפס
           </button>
-          <button type="button" class="action-btn" id="emailBtn" title="שליחה במייל">
-            <span class="ico">✉️</span> שליחה במייל
+          <button type="button" class="action-btn" id="btnEmail" title="שליחה במייל">
+            <span class="action-ico">✉️</span> מייל
           </button>
-          <button type="button" class="action-btn" id="resetBtn" title="איפוס הטופס">
-            <span class="ico">♻️</span> איפוס
+          <button type="button" class="action-btn" id="btnMeta" aria-expanded="false" title="פרטי דו״ח">
+            <span class="action-ico">ℹ️</span> פרטי דו״ח
           </button>
-          <button type="button" class="action-btn" id="toggleMetaBtn" title="פרטי דו״ח">
-            <span class="ico">🗂️</span> פרטי דו״ח
+          <button type="button" class="action-btn" id="btnNotes" aria-expanded="false" title="הוסף הערה">
+            <span class="action-ico">📝</span> הערה
           </button>
-          <button type="button" class="action-btn" id="toggleNotesBtn" title="הערה">
-            <span class="ico">📝</span> הערה
+          <button type="button" class="action-btn" id="btnReset" title="איפוס">
+            <span class="action-ico">↺</span> איפוס
           </button>
         </div>
 
-        <div id="emailHelp" class="email-note">
-          טיפ: שמרו קודם את צילום המסך (PNG) ואז צרפו ידנית להודעת המייל.
+        <div id="emailHelp" class="email-tip">
+          טיפ: דפדפנים לא מצרפים קבצים אוטומטית. שמור/י קודם את צילום המסך (כפתור “הדפס”) ואז צרף/י ידנית להודעת המייל.
         </div>
 
-        <div class="meta-row" id="metaRow">
-          <div class="input-group meta-small">
-            <label for="caseId">מס' תיק</label>
-            <input type="text" id="caseId" placeholder="לדוגמה: 12345/25">
-          </div>
-          <div class="input-group meta-small">
-            <label for="authorName">שם עורך/ת החישוב</label>
-            <input type="text" id="authorName" placeholder="שם מלא">
-          </div>
-          <div class="input-group meta-small">
-            <label for="calcDate">תאריך</label>
-            <input type="text" id="calcDate" class="readonly-display" readonly>
+        <!-- פרטי דו"ח (מתקפל) -->
+        <div id="metaPanel" class="collapsible" hidden>
+          <div class="meta-row">
+            <div class="input-group meta-small">
+              <label for="caseId">מס' תיק</label>
+              <input type="text" id="caseId" placeholder="לדוגמה: 12345/25">
+            </div>
+            <div class="input-group meta-small">
+              <label for="authorName">שם עורך/ת החישוב</label>
+              <input type="text" id="authorName" placeholder="שם מלא">
+            </div>
+            <div class="input-group meta-small">
+              <label for="calcDate">תאריך</label>
+              <input type="text" id="calcDate" class="readonly-display" readonly>
+            </div>
           </div>
         </div>
 
-        <div class="notes-row" id="notesRow">
+        <!-- הערה (מתקפל) -->
+        <div id="notesPanel" class="collapsible" hidden>
           <div class="input-group">
             <label for="calcNotes">הערה (עד 500 תווים)</label>
             <textarea id="calcNotes" maxlength="500" placeholder="ניתן לרשום כאן הנחיות/הבהרות קצרות..."></textarea>
@@ -296,6 +329,7 @@
         </div>
       </div>
 
+      <!-- תוצאות -->
       <section class="results-section">
         <h2 style="text-align: center;">תוצאות החישוב</h2>
 
@@ -364,14 +398,11 @@
     </div>
   </div>
 
-  <!-- לצילום מסך -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // שנה בכותרת + תאריך לפרטי דו"ח
-      const yearEl = document.getElementById('currentYear');
-      if (yearEl) yearEl.textContent = new Date().getFullYear();
+      // שנה לכותרת + תאריך אוטומטי בפרטי דו"ח
+      const yEl = document.getElementById('currentYear');
+      if (yEl) yEl.textContent = new Date().getFullYear();
       const dEl = document.getElementById('calcDate');
       if (dEl) dEl.value = new Date().toLocaleDateString('he-IL',{year:'numeric',month:'2-digit',day:'2-digit'});
 
@@ -407,7 +438,6 @@
       const alimonyButtonEl = document.getElementById('alimonyButton');
       const alimonyFieldsEl = document.getElementById('alimonyFields');
 
-      // אלמנטים לכותרות/תוצאות
       const salaryDebtorLabelTextEl  = document.querySelector('#salaryDebtorLabel .label-text');
       const salaryPartnerLabelTextEl = document.querySelector('#salaryPartnerLabel .label-text');
 
@@ -560,28 +590,28 @@
         finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
       };
 
-      /* טולטיפים ? */
-      let currentPopover = null, currentBtn = null;
+      // פופאבר "?"
+      let currentPopover=null,currentBtn=null;
       function closePopover(){
-        if(currentPopover){ currentPopover.remove(); currentPopover=null; if(currentBtn) currentBtn.setAttribute('aria-expanded','false'); currentBtn=null; }
+        if(currentPopover){ currentPopover.remove(); currentPopover=null;
+          if(currentBtn) currentBtn.setAttribute('aria-expanded','false'); currentBtn=null; }
       }
       function openPopover(btn){
-        const raw = btn.getAttribute('data-info') || '';
+        const raw=btn.getAttribute('data-info')||'';
         if(!raw) return;
-        if(currentBtn === btn){ closePopover(); return; }
+        if(currentBtn===btn){ closePopover(); return; }
         closePopover();
-        const pop = document.createElement('div');
-        pop.className='info-popover';
-        pop.innerHTML = raw.replace(/\n/g,'<br>');
+        const pop=document.createElement('div');
+        pop.className='info-popover'; pop.innerHTML=raw.replace(/\n/g,'<br>');
         document.body.appendChild(pop);
-        const rect = btn.getBoundingClientRect();
-        const top = rect.bottom + window.scrollY + 8;
-        const right = (window.innerWidth - rect.right) + 8;
-        pop.style.top = `${top}px`; pop.style.right = `${right}px`;
-        currentPopover = pop; currentBtn = btn; btn.setAttribute('aria-expanded','true');
+        const rect=btn.getBoundingClientRect();
+        const top=rect.bottom+window.scrollY+8;
+        const right=(window.innerWidth-rect.right)+8;
+        pop.style.top=`${top}px`; pop.style.right=`${right}px`;
+        currentPopover=pop; currentBtn=btn; btn.setAttribute('aria-expanded','true');
       }
       document.addEventListener('click',(e)=>{
-        const btn = e.target.closest('.info-btn');
+        const btn=e.target.closest('.info-btn');
         if(btn){ openPopover(btn); return; }
         if(currentPopover && !e.target.closest('.info-popover')) closePopover();
       });
@@ -608,77 +638,63 @@
         calculate();
       });
 
-      updateLabelsAndUI();
-      calculate();
+      // === תוספות: פתיחה/סגירה של בלוקים, טיפ מייל, הדפסה PNG, איפוס ===
+      (function initMetaAndNotesCounter(){
+        const ta=document.getElementById('calcNotes');
+        const cnt=document.getElementById('notesCount');
+        if(ta && cnt){ const upd=()=>{cnt.textContent=ta.value.length}; ta.addEventListener('input',upd); upd(); }
+      })();
 
-      /* ===== כפתורי פעולה ===== */
-      async function screenshotAndPrint() {
-        const root = document.getElementById('calcRoot');
-        if (!root || typeof html2canvas === 'undefined') { window.print(); return; }
-        const canvas = await html2canvas(root,{scale:2,useCORS:true,scrollX:0,scrollY:-window.scrollY});
-        const dataURL = canvas.toDataURL('image/png');
-        const w = window.open('', '_blank');
-        if (!w) return;
-        w.document.write(`
-          <html dir="rtl"><head><title>צילום מסך – מחשבון צו תשלומים</title></head>
-          <body style="margin:0;background:#fff;text-align:center">
-            <img src="${dataURL}" style="max-width:100%;height:auto"
-                 onload="window.print();window.onfocus=function(){setTimeout(()=>window.close(),300);}">
-          </body></html>
-        `);
-        w.document.close();
-      }
+      (function toggles(){
+        const metaBtn=document.getElementById('btnMeta');
+        const notesBtn=document.getElementById('btnNotes');
+        const metaPanel=document.getElementById('metaPanel');
+        const notesPanel=document.getElementById('notesPanel');
+        function toggle(btn,panel){
+          const open=panel.hasAttribute('hidden');
+          if(open){ panel.removeAttribute('hidden'); btn.setAttribute('aria-expanded','true'); }
+          else{ panel.setAttribute('hidden',''); btn.setAttribute('aria-expanded','false'); }
+        }
+        metaBtn?.addEventListener('click',()=>toggle(metaBtn,metaPanel));
+        notesBtn?.addEventListener('click',()=>toggle(notesBtn,notesPanel));
+      })();
 
-      function buildEmailBody() {
-        const txt = id => (document.getElementById(id)?.textContent || '').trim();
-        const val = id => (document.getElementById(id)?.value || '').trim();
+      document.getElementById('btnPrint')?.addEventListener('click', async ()=>{
+        try{
+          const node=document.querySelector('.calculator-container');
+          const canvas=await html2canvas(node,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
+          const dataUrl=canvas.toDataURL('image/png');
+          const w=window.open('','_blank');
+          w.document.write(`
+            <html lang="he" dir="rtl">
+              <head><meta charset="utf-8"><title>צילום מסך המחשבון</title>
+              <style>body{margin:0} img{width:100%;height:auto;display:block}</style></head>
+              <body><img src="${dataUrl}" alt="צילום מסך"/></body>
+            </html>`);
+          w.document.close(); w.focus(); w.print();
+        }catch(e){ alert('לא הצלחנו ליצור צילום מסך. נסה/י שוב.'); }
+      });
 
-        const caseId = val('caseId') || '-';
-        const author = val('authorName') || '-';
-        const dateStr = val('calcDate') || '-';
-        const notes = (document.getElementById('calcNotes')?.value || '').trim();
+      document.getElementById('btnEmail')?.addEventListener('click', ()=>{
+        const tip=document.getElementById('emailHelp');
+        if(tip) tip.style.display='block';
 
-        const status = val('status') || '-';
-        const inProc = document.getElementById('debtor-male')?.checked ? 'חייב' :
-                       (document.getElementById('debtor-female')?.checked ? 'חייבת' : '-');
-        const joint = document.getElementById('jointProceeding')?.checked ? 'כן' : 'לא';
+        const txt=id=>(document.getElementById(id)?.textContent||'').trim();
+        const val=id=>(document.getElementById(id)?.value||'').trim();
 
-        const salaryDebtor = val('salaryDebtor') || '-';
-        const salaryPartner = val('salaryPartner') || '-';
-        const otherDebtor = val('otherIncomeDebtor') || '-';
-        const otherPartner = val('otherIncomePartner') || '-';
-        const debAllow = val('debtorAllowance') || '-';
-        const partAllow = val('partnerAllowance') || '-';
-        const unusual = val('unusualExpenses') || '-';
-        const childcare = val('childcareExpenses') || '-';
-        const alimony = val('alimonyExpenses') || '-';
-
-        const lines = [
+        const subject=`מחשבון צו תשלומים – ${val('caseId') ? 'תיק ' + val('caseId') : 'ללא מספר תיק'}`;
+        const body=[
           `שלום,`,
           ``,
-          `מצורף צילום מסך (PNG) של תוצאות החישוב. שימו לב לצרף ידנית את הקובץ למייל.`,
+          `מצורף/ת צילום מסך של תוצאות החישוב (יש לצרף ידנית את קובץ ה-PNG).`,
           ``,
-          `— פרטי דו״ח —`,
-          `מס' תיק: ${caseId}`,
-          `שם עורך/ת: ${author}`,
-          `תאריך: ${dateStr}`,
-          notes ? `הערה: ${notes}` : '',
+          `פרטי דו״ח:`,
+          `מס׳ תיק: ${val('caseId') || '-'}`,
+          `עורך/ת: ${val('authorName') || '-'}`,
+          `תאריך: ${val('calcDate') || '-'}`,
+          val('calcNotes') ? `הערה: ${val('calcNotes')}` : '',
           ``,
-          `— פרטי קלט —`,
-          `סטטוס משפחתי: ${status}`,
-          `מי בהליך: ${inProc}`,
-          `שני בני הזוג בהליך: ${joint}`,
-          `הכנסה (חייב/ת): ${salaryDebtor}`,
-          `הכנסה (בן/בת זוג): ${salaryPartner}`,
-          `הכנסות אחרות (חייב/ת): ${otherDebtor}`,
-          `הכנסות אחרות (בן/בת זוג): ${otherPartner}`,
-          `קצבה (חייב/ת): ${debAllow}`,
-          `קצבה (בן/בת זוג): ${partAllow}`,
-          `הוצאות חריגות: ${unusual}`,
-          `הוצאות טיפול וצהרונים: ${childcare}`,
-          `הוצאות מזונות: ${alimony}`,
-          ``,
-          `— תוצאות —`,
+          `תקציר תוצאות:`,
           `סך הכנסות: ${txt('totalIncomeResult')}`,
           `סך הוצאות: ${txt('totalExpensesResult')}`,
           `הכנסה פנויה: ${txt('disposableIncomeResult')}`,
@@ -689,104 +705,23 @@
           `תשלום חודשי לתא משפחתי: ${txt('finalPaymentResult')}`,
           ``,
           `בברכה`
-        ].filter(Boolean);
+        ].filter(Boolean).join('\n');
 
-        return lines.join('\n');
-      }
+        window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      });
 
-      function sendEmail() {
-        const help = document.getElementById('emailHelp');
-        if (help) help.style.display = 'block';
-        const caseId = (document.getElementById('caseId')?.value || '').trim();
-        const subject = `דו״ח מחשבון צו תשלומים – ${caseId ? 'תיק ' + caseId : 'ללא מס׳ תיק'}`;
-        const body = buildEmailBody();
-        const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.location.href = url;
-      }
+      document.getElementById('btnReset')?.addEventListener('click', ()=>{
+        form?.reset();
+        document.getElementById('debtor-male')?.setAttribute('checked','checked');
+        if (allowanceFieldsEl) allowanceFieldsEl.style.display='none';
+        if (alimonyFieldsEl)   alimonyFieldsEl.style.display='none';
+        updateLabelsAndUI(); calculate();
+      });
 
-      function resetFormAndResults() {
-        form.reset();
-        const allowanceFields = document.getElementById('allowanceFields');
-        const alimonyFields = document.getElementById('alimonyFields');
-        if (allowanceFields) allowanceFields.style.display = 'none';
-        if (alimonyFields) alimonyFields.style.display = 'none';
-        const ta = document.getElementById('calcNotes');
-        const cnt = document.getElementById('notesCount');
-        if (ta) ta.value = '';
-        if (cnt) cnt.textContent = '0';
-        updateLabelsAndUI();
-        calculate();
-      }
-
-      document.getElementById('printPngBtn')?.addEventListener('click', screenshotAndPrint);
-      document.getElementById('emailBtn')?.addEventListener('click', sendEmail);
-      document.getElementById('resetBtn')?.addEventListener('click', resetFormAndResults);
-      document.getElementById('toggleMetaBtn')?.addEventListener('click', ()=> document.getElementById('metaRow')?.classList.toggle('open'));
-      document.getElementById('toggleNotesBtn')?.addEventListener('click', ()=> document.getElementById('notesRow')?.classList.toggle('open'));
+      // הפעלה ראשונית
+      updateLabelsAndUI();
+      calculate();
     });
   </script>
 </body>
 </html>
-/* ======= מובייל קומפקט ======= */
-
-/* ≤ 480px — הכי קומפקטי: עמודה אחת, פונטים/ריווחים קטנים */
-@media (max-width: 480px) {
-  body { padding: 12px; }
-  header { padding: 14px; }
-  header h1 { font-size: 1.25em; }
-  .version { font-size: .8em; }
-
-  .calculator-container { grid-template-columns: 1fr; }
-  .inputs-column, .results-column { padding: 14px; }
-  .form-section { gap: 12px; }
-  .form-section h2 { font-size: 1.1em; padding-bottom: 6px; }
-
-  /* זוגות שדות -> עמודה אחת כדי שלא יצא צפוף מדי */
-  .input-pair-inline { grid-template-columns: 1fr; gap: 12px; }
-
-  /* שדות/כפתורים יותר קטנים מעט */
-  .input-group input, .input-group select, .input-group textarea { 
-    padding: 9px; font-size: .95em; 
-  }
-  .radio-button-label { padding: 6px 12px; font-size: .95em; }
-
-  /* תוצאות – קומפקט אבל ברור */
-  .results-section h2 { font-size: 1.1em; margin-bottom: 10px; }
-  .result-item { padding: 8px 0; font-size: 1em; }
-  .result-item.side-by-side { gap: 12px; }
-  .result-item .value { font-size: 1.05em; }
-
-  /* סרגל פעולות ובלוקים מתקפלים */
-  .actions-bar { gap: 8px; }
-  .action-btn { padding: 7px 10px; border-radius: 8px; }
-  .meta-row { grid-template-columns: 1fr; gap: 8px; }
-}
-
-/* 481–768px — עדיין קומפקטי, אבל זוגות שדות נשארים 2 עמודות כדי לחסוך גלילה */
-@media (min-width: 481px) and (max-width: 768px) {
-  body { padding: 16px; }
-  header { padding: 16px; }
-  header h1 { font-size: 1.4em; }
-  .version { font-size: .85em; }
-
-  .calculator-container { grid-template-columns: 1fr; }
-  .inputs-column, .results-column { padding: 18px; }
-  .form-section { gap: 14px; }
-  .form-section h2 { font-size: 1.2em; }
-
-  /* נשאר 2 עמודות לזוגות כדי לקצר את האורך */
-  .input-pair-inline { grid-template-columns: 1fr 1fr; gap: 14px; }
-
-  .input-group input, .input-group select, .input-group textarea { 
-    padding: 10px; font-size: 1em; 
-  }
-  .radio-button-label { padding: 7px 14px; }
-
-  .results-section h2 { font-size: 1.2em; }
-  .result-item { padding: 10px 0; font-size: 1.05em; }
-  .result-item.side-by-side { gap: 16px; }
-
-  .meta-row { grid-template-columns: 1fr 1fr; gap: 10px; }
-}
-
-/* ≥ 769px — אין שינוי: נשאר העיצוב הקיים של דסקטופ */
