@@ -19,7 +19,7 @@
       box-shadow:0 4px 15px rgba(0,0,0,.1);overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
     header{grid-column:1 / -1;background:var(--primary-color);color:#fff;padding:20px;text-align:center}
     header h1{margin:0;font-size:1.8em}
-    .version{font-size:.7em;font-weight:500;opacity:.9;margin-inline-start:.5rem;white-space:nowrap}
+    .version{font-size:.85em;font-weight:500;opacity:.95;margin-inline-start:.4rem;white-space:nowrap}
 
     .inputs-column{padding:25px;border-left:1px solid var(--border-color)}
     .results-column{padding:25px;background:var(--result-bg)}
@@ -44,10 +44,8 @@
     .info-btn:hover{background:#e1f0f0}
     .info-popover{
       position:absolute;z-index:1000;max-width:320px;
-      background:#fff7d6; /* צהוב בהיר */
-      color:#3b2f00;border:1px solid #ffe6a8;
-      border-radius:14px; /* קצוות מעוגלים יותר */
-      box-shadow:0 12px 28px rgba(0,0,0,.15);
+      background:#fff7d6;color:#3b2f00;border:1px solid #ffe6a8;
+      border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.15);
       padding:12px 14px;font-size:.97em;direction:rtl;line-height:1.45;
     }
 
@@ -84,6 +82,21 @@
     #jointProceeding{display:none}
     .debtor-income-input.empty-input{color:orange}
 
+    /* אזור פעולות ו“פרטי דו״ח/הערה” מתקפלים */
+    .actions-meta{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+    .actions-bar{display:flex;gap:10px;justify-content:flex-start;align-items:center;flex-wrap:wrap}
+    .action-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #cbd5e1;background:#ffffff;border-radius:10px;padding:8px 12px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+    .action-btn:hover{background:#f8fafc}
+    .action-btn .ico{font-size:1.05em}
+    .email-note{display:none;background:#fff7d6;border:1px solid #ffe6a8;color:#3b2f00;border-radius:10px;padding:8px 10px;font-size:.9em}
+
+    .meta-row,.notes-row{display:none}
+    .meta-row.open,.notes-row.open{display:grid}
+    .meta-row{grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .meta-small{font-size:.9em}
+    .notes-row{grid-template-columns:1fr;gap:6px}
+    .notes-counter{font-size:.85em;color:#666;align-self:flex-end}
+
     @media (max-width:768px){
       .calculator-container{grid-template-columns:1fr}
       .inputs-column{border-left:none}
@@ -92,14 +105,18 @@
       .input-group,.debtor-selection-group,.joint-proceeding-group{width:100%}
       .input-pair-inline{grid-template-columns:1fr}
       .input-group.debtor,.input-group.partner{grid-column:auto}
+      .meta-row{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
 
-  <div class="calculator-container">
+  <div class="calculator-container" id="calcRoot">
     <header>
-      <h1>מחשבון צו תשלומים <span class="version">| גרסה <span id="currentYear"></span></span></h1>
+      <h1>
+        מחשבון צו תשלומים
+        <span class="version">(מעודכן ל-<span id="currentYear"></span>)</span>
+      </h1>
     </header>
 
     <div class="inputs-column">
@@ -152,20 +169,16 @@
             <div class="input-group debtor" id="salaryDebtorGroup">
               <label id="salaryDebtorLabel">
                 <span class="label-text">הכנסה (חייב)</span>
-                <!-- טקסט ייעודי לחייב/ת -->
                 <button type="button" class="info-btn" aria-label="מידע על השדה"
-                        data-info='ממוצע נטו תלושי שכר
-לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ 3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
+                        data-info='ממוצע נטו תלושי שכר<br>לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ 3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
               </label>
               <input type="number" id="salaryDebtor" placeholder="הזן הכנסה" value="">
             </div>
             <div class="input-group partner" id="salaryPartnerGroup">
               <label id="salaryPartnerLabel">
                 <span class="label-text">הכנסה (בת זוג)</span>
-                <!-- טקסט ייעודי לבן/בת זוג -->
                 <button type="button" class="info-btn" aria-label="מידע על השדה"
-                        data-info='ממוצע נטו תלושי שכר.
-במקרה שבן הזוג לא עובד ייקבע תשלום מדורג בהתבסס על הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
+                        data-info='ממוצע נטו תלושי שכר.<br>במקרה שבן הזוג לא עובד ייקבע תשלום מדורג בהתבסס על הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
               </label>
               <input type="number" id="salaryPartner" placeholder="הזן הכנסה" value="">
             </div>
@@ -234,6 +247,55 @@
     </div>
 
     <div class="results-column">
+
+      <!-- כפתורים + פרטי דו"ח/הערה -->
+      <div class="actions-meta">
+        <div class="actions-bar">
+          <button type="button" class="action-btn" id="printPngBtn" title="צילום/הדפסה">
+            <span class="ico">🖼️</span> צילום/הדפסה
+          </button>
+          <button type="button" class="action-btn" id="emailBtn" title="שליחה במייל">
+            <span class="ico">✉️</span> שליחה במייל
+          </button>
+          <button type="button" class="action-btn" id="resetBtn" title="איפוס הטופס">
+            <span class="ico">♻️</span> איפוס
+          </button>
+          <button type="button" class="action-btn" id="toggleMetaBtn" title="פרטי דו״ח">
+            <span class="ico">🗂️</span> פרטי דו״ח
+          </button>
+          <button type="button" class="action-btn" id="toggleNotesBtn" title="הערה">
+            <span class="ico">📝</span> הערה
+          </button>
+        </div>
+
+        <div id="emailHelp" class="email-note">
+          טיפ: שמרו קודם את צילום המסך (PNG) ואז צרפו ידנית להודעת המייל.
+        </div>
+
+        <div class="meta-row" id="metaRow">
+          <div class="input-group meta-small">
+            <label for="caseId">מס' תיק</label>
+            <input type="text" id="caseId" placeholder="לדוגמה: 12345/25">
+          </div>
+          <div class="input-group meta-small">
+            <label for="authorName">שם עורך/ת החישוב</label>
+            <input type="text" id="authorName" placeholder="שם מלא">
+          </div>
+          <div class="input-group meta-small">
+            <label for="calcDate">תאריך</label>
+            <input type="text" id="calcDate" class="readonly-display" readonly>
+          </div>
+        </div>
+
+        <div class="notes-row" id="notesRow">
+          <div class="input-group">
+            <label for="calcNotes">הערה (עד 500 תווים)</label>
+            <textarea id="calcNotes" maxlength="500" placeholder="ניתן לרשום כאן הנחיות/הבהרות קצרות..."></textarea>
+          </div>
+          <div class="notes-counter"><span id="notesCount">0</span>/500</div>
+        </div>
+      </div>
+
       <section class="results-section">
         <h2 style="text-align: center;">תוצאות החישוב</h2>
 
@@ -302,11 +364,16 @@
     </div>
   </div>
 
+  <!-- לצילום מסך -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // שנה נוכחית בגרסה
+      // שנה בכותרת + תאריך לפרטי דו"ח
       const yearEl = document.getElementById('currentYear');
       if (yearEl) yearEl.textContent = new Date().getFullYear();
+      const dEl = document.getElementById('calcDate');
+      if (dEl) dEl.value = new Date().toLocaleDateString('he-IL',{year:'numeric',month:'2-digit',day:'2-digit'});
 
       const lookupData = {
         "יחיד/נשוי חי בנפרד": { kids: 0, livingCost: 4556 },
@@ -340,7 +407,7 @@
       const alimonyButtonEl = document.getElementById('alimonyButton');
       const alimonyFieldsEl = document.getElementById('alimonyFields');
 
-      // אלמנטים של טקסט בתוויות עם אייקון
+      // אלמנטים לכותרות/תוצאות
       const salaryDebtorLabelTextEl  = document.querySelector('#salaryDebtorLabel .label-text');
       const salaryPartnerLabelTextEl = document.querySelector('#salaryPartnerLabel .label-text');
 
@@ -471,8 +538,8 @@
         const B11_disposableIncome = totalIncomes - totalExpenses;
         disposableIncomeResultEl.textContent = B11_disposableIncome < 0 ? 'אין הכנסה פנויה' : formatCurrency(B11_disposableIncome);
 
-        const B12_debtorPayment   = B10_debtorRatio  > 0 ? Math.floor(((B11_disposableIncome * B10_debtorRatio ) / 2)/10)*10 : 0;
-        const C12_partnerPayment  = C10_partnerRatio > 0 ? Math.floor(((B11_disposableIncome * C10_partnerRatio) / 2)/10)*10 : 0;
+        const B12_debtorPayment   = B10_debtorRatio  > 0 ? roundDownToNearest10((B11_disposableIncome * B10_debtorRatio ) / 2) : 0;
+        const C12_partnerPayment  = C10_partnerRatio > 0 ? roundDownToNearest10((B11_disposableIncome * C10_partnerRatio) / 2) : 0;
         debtorPaymentResultEl.textContent  = formatCurrency(Math.max(0, B12_debtorPayment));
         partnerPaymentResultEl.textContent = formatCurrency(Math.max(0, C12_partnerPayment));
 
@@ -485,7 +552,7 @@
         } else if (isJointProceeding) {
           if (B11_disposableIncome > 0) {
             const partnerPaymentForCalc = (C10_partnerRatio > 0) ? C12_partnerPayment : 0;
-            B13_finalPayment = Math.floor((Math.max(0, B11_disposableIncome - partnerPaymentForCalc) / 2)/10)*10;
+            B13_finalPayment = roundDownToNearest10(Math.max(0, B11_disposableIncome - partnerPaymentForCalc) / 2);
           }
         } else {
           B13_finalPayment = Math.max(0, B12_debtorPayment);
@@ -493,7 +560,7 @@
         finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
       };
 
-      /* פופאבר "?" עם תמיכה בשורות חדשות */
+      /* טולטיפים ? */
       let currentPopover = null, currentBtn = null;
       function closePopover(){
         if(currentPopover){ currentPopover.remove(); currentPopover=null; if(currentBtn) currentBtn.setAttribute('aria-expanded','false'); currentBtn=null; }
@@ -505,7 +572,6 @@
         closePopover();
         const pop = document.createElement('div');
         pop.className='info-popover';
-        // המרה לשורות חדשות
         pop.innerHTML = raw.replace(/\n/g,'<br>');
         document.body.appendChild(pop);
         const rect = btn.getBoundingClientRect();
@@ -544,6 +610,119 @@
 
       updateLabelsAndUI();
       calculate();
+
+      /* ===== כפתורי פעולה ===== */
+      async function screenshotAndPrint() {
+        const root = document.getElementById('calcRoot');
+        if (!root || typeof html2canvas === 'undefined') { window.print(); return; }
+        const canvas = await html2canvas(root,{scale:2,useCORS:true,scrollX:0,scrollY:-window.scrollY});
+        const dataURL = canvas.toDataURL('image/png');
+        const w = window.open('', '_blank');
+        if (!w) return;
+        w.document.write(`
+          <html dir="rtl"><head><title>צילום מסך – מחשבון צו תשלומים</title></head>
+          <body style="margin:0;background:#fff;text-align:center">
+            <img src="${dataURL}" style="max-width:100%;height:auto"
+                 onload="window.print();window.onfocus=function(){setTimeout(()=>window.close(),300);}">
+          </body></html>
+        `);
+        w.document.close();
+      }
+
+      function buildEmailBody() {
+        const txt = id => (document.getElementById(id)?.textContent || '').trim();
+        const val = id => (document.getElementById(id)?.value || '').trim();
+
+        const caseId = val('caseId') || '-';
+        const author = val('authorName') || '-';
+        const dateStr = val('calcDate') || '-';
+        const notes = (document.getElementById('calcNotes')?.value || '').trim();
+
+        const status = val('status') || '-';
+        const inProc = document.getElementById('debtor-male')?.checked ? 'חייב' :
+                       (document.getElementById('debtor-female')?.checked ? 'חייבת' : '-');
+        const joint = document.getElementById('jointProceeding')?.checked ? 'כן' : 'לא';
+
+        const salaryDebtor = val('salaryDebtor') || '-';
+        const salaryPartner = val('salaryPartner') || '-';
+        const otherDebtor = val('otherIncomeDebtor') || '-';
+        const otherPartner = val('otherIncomePartner') || '-';
+        const debAllow = val('debtorAllowance') || '-';
+        const partAllow = val('partnerAllowance') || '-';
+        const unusual = val('unusualExpenses') || '-';
+        const childcare = val('childcareExpenses') || '-';
+        const alimony = val('alimonyExpenses') || '-';
+
+        const lines = [
+          `שלום,`,
+          ``,
+          `מצורף צילום מסך (PNG) של תוצאות החישוב. שימו לב לצרף ידנית את הקובץ למייל.`,
+          ``,
+          `— פרטי דו״ח —`,
+          `מס' תיק: ${caseId}`,
+          `שם עורך/ת: ${author}`,
+          `תאריך: ${dateStr}`,
+          notes ? `הערה: ${notes}` : '',
+          ``,
+          `— פרטי קלט —`,
+          `סטטוס משפחתי: ${status}`,
+          `מי בהליך: ${inProc}`,
+          `שני בני הזוג בהליך: ${joint}`,
+          `הכנסה (חייב/ת): ${salaryDebtor}`,
+          `הכנסה (בן/בת זוג): ${salaryPartner}`,
+          `הכנסות אחרות (חייב/ת): ${otherDebtor}`,
+          `הכנסות אחרות (בן/בת זוג): ${otherPartner}`,
+          `קצבה (חייב/ת): ${debAllow}`,
+          `קצבה (בן/בת זוג): ${partAllow}`,
+          `הוצאות חריגות: ${unusual}`,
+          `הוצאות טיפול וצהרונים: ${childcare}`,
+          `הוצאות מזונות: ${alimony}`,
+          ``,
+          `— תוצאות —`,
+          `סך הכנסות: ${txt('totalIncomeResult')}`,
+          `סך הוצאות: ${txt('totalExpensesResult')}`,
+          `הכנסה פנויה: ${txt('disposableIncomeResult')}`,
+          `אחוז הכנסה (חייב/ת): ${txt('debtorIncomeRatio')}`,
+          `אחוז הכנסה (בן/בת זוג): ${txt('partnerIncomeRatio')}`,
+          `תשלום מוצע (חייב/ת): ${txt('debtorPaymentResult')}`,
+          `תשלום מוצע (בן/בת זוג): ${txt('partnerPaymentResult')}`,
+          `תשלום חודשי לתא משפחתי: ${txt('finalPaymentResult')}`,
+          ``,
+          `בברכה`
+        ].filter(Boolean);
+
+        return lines.join('\n');
+      }
+
+      function sendEmail() {
+        const help = document.getElementById('emailHelp');
+        if (help) help.style.display = 'block';
+        const caseId = (document.getElementById('caseId')?.value || '').trim();
+        const subject = `דו״ח מחשבון צו תשלומים – ${caseId ? 'תיק ' + caseId : 'ללא מס׳ תיק'}`;
+        const body = buildEmailBody();
+        const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = url;
+      }
+
+      function resetFormAndResults() {
+        form.reset();
+        const allowanceFields = document.getElementById('allowanceFields');
+        const alimonyFields = document.getElementById('alimonyFields');
+        if (allowanceFields) allowanceFields.style.display = 'none';
+        if (alimonyFields) alimonyFields.style.display = 'none';
+        const ta = document.getElementById('calcNotes');
+        const cnt = document.getElementById('notesCount');
+        if (ta) ta.value = '';
+        if (cnt) cnt.textContent = '0';
+        updateLabelsAndUI();
+        calculate();
+      }
+
+      document.getElementById('printPngBtn')?.addEventListener('click', screenshotAndPrint);
+      document.getElementById('emailBtn')?.addEventListener('click', sendEmail);
+      document.getElementById('resetBtn')?.addEventListener('click', resetFormAndResults);
+      document.getElementById('toggleMetaBtn')?.addEventListener('click', ()=> document.getElementById('metaRow')?.classList.toggle('open'));
+      document.getElementById('toggleNotesBtn')?.addEventListener('click', ()=> document.getElementById('notesRow')?.classList.toggle('open'));
     });
   </script>
 </body>
