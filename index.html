@@ -43,9 +43,12 @@
     }
     .info-btn:hover{background:#e1f0f0}
     .info-popover{
-      position:absolute;z-index:1000;max-width:260px;
-      background:#fff;color:#123;border:1px solid #cfe7e7;border-radius:10px;
-      box-shadow:0 8px 24px rgba(0,0,0,.12);padding:10px 12px;font-size:.95em;direction:rtl;
+      position:absolute;z-index:1000;max-width:320px;
+      background:#fff7d6; /* צהוב בהיר */
+      color:#3b2f00;border:1px solid #ffe6a8;
+      border-radius:14px; /* קצוות מעוגלים יותר */
+      box-shadow:0 12px 28px rgba(0,0,0,.15);
+      padding:12px 14px;font-size:.97em;direction:rtl;line-height:1.45;
     }
 
     .results-section{padding:0}
@@ -105,7 +108,6 @@
           <h2>פרטי התא המשפחתי</h2>
           <div class="top-section-buttons-container">
 
-            <!-- סטטוס משפחתי בשורה אחת -->
             <div class="input-group">
               <select id="status" aria-label="סטטוס משפחתי">
                 <option value="" selected disabled>סטטוס משפחתי — בחר סטטוס...</option>
@@ -121,7 +123,7 @@
                 <option value="זוג+ 7 ילדים">זוג+ 7 ילדים</option>
                 <option value="זוג+ 8 ילדים">זוג+ 8 ילדים</option>
                 <option value="זוג+ 9 ילדים">זוג+ 9 ילדים</option>
-                <option value="זוג+ 10 ילדים">ζוג+ 10 ילדים</option>
+                <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
               </select>
             </div>
 
@@ -150,14 +152,20 @@
             <div class="input-group debtor" id="salaryDebtorGroup">
               <label id="salaryDebtorLabel">
                 <span class="label-text">הכנסה (חייב)</span>
-                <button type="button" class="info-btn" aria-label="מידע על השדה" data-info="ממוצע נטו תלושי שכר">?</button>
+                <!-- טקסט ייעודי לחייב/ת -->
+                <button type="button" class="info-btn" aria-label="מידע על השדה"
+                        data-info='ממוצע נטו תלושי שכר
+לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ 3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
               </label>
               <input type="number" id="salaryDebtor" placeholder="הזן הכנסה" value="">
             </div>
             <div class="input-group partner" id="salaryPartnerGroup">
               <label id="salaryPartnerLabel">
                 <span class="label-text">הכנסה (בת זוג)</span>
-                <button type="button" class="info-btn" aria-label="מידע על השדה" data-info="ממוצע נטו תלושי שכר">?</button>
+                <!-- טקסט ייעודי לבן/בת זוג -->
+                <button type="button" class="info-btn" aria-label="מידע על השדה"
+                        data-info='ממוצע נטו תלושי שכר.
+במקרה שבן הזוג לא עובד ייקבע תשלום מדורג בהתבסס על הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
               </label>
               <input type="number" id="salaryPartner" placeholder="הזן הכנסה" value="">
             </div>
@@ -336,8 +344,6 @@
       const salaryDebtorLabelTextEl  = document.querySelector('#salaryDebtorLabel .label-text');
       const salaryPartnerLabelTextEl = document.querySelector('#salaryPartnerLabel .label-text');
 
-      const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
-      const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
       const otherIncomeDebtorLabelEl = document.getElementById('otherIncomeDebtorLabel');
       const otherIncomePartnerLabelEl = document.getElementById('otherIncomePartnerLabel');
       const debtorIncomeRatioLabelEl = document.getElementById('debtorIncomeRatioLabel');
@@ -396,11 +402,9 @@
         else if (isMaleDebtor) { debtorText = 'חייב'; partnerText = 'בת זוג'; }
         else { debtorText = 'חייבת'; partnerText = 'בן זוג'; }
 
-        // *** מעדכנים רק את הטקסט בתוך ה-span כדי לא למחוק את כפתור ה-"?" ***
         if (salaryDebtorLabelTextEl)  salaryDebtorLabelTextEl.textContent  = isSingle ? 'הכנסה (חייב/ת)' : (isMaleDebtor ? 'הכנסה (חייב)' : 'הכנסה (חייבת)');
         if (salaryPartnerLabelTextEl) salaryPartnerLabelTextEl.textContent = isSingle ? 'הכנסה (בן/בת זוג)' : (isMaleDebtor ? 'הכנסה (בת זוג)' : 'הכנסה (בן זוג)');
 
-        // שאר התוויות (ללא אייקון) אפשר לעדכן כרגיל
         if (isSingle) {
           otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
           otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בן/בת זוג)';
@@ -489,19 +493,20 @@
         finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
       };
 
-      // פופאבר "?"
+      /* פופאבר "?" עם תמיכה בשורות חדשות */
       let currentPopover = null, currentBtn = null;
       function closePopover(){
         if(currentPopover){ currentPopover.remove(); currentPopover=null; if(currentBtn) currentBtn.setAttribute('aria-expanded','false'); currentBtn=null; }
       }
       function openPopover(btn){
-        const text = btn.getAttribute('data-info') || '';
-        if(!text) return;
+        const raw = btn.getAttribute('data-info') || '';
+        if(!raw) return;
         if(currentBtn === btn){ closePopover(); return; }
         closePopover();
         const pop = document.createElement('div');
         pop.className='info-popover';
-        pop.textContent=text;
+        // המרה לשורות חדשות
+        pop.innerHTML = raw.replace(/\n/g,'<br>');
         document.body.appendChild(pop);
         const rect = btn.getBoundingClientRect();
         const top = rect.bottom + window.scrollY + 8;
