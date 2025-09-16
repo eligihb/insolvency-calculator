@@ -80,7 +80,9 @@
 <body>
 
   <div class="calculator-container">
-    <header><h1>מחשבון צו תשלומים</h1></header>
+    <header>
+      <h1>מחשבון צו תשלומים גרסה (<span id="currentYear"></span>)</h1>
+    </header>
 
     <div class="inputs-column">
       <form id="calculatorForm">
@@ -272,6 +274,11 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // הכנסת השנה הנוכחית לכותרת
+      const yr = new Date().getFullYear();
+      const yearEl = document.getElementById('currentYear');
+      if (yearEl) yearEl.textContent = yr;
+
       const lookupData = {
         "יחיד/נשוי חי בנפרד": { kids: 0, livingCost: 4556 },
         "רווק/גרוש/אלמן + ילד": { kids: 1, livingCost: 6056 }, "זוג": { kids: 0, livingCost: 6024 },
