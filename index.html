@@ -44,8 +44,11 @@
     .info-btn:hover{background:#e1f0f0}
     .info-popover{
       position:absolute;z-index:1000;max-width:320px;
-      background:#fff7d6;color:#3b2f00;border:1px solid #ffe6a8;border-radius:14px;
-      box-shadow:0 12px 28px rgba(0,0,0,.15);padding:12px 14px;font-size:.97em;direction:rtl;line-height:1.45;
+      background:#fff7d6; /* צהוב בהיר */
+      color:#3b2f00;border:1px solid #ffe6a8;
+      border-radius:14px; /* קצוות מעוגלים יותר */
+      box-shadow:0 12px 28px rgba(0,0,0,.15);
+      padding:12px 14px;font-size:.97em;direction:rtl;line-height:1.45;
     }
 
     .results-section{padding:0}
@@ -149,6 +152,7 @@
             <div class="input-group debtor" id="salaryDebtorGroup">
               <label id="salaryDebtorLabel">
                 <span class="label-text">הכנסה (חייב)</span>
+                <!-- טקסט ייעודי לחייב/ת -->
                 <button type="button" class="info-btn" aria-label="מידע על השדה"
                         data-info='ממוצע נטו תלושי שכר
 לחייב שלא עובד יקבע תשלום זמני של 150 ₪ ותשלום עתידי החל מ 3 חודשים קדימה עפ"י הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
@@ -158,6 +162,7 @@
             <div class="input-group partner" id="salaryPartnerGroup">
               <label id="salaryPartnerLabel">
                 <span class="label-text">הכנסה (בת זוג)</span>
+                <!-- טקסט ייעודי לבן/בת זוג -->
                 <button type="button" class="info-btn" aria-label="מידע על השדה"
                         data-info='ממוצע נטו תלושי שכר.
 במקרה שבן הזוג לא עובד ייקבע תשלום מדורג בהתבסס על הכנסה רעיונית של שכר מינימום בסך 6,247 ש"ח'>?</button>
@@ -335,6 +340,7 @@
       const alimonyButtonEl = document.getElementById('alimonyButton');
       const alimonyFieldsEl = document.getElementById('alimonyFields');
 
+      // אלמנטים של טקסט בתוויות עם אייקון
       const salaryDebtorLabelTextEl  = document.querySelector('#salaryDebtorLabel .label-text');
       const salaryPartnerLabelTextEl = document.querySelector('#salaryPartnerLabel .label-text');
 
@@ -414,7 +420,6 @@
         partnerIncomeRatioLabelEl.textContent = `אחוז הכנסה (${partnerText}):`;
         debtorPaymentLabelEl.textContent      = `תשלום מוצע (${debtorText}):`;
         partnerPaymentLabelEl.textContent     = `תשלום מוצע (${partnerText}):`;
-
         if (debtorAllowanceLabelEl)  debtorAllowanceLabelEl.textContent  = `קצבה (${debtorText})`;
         if (partnerAllowanceLabelEl) partnerAllowanceLabelEl.textContent = `קצבה (${partnerText})`;
 
@@ -474,29 +479,21 @@
         const isSingle = statusEl.value.includes('יחיד') || statusEl.value.includes('רווק');
         const isJointProceeding = jointProceedingEl.checked;
 
-        // ===== נוסחה מעודכנת לזוגות בהליך =====
         let B13_finalPayment = 0;
         if (isSingle) {
           B13_finalPayment = Math.max(0, B12_debtorPayment);
         } else if (isJointProceeding) {
           if (B11_disposableIncome > 0) {
-            const half = B11_disposableIncome / 2;
-            const baseAfterPartner = Math.max(0, half - C12_partnerPayment);
-            const debtorPortion = baseAfterPartner * B10_debtorRatio;
-            const combined = debtorPortion + C12_partnerPayment;
-            B13_finalPayment = Math.floor(combined/10)*10; // עיגול כלפי מטה לעשרות
-          } else {
-            B13_finalPayment = 0;
+            const partnerPaymentForCalc = (C10_partnerRatio > 0) ? C12_partnerPayment : 0;
+            B13_finalPayment = Math.floor((Math.max(0, B11_disposableIncome - partnerPaymentForCalc) / 2)/10)*10;
           }
         } else {
           B13_finalPayment = Math.max(0, B12_debtorPayment);
         }
-        // ===== סוף נוסחה מעודכנת =====
-
         finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
       };
 
-      /* פופאבר "?" */
+      /* פופאבר "?" עם תמיכה בשורות חדשות */
       let currentPopover = null, currentBtn = null;
       function closePopover(){
         if(currentPopover){ currentPopover.remove(); currentPopover=null; if(currentBtn) currentBtn.setAttribute('aria-expanded','false'); currentBtn=null; }
@@ -508,6 +505,7 @@
         closePopover();
         const pop = document.createElement('div');
         pop.className='info-popover';
+        // המרה לשורות חדשות
         pop.innerHTML = raw.replace(/\n/g,'<br>');
         document.body.appendChild(pop);
         const rect = btn.getBoundingClientRect();
@@ -524,7 +522,7 @@
       window.addEventListener('scroll', closePopover, {passive:true});
       window.addEventListener('resize', closePopover);
 
-      // מאזינים
+      // מאזינים קיימים
       inputs.forEach(input => { input.addEventListener('input', () => { updateLabelsAndUI(); calculate(); }); });
       salaryDebtorEl.addEventListener('input', (e) => {
         const input = e.target;
