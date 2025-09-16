@@ -9,38 +9,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-color:#005f73; --secondary-color:#0a9396; --background-color:#f4f4f4; --container-bg:#ffffff;
-      --text-color:#333; --label-color:#555; --border-color:#ddd; --accent-color:#ee9b00; --result-bg:#e9f5f5;
-      --danger-color:#ae2012; --blue-color:#007bff;
+      --primary-color:#005f73;--secondary-color:#0a9396;--background-color:#f4f4f4;--container-bg:#ffffff;
+      --text-color:#333;--label-color:#555;--border-color:#ddd;--accent-color:#ee9b00;--result-bg:#e9f5f5;
+      --danger-color:#ae2012;--blue-color:#007bff;
     }
-
-    body{font-family:'Heebo',sans-serif;background-color:var(--background-color);color:var(--text-color);
+    body{font-family:'Heebo',sans-serif;background:var(--background-color);color:var(--text-color);
       margin:0;padding:20px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
-
-    .calculator-container{width:100%;max-width:1000px;background-color:var(--container-bg);border-radius:12px;
+    .calculator-container{width:100%;max-width:1000px;background:var(--container-bg);border-radius:12px;
       box-shadow:0 4px 15px rgba(0,0,0,.1);overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
-
-    header{grid-column:1 / -1;background-color:var(--primary-color);color:#fff;padding:20px;text-align:center}
+    header{grid-column:1 / -1;background:var(--primary-color);color:#fff;padding:20px;text-align:center}
     header h1{margin:0;font-size:1.8em}
-
     .inputs-column{padding:25px;border-left:1px solid var(--border-color)}
-    .results-column{padding:25px;background-color:var(--result-bg)}
-
+    .results-column{padding:25px;background:var(--result-bg)}
     .form-section{display:grid;gap:20px}
-    .form-section h2{grid-column:1 / -1;margin:0 0 10px 0;color:var(--primary-color);
+    .form-section h2{grid-column:1/-1;margin:0 0 10px 0;color:var(--primary-color);
       border-bottom:2px solid var(--secondary-color);padding-bottom:8px;font-size:1.4em}
-
     .input-group{display:flex;flex-direction:column;width:100%}
     .input-group label{font-weight:500;margin-bottom:8px;color:var(--label-color)}
-    .input-group input,.input-group select{width:100%;padding:10px;border:1px solid var(--border-color);border-radius:6px;
-      font-size:1em;box-sizing:border-box;transition:border-color .3s, box-shadow .3s}
+    .input-group input,.input-group select{width:100%;padding:10px;border:1px solid var(--border-color);
+      border-radius:6px;font-size:1em;box-sizing:border-box;transition:border-color .3s, box-shadow .3s}
     .input-group input:focus,.input-group select:focus{outline:none;border-color:var(--secondary-color);
       box-shadow:0 0 0 3px rgba(10,147,150,.2)}
-    .input-group input.readonly-display{background-color:#e9ecef;font-weight:bold;color:var(--primary-color)}
+    .input-group input.readonly-display{background:#e9ecef;font-weight:bold;color:var(--primary-color)}
 
     .results-section{padding:0}
     .results-section h2{margin:0 0 20px 0;color:var(--primary-color);font-size:1.4em;text-align:center}
-    .result-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;font-size:1.1em;border-bottom:1px solid #d4e7e7}
+    .result-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;font-size:1.1em;
+      border-bottom:1px solid #d4e7e7}
     .result-item:last-child{border-bottom:none}
     .result-item.side-by-side{display:grid;grid-template-columns:1fr 1fr;gap:20px;justify-items:center;text-align:center}
     .result-item.side-by-side .value{font-size:1.2em;color:var(--accent-color)}
@@ -51,31 +46,23 @@
     .result-item.disposable-income .value{color:var(--blue-color);font-size:1.5em;font-weight:bold;display:block;margin-top:5px}
     .result-item.total .value{color:var(--danger-color);font-size:1.5em}
 
-    /* זוגות שדות – החייב/ת תמיד בעמודה הימנית! */
+    /* זוגות שדות – 2 עמודות. החייב/ת תמיד בעמודה הימנית */
     .input-pair-inline{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .input-group.debtor  {grid-column:2} /* ימין */
+    .input-group.partner {grid-column:1} /* שמאל */
 
-    /* רק לזוגות שמכילים חייב/ת מול בן/בת זוג */
-    .pair-debtor{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:20px;
-      /* קובע מיקומים ויזואליים בלתי תלויים ב-RTL: שמאל->partner, ימין->debtor */
-      grid-template-areas: "partner debtor";
-    }
-    .pair-debtor .debtor{grid-area:debtor}     /* ימין */
-    .pair-debtor .partner{grid-area:partner}   /* שמאל */
-
-    #special-note{background:#fff3cd;border:1px solid #ffeeba;color:#856404;padding:15px;border-radius:6px;margin-top:20px;display:none}
-
+    #special-note{background:#fff3cd;border:1px solid #ffeeba;color:#856404;padding:15px;border-radius:6px;
+      margin-top:20px;display:none}
     .top-section-buttons-container{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:15px;margin-bottom:15px}
     .debtor-selection-options{display:flex;gap:10px;flex-wrap:nowrap}
-    .radio-button-label{background:#f0f0f0;border:1px solid #ccc;padding:8px 16px;border-radius:20px;cursor:pointer;transition:background-color .3s, border-color .3s;font-weight:normal}
+    .radio-button-label{background:#f0f0f0;border:1px solid #ccc;padding:8px 16px;border-radius:20px;cursor:pointer;
+      transition:background-color .3s, border-color .3s;font-weight:normal}
     .radio-button-label.checked{background:var(--secondary-color);color:#fff;border-color:var(--secondary-color)}
     .radio-button-input{display:none}
-    #jointProceedingLabel{background:#f0f0f0;border:1px solid #ccc;padding:8px 16px;border-radius:20px;cursor:pointer;transition:background-color .3s,border-color .3s;font-weight:normal;display:inline-block}
+    #jointProceedingLabel{background:#f0f0f0;border:1px solid #ccc;padding:8px 16px;border-radius:20px;cursor:pointer;
+      transition:background-color .3s, border-color .3s;font-weight:normal;display:inline-block}
     #jointProceedingLabel.checked{background:var(--danger-color);color:#fff;border-color:var(--danger-color)}
     #jointProceeding{display:none}
-
     .debtor-income-input.empty-input{color:orange}
 
     @media (max-width:768px){
@@ -84,9 +71,9 @@
       .top-section-buttons-container{flex-direction:column;align-items:flex-start}
       .debtor-selection-group,.joint-proceeding-group{justify-content:flex-start;margin-bottom:0}
       .input-group,.debtor-selection-group,.joint-proceeding-group{width:100%}
-
-      /* בנייד – מציגים בטור, קודם החייב/ת ואז בן/בת הזוג */
-      .pair-debtor{grid-template-columns:1fr;grid-template-areas:"debtor" "partner"}
+      /* בנייד – עמודה אחת, מבטלים הצמדות ידניות */
+      .input-pair-inline{grid-template-columns:1fr}
+      .input-group.debtor,.input-group.partner{grid-column:auto}
     }
   </style>
 </head>
@@ -141,7 +128,7 @@
           <h2>הכנסות והוצאות התא המשפחתי (₪)</h2>
 
           <!-- שכר -->
-          <div class="input-pair-inline pair-debtor" id="pair-salary">
+          <div class="input-pair-inline" id="pair-salary">
             <div class="input-group debtor" id="salaryDebtorGroup">
               <label id="salaryDebtorLabel">הכנסה (חייב)</label>
               <input type="number" id="salaryDebtor" placeholder="הזן הכנסה" value="">
@@ -153,7 +140,7 @@
           </div>
 
           <!-- הכנסות אחרות -->
-          <div class="input-pair-inline pair-debtor" id="pair-otherIncome">
+          <div class="input-pair-inline" id="pair-otherIncome">
             <div class="input-group debtor" id="otherIncomeDebtorGroup">
               <label id="otherIncomeDebtorLabel">הכנסות אחרות (חייב)</label>
               <input type="number" id="otherIncomeDebtor" placeholder="הזן הכנסות אחרות" value="">
@@ -169,7 +156,7 @@
           </div>
 
           <div id="allowanceFields" style="display: none;">
-            <div class="input-pair-inline pair-debtor" id="pair-allowances">
+            <div class="input-pair-inline" id="pair-allowances">
               <div class="input-group debtor">
                 <label for="debtorAllowance" id="debtorAllowanceLabel">קצבה (חייב/ת)</label>
                 <input type="number" id="debtorAllowance" placeholder="הזן קצבה" value="">
@@ -228,6 +215,7 @@
             <span class="value" id="totalIncomeResult"></span>
           </div>
         </div>
+
         <hr>
 
         <div class="result-item side-by-side">
@@ -240,12 +228,14 @@
             <span class="value" id="totalExpensesResult"></span>
           </div>
         </div>
+
         <hr>
 
         <div class="result-item disposable-income">
           <span class="label">הכנסה פנויה לתא המשפחתי:</span>
           <span class="value" id="disposableIncomeResult"></span>
         </div>
+
         <hr>
 
         <div class="result-item side-by-side">
@@ -258,6 +248,7 @@
             <span class="value" id="partnerIncomeRatio"></span>
           </div>
         </div>
+
         <hr>
 
         <div class="result-item side-by-side" id="proposedPaymentsDisplay">
@@ -342,10 +333,10 @@
 
       const partnerAllowanceGroup = document.getElementById('partnerAllowanceGroup');
 
-      const formatCurrency = (value) =>
-        (typeof value !== 'number' || isNaN(value)) ? '0 ₪'
-          : new Intl.NumberFormat('he-IL', {style:'currency',currency:'ILS',minimumFractionDigits:0}).format(value);
-
+      const formatCurrency = (value) => {
+        if (typeof value !== 'number' || isNaN(value)) return '0 ₪';
+        return new Intl.NumberFormat('he-IL', { style:'currency', currency:'ILS', minimumFractionDigits:0 }).format(value);
+      };
       const roundDownToNearest10 = (num) => Math.floor(num/10)*10;
 
       const updateLabelsAndUI = () => {
@@ -354,24 +345,25 @@
         const isMaleDebtor = debtorMaleEl.checked;
         const isJoint = jointProceedingEl.checked;
 
-        // הצגת/הסתרת קבוצות
+        // נראות קבוצות
         debtorSelectionGroup.style.display = 'flex';
         const jointProceedingGroup = document.getElementById('joint-proceeding-group');
         jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
 
+        // הסתרת שדות בן/בת זוג כשיחיד/ה
         const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
         const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
         if (salaryPartnerGroup) salaryPartnerGroup.style.display = isSingle ? 'none' : 'flex';
         if (otherIncomePartnerGroup) otherIncomePartnerGroup.style.display = isSingle ? 'none' : 'flex';
         if (partnerAllowanceGroup) partnerAllowanceGroup.style.display = isSingle ? 'none' : 'flex';
 
-        // רדיו סטייל
+        // סטייל כפתורי רדיו
         document.querySelectorAll('.radio-button-label').forEach(l => l.classList.remove('checked'));
         if (debtorMaleEl.checked) document.querySelector('label[for="debtor-male"]').classList.add('checked');
         if (debtorFemaleEl.checked) document.querySelector('label[for="debtor-female"]').classList.add('checked');
         jointProceedingLabelEl.classList.toggle('checked', isJoint);
 
-        // טקסטים
+        // טקסטים דינמיים
         let debtorText, partnerText;
         if (isSingle) { debtorText = 'חייב/ת'; partnerText = 'בן/בת זוג'; }
         else if (isMaleDebtor) { debtorText = 'חייב'; partnerText = 'בת זוג'; }
@@ -447,8 +439,8 @@
         const B11_disposableIncome = totalIncomes - totalExpenses;
         disposableIncomeResultEl.textContent = B11_disposableIncome < 0 ? 'אין הכנסה פנויה' : formatCurrency(B11_disposableIncome);
 
-        const B12_debtorPayment  = B10_debtorRatio  > 0 ? roundDownToNearest10((B11_disposableIncome * B10_debtorRatio ) / 2) : 0;
-        const C12_partnerPayment = C10_partnerRatio > 0 ? roundDownToNearest10((B11_disposableIncome * C10_partnerRatio) / 2) : 0;
+        const B12_debtorPayment   = B10_debtorRatio  > 0 ? roundDownToNearest10((B11_disposableIncome * B10_debtorRatio ) / 2) : 0;
+        const C12_partnerPayment  = C10_partnerRatio > 0 ? roundDownToNearest10((B11_disposableIncome * C10_partnerRatio) / 2) : 0;
         debtorPaymentResultEl.textContent  = formatCurrency(Math.max(0, B12_debtorPayment));
         partnerPaymentResultEl.textContent = formatCurrency(Math.max(0, C12_partnerPayment));
 
@@ -470,7 +462,9 @@
       };
 
       // מאזינים
-      inputs.forEach(input => input.addEventListener('input', () => { updateLabelsAndUI(); calculate(); }));
+      inputs.forEach(input => {
+        input.addEventListener('input', () => { updateLabelsAndUI(); calculate(); });
+      });
       salaryDebtorEl.addEventListener('input', (e) => {
         const input = e.target;
         if (input.value === '') input.classList.add('empty-input'); else input.classList.remove('empty-input');
