@@ -19,6 +19,8 @@
       box-shadow:0 4px 15px rgba(0,0,0,.1);overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
     header{grid-column:1 / -1;background:var(--primary-color);color:#fff;padding:20px;text-align:center}
     header h1{margin:0;font-size:1.8em}
+    /* תגית גרסה קטנה ליד הכותרת */
+    .version{font-size:.7em;font-weight:500;opacity:.9;margin-inline-start:.5rem;white-space:nowrap}
     .inputs-column{padding:25px;border-left:1px solid var(--border-color)}
     .results-column{padding:25px;background:var(--result-bg)}
     .form-section{display:grid;gap:20px}
@@ -81,7 +83,7 @@
 
   <div class="calculator-container">
     <header>
-      <h1>מחשבון צו תשלומים גרסה (<span id="currentYear"></span>)</h1>
+      <h1>מחשבון צו תשלומים <span class="version">| גרסה <span id="currentYear"></span></span></h1>
     </header>
 
     <div class="inputs-column">
@@ -89,10 +91,11 @@
         <section class="form-section">
           <h2>פרטי התא המשפחתי</h2>
           <div class="top-section-buttons-container">
+
+            <!-- סטטוס משפחתי – ללא label, הטקסט מוטמע בתוך האפשרות הראשונה -->
             <div class="input-group">
-              <label for="status">סטטוס משפחתי</label>
-              <select id="status">
-                <option value="" selected disabled>בחר סטטוס...</option>
+              <select id="status" aria-label="סטטוס משפחתי">
+                <option value="" selected disabled>סטטוס משפחתי — בחר סטטוס...</option>
                 <option value="יחיד/נשוי חי בנפרד">יחיד/נשוי חי בנפרד</option>
                 <option value="רווק/גרוש/אלמן + ילד">רווק/גרוש/אלמן + ילד</option>
                 <option value="זוג">זוג</option>
@@ -274,10 +277,9 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // הכנסת השנה הנוכחית לכותרת
-      const yr = new Date().getFullYear();
+      // שנה נוכחית בגרסה
       const yearEl = document.getElementById('currentYear');
-      if (yearEl) yearEl.textContent = yr;
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
 
       const lookupData = {
         "יחיד/נשוי חי בנפרד": { kids: 0, livingCost: 4556 },
@@ -352,25 +354,21 @@
         const isMaleDebtor = debtorMaleEl.checked;
         const isJoint = jointProceedingEl.checked;
 
-        // נראות קבוצות
         debtorSelectionGroup.style.display = 'flex';
         const jointProceedingGroup = document.getElementById('joint-proceeding-group');
         jointProceedingGroup.style.display = isSingle ? 'none' : 'flex';
 
-        // הסתרת שדות בן/בת זוג כשיחיד/ה
         const salaryPartnerGroup = salaryPartnerEl.closest('.input-group');
         const otherIncomePartnerGroup = otherIncomePartnerEl.closest('.input-group');
         if (salaryPartnerGroup) salaryPartnerGroup.style.display = isSingle ? 'none' : 'flex';
         if (otherIncomePartnerGroup) otherIncomePartnerGroup.style.display = isSingle ? 'none' : 'flex';
         if (partnerAllowanceGroup) partnerAllowanceGroup.style.display = isSingle ? 'none' : 'flex';
 
-        // סטייל כפתורי רדיו
         document.querySelectorAll('.radio-button-label').forEach(l => l.classList.remove('checked'));
         if (debtorMaleEl.checked) document.querySelector('label[for="debtor-male"]').classList.add('checked');
         if (debtorFemaleEl.checked) document.querySelector('label[for="debtor-female"]').classList.add('checked');
         jointProceedingLabelEl.classList.toggle('checked', isJoint);
 
-        // טקסטים דינמיים
         let debtorText, partnerText;
         if (isSingle) { debtorText = 'חייב/ת'; partnerText = 'בן/בת זוג'; }
         else if (isMaleDebtor) { debtorText = 'חייב'; partnerText = 'בת זוג'; }
@@ -446,10 +444,10 @@
         const B11_disposableIncome = totalIncomes - totalExpenses;
         disposableIncomeResultEl.textContent = B11_disposableIncome < 0 ? 'אין הכנסה פנויה' : formatCurrency(B11_disposableIncome);
 
-        const B12_debtorPayment   = B10_debtorRatio  > 0 ? roundDownToNearest10((B11_disposableIncome * B10_debtorRatio ) / 2) : 0;
-        const C12_partnerPayment  = C10_partnerRatio > 0 ? roundDownToNearest10((B11_disposableIncome * C10_partnerRatio) / 2) : 0;
-        debtorPaymentResultEl.textContent  = formatCurrency(Math.max(0, B12_debtorPayment));
-        partnerPaymentResultEl.textContent = formatCurrency(Math.max(0, C12_partnerPayment));
+        const B12_debtorPayment   = B10_debtorRatio  > 0 ? Math.floor(((B11_disposableIncome * B10_debtorRatio ) / 2)/10)*10 : 0;
+        const C12_partnerPayment  = C10_partnerRatio > 0 ? Math.floor(((B11_disposableIncome * C10_partnerRatio) / 2)/10)*10 : 0;
+        document.getElementById('debtorPaymentResult').textContent  = formatCurrency(Math.max(0, B12_debtorPayment));
+        document.getElementById('partnerPaymentResult').textContent = formatCurrency(Math.max(0, C12_partnerPayment));
 
         const isSingle = statusEl.value.includes('יחיד') || statusEl.value.includes('רווק');
         const isJointProceeding = jointProceedingEl.checked;
@@ -460,15 +458,14 @@
         } else if (isJointProceeding) {
           if (B11_disposableIncome > 0) {
             const partnerPaymentForCalc = (C10_partnerRatio > 0) ? C12_partnerPayment : 0;
-            B13_finalPayment = roundDownToNearest10(Math.max(0, B11_disposableIncome - partnerPaymentForCalc) / 2);
+            B13_finalPayment = Math.floor((Math.max(0, B11_disposableIncome - partnerPaymentForCalc) / 2)/10)*10;
           }
         } else {
           B13_finalPayment = Math.max(0, B12_debtorPayment);
         }
-        finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
+        document.getElementById('finalPaymentResult').textContent = formatCurrency(B13_finalPayment);
       };
 
-      // מאזינים
       inputs.forEach(input => {
         input.addEventListener('input', () => { updateLabelsAndUI(); calculate(); });
       });
