@@ -8,124 +8,95 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
-
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 :root{
   --primary:#005f73; --secondary:#0a9396; --bg:#f4f4f4; --panel:#fff;
   --text:#333; --label:#555; --border:#ddd; --accent:#ee9b00;
-  --resultbg:#e9f5f5; --danger:#ae2012; --blue:#007bff;
-  --chip-bg:#f0f0f0; --chip-border:#ccc;
+  --resultbg:#e9f5f5; --danger:#ae2012; --blue:#0b72ff;
+  --chip-bg:#f0f0f0; --chip-border:#cfcfcf; --chip-red:#e84a4a;
 }
 *{box-sizing:border-box}
-html,body{height:100%}
 body{
-  font-family:'Heebo',sans-serif; background:var(--bg); color:var(--text);
-  margin:0; padding:20px; display:flex; justify-content:center; align-items:flex-start;
+  margin:0; font-family:'Heebo',sans-serif; background:var(--bg); color:var(--text);
+  display:flex; justify-content:center; padding:18px;
 }
 #captureRoot{width:100%; max-width:1000px}
 .calculator{
-  background:var(--panel); border-radius:12px; overflow:hidden;
+  background:#fff; border-radius:12px; overflow:hidden;
   box-shadow:0 4px 15px rgba(0,0,0,.1);
   display:grid; grid-template-columns:1fr 1fr;
 }
 header{
-  grid-column:1 / -1; background:var(--primary); color:#fff; padding:18px 20px;
-  display:flex; align-items:center; justify-content:center; gap:10px; text-align:center;
+  grid-column:1 / -1; background:var(--primary); color:#fff;
+  display:flex; gap:10px; justify-content:center; align-items:center;
+  padding:14px 18px;
 }
-header h1{margin:0; font-size:1.7rem; font-weight:700}
-.update-tag{font-size:.85rem; opacity:.95; background:rgba(255,255,255,.12);
-  padding:4px 8px; border-radius:8px}
+header h1{margin:0; font-size:1.6rem}
+.update-tag{font-size:.9rem; background:rgba(255,255,255,.15); padding:4px 8px; border-radius:8px}
 
-.inputs-col{padding:22px; border-left:1px solid var(--border)}
-.results-col{padding:22px; background:var(--resultbg)}
+.inputs{padding:20px; border-left:1px solid var(--border)}
+.results{padding:20px; background:var(--resultbg)}
 
-.section{display:grid; gap:18px}
-.section h2{margin:0; color:var(--primary); border-bottom:2px solid var(--secondary);
-  padding-bottom:8px; font-size:1.25rem}
-.row{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+h2.sec{margin:0 0 12px 0; color:var(--primary); border-bottom:2px solid var(--secondary); padding-bottom:6px; font-size:1.2rem}
+
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 .group{display:flex; flex-direction:column}
-.group label{color:var(--label); font-weight:500; margin-bottom:6px}
-input,select{
-  width:100%; padding:10px; border:1px solid var(--border); border-radius:8px;
-  font-size:1rem; background:#fff; transition:.2s border,.2s box-shadow;
+label{color:var(--label); font-weight:500; margin-bottom:6px}
+input,select,textarea{
+  width:100%; border:1px solid var(--border); border-radius:8px; padding:10px; font-size:1rem; background:#fff;
 }
-input:focus,select:focus{outline:none; border-color:var(--secondary);
-  box-shadow:0 0 0 3px rgba(10,147,150,.2)}
+input:focus,select:focus,textarea:focus{outline:none; border-color:var(--secondary); box-shadow:0 0 0 3px rgba(10,147,150,.18)}
+textarea{min-height:90px; resize:vertical}
 
-/* צ’יפים */
-.chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+/* chips */
+.chips{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
 .chip{
   padding:8px 14px; border:1px solid var(--chip-border); border-radius:999px;
-  background:var(--chip-bg); cursor:pointer; user-select:none; font-size:.95rem;
-  transition:.2s background,.2s color,.2s border;
+  background:var(--chip-bg); cursor:pointer; user-select:none; transition:.2s;
 }
 .chip input{display:none}
 .chip.active{background:var(--secondary); color:#fff; border-color:var(--secondary)}
-.chip.danger.active{background:#e84a4a; border-color:#e84a4a; color:#fff}
+.chip.red.active{background:var(--chip-red); border-color:var(--chip-red); color:#fff}
 
-/* תוצאות */
-.results h3{margin:0 0 16px 0; color:var(--primary); text-align:center}
-.r-line{display:flex; justify-content:space-between; align-items:center; padding:10px 0;
-  border-bottom:1px solid #d4e7e7; font-size:1.05rem}
-.r-line:last-child{border-bottom:none}
-.r-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; text-align:center}
-.r-label{font-weight:500}
-.r-val{font-weight:700; color:var(--accent)}
-.r-disposable{text-align:center}
-.r-disposable .r-val{color:var(--blue); font-size:1.35rem}
-.r-total .r-val{color:var(--danger); font-size:1.35rem}
-.zero-case{color:var(--secondary)!important; font-weight:800; font-size:1.35rem}
-
-/* מתקפלים */
-.collapse{
-  border:1px solid var(--border); border-radius:10px; overflow:hidden;
-}
-.c-head{
-  background:#fafafa; padding:10px 12px; cursor:pointer; display:flex; align-items:center; justify-content:space-between;
-}
+/* collapses */
+.collapse{border:1px solid var(--border); border-radius:10px; overflow:hidden}
+.c-head{background:#fafafa; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer}
 .c-body{display:none; padding:12px}
 .collapse.open .c-body{display:block}
 
-/* סרגל כפתורים קבוע בדסקטופ */
-.actions-bar{
-  display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-  margin:0 0 10px 0;
-}
-.btn{
-  display:inline-flex; align-items:center; gap:8px; padding:8px 12px;
-  background:#fff; border:1px solid #cbd5e1; border-radius:10px; cursor:pointer;
-  box-shadow:0 2px 6px rgba(0,0,0,.05);
-}
+/* results */
+.r-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; text-align:center}
+.r-box .lbl{font-weight:500}
+.r-box .val{font-weight:700; color:var(--accent)}
+.r-mid{text-align:center; margin:10px 0}
+.r-mid .val{color:var(--blue); font-size:1.3rem; font-weight:800}
+.r-total{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid #d4e7e7}
+.r-total .val{color:var(--danger); font-size:1.3rem; font-weight:800}
+.zero-case{color:var(--secondary)!important}
+
+/* action bar (desktop) */
+.actions{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+.btn{border:1px solid #cbd5e1; background:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px}
 .btn:hover{background:#f8fafc}
 
-/* רק מובייל – כפתורים צפים */
-.floating-actions{display:none}
+/* mobile sticky */
+.fab-wrap{display:none}
 @media (max-width:768px){
   .calculator{grid-template-columns:1fr}
-  .inputs-col{border-left:none}
-  .row{grid-template-columns:1fr}
-  /* הסתרת הסרגל הקבוע במובייל */
-  .actions-bar{display:none}
-  .floating-actions{
-    position:fixed; bottom:12px; right:12px; left:12px; z-index:9999;
-    display:flex; gap:10px; justify-content:space-between; align-items:center;
-    background:rgba(255,255,255,.9); border:1px solid var(--border); border-radius:14px;
-    padding:8px 10px; box-shadow:0 10px 25px rgba(0,0,0,.15); backdrop-filter: blur(6px);
-  }
-  .fab{
-    flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
-    padding:10px 12px; border-radius:10px; border:1px solid #cbd5e1; background:#fff; font-weight:600; cursor:pointer;
-  }
-  .fab:active{transform:translateY(1px)}
+  .inputs{border-left:none}
+  .row2{grid-template-columns:1fr}
+  .actions{display:none}        /* אין סרגל בדסקטופ במובייל */
+  .fab-wrap{display:flex; position:fixed; right:12px; left:12px; bottom:12px; gap:8px; z-index:9999;
+    background:rgba(255,255,255,.92); border:1px solid var(--border); border-radius:14px; padding:8px 10px; box-shadow:0 10px 25px rgba(0,0,0,.15)}
+  .fab{flex:1; border:1px solid #cbd5e1; border-radius:10px; background:#fff; padding:10px 12px; font-weight:700; cursor:pointer}
 }
 @media print{
-  body{padding:0; background:#fff}
-  .floating-actions,.btn{display:none!important}
-  .results-col{background:#fff}
-  header{padding:12px}
-  input,select{border:none!important; box-shadow:none!important}
+  .btn,.fab-wrap{display:none!important}
+  header{padding:10px}
+  .results{background:#fff}
+  input,select,textarea{border:none!important; box-shadow:none!important}
 }
 </style>
 </head>
@@ -138,457 +109,394 @@ input:focus,select:focus{outline:none; border-color:var(--secondary);
       <span class="update-tag">מעודכן ל־<span id="yearTag"></span></span>
     </header>
 
-    <!-- עמודת קלט -->
-    <div class="inputs-col">
-      <form id="form">
-        <div class="section">
-          <h2>פרטי התא המשפחתי</h2>
+    <!-- קלט -->
+    <div class="inputs">
+      <h2 class="sec">פרטי התא המשפחתי</h2>
 
-          <div class="group">
-            <label for="status">סטטוס משפחתי</label>
-            <select id="status">
-              <option value="" selected disabled>בחר סטטוס...</option>
-              <option value="יחיד/נשוי חי בנפרד">יחיד/נשוי חי בנפרד</option>
-              <option value="רווק/גרוש/אלמן + ילד">רווק/גרוש/אלמן + ילד</option>
-              <option value="זוג">זוג</option>
-              <option value="זוג+ילד">זוג+ילד</option>
-              <option value="זוג+ 2 ילדים">זוג+ 2 ילדים</option>
-              <option value="זוג+ 3 ילדים">זוג+ 3 ילדים</option>
-              <option value="זוג+ 4 ילדים">זוג+ 4 ילדים</option>
-              <option value="זוג+ 5 ילדים">זוג+ 5 ילדים</option>
-              <option value="זוג+ 6 ילדים">זוג+ 6 ילדים</option>
-              <option value="זוג+ 7 ילדים">זוג+ 7 ילדים</option>
-              <option value="זוג+ 8 ילדים">זוג+ 8 ילדים</option>
-              <option value="זוג+ 9 ילדים">זוג+ 9 ילדים</option>
-              <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
-            </select>
-          </div>
-
-          <!-- צ’יפים בשורה אחת – תמיד מוצג -->
-          <div class="group">
-            <label>מי בהליך?</label>
-            <div class="chips" id="chipsRow">
-              <label class="chip" id="chipMale"><input type="radio" name="debtor" id="debtorMale" checked> חייב</label>
-              <label class="chip" id="chipFemale"><input type="radio" name="debtor" id="debtorFemale"> חייבת</label>
-              <label class="chip danger" id="chipJoint"><input type="checkbox" id="jointProceeding"> שני בני הזוג בהליך</label>
-            </div>
-          </div>
+      <!-- שורת על: סטטוס + מי בהליך -->
+      <div class="row2" style="align-items:end">
+        <div class="group">
+          <label for="status">סטטוס משפחתי</label>
+          <select id="status">
+            <option value="" selected disabled>בחר סטטוס...</option>
+            <option value="יחיד/נשוי חי בנפרד">יחיד/נשוי חי בנפרד</option>
+            <option value="רווק/גרוש/אלמן + ילד">רווק/גרוש/אלמן + ילד</option>
+            <option value="זוג">זוג</option>
+            <option value="זוג+ילד">זוג+ילד</option>
+            <option value="זוג+ 2 ילדים">זוג+ 2 ילדים</option>
+            <option value="זוג+ 3 ילדים">זוג+ 3 ילדים</option>
+            <option value="זוג+ 4 ילדים">זוג+ 4 ילדים</option>
+            <option value="זוג+ 5 ילדים">זוג+ 5 ילדים</option>
+            <option value="זוג+ 6 ילדים">זוג+ 6 ילדים</option>
+            <option value="זוג+ 7 ילדים">זוג+ 7 ילדים</option>
+            <option value="זוג+ 8 ילדים">זוג+ 8 ילדים</option>
+            <option value="זוג+ 9 ילדים">זוג+ 9 ילדים</option>
+            <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
+          </select>
         </div>
 
-        <div class="section">
-          <h2>הכנסות והוצאות התא המשפחתי (₪)</h2>
-
-          <div class="row">
-            <div class="group">
-              <label id="salaryDebtorLabel">הכנסה (חייב)</label>
-              <input type="number" id="salaryDebtor" placeholder="הזן הכנסה">
-            </div>
-            <div class="group" id="salaryPartnerWrap">
-              <label id="salaryPartnerLabel">הכנסה (בת זוג)</label>
-              <input type="number" id="salaryPartner" placeholder="הזן הכנסה">
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="group">
-              <label id="otherDebtorLabel">הכנסות אחרות (חייב)</label>
-              <input type="number" id="otherIncomeDebtor" placeholder="הזן הכנסות אחרות">
-            </div>
-            <div class="group" id="otherPartnerWrap">
-              <label id="otherPartnerLabel">הכנסות אחרות (בת זוג)</label>
-              <input type="number" id="otherIncomePartner" placeholder="הזן הכנסות אחרות">
-            </div>
-          </div>
-
-          <!-- מתקפל: קצבאות -->
-          <div class="collapse" id="collapseAllow">
-            <div class="c-head" data-toggle="#collapseAllow"><span>הכנסות מקצבאות</span><span>▼</span></div>
-            <div class="c-body">
-              <div class="row">
-                <div class="group">
-                  <label>קצבה (חייב/ת)</label>
-                  <input type="number" id="debtorAllowance" placeholder="הזן קצבה">
-                </div>
-                <div class="group" id="partnerAllowanceWrap">
-                  <label>קצבה (בן/בת זוג)</label>
-                  <input type="number" id="partnerAllowance" placeholder="הזן קצבה">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- מתקפל: מזונות -->
-          <div class="collapse" id="collapseAlimony">
-            <div class="c-head" data-toggle="#collapseAlimony"><span>הוצאות מזונות</span><span>▼</span></div>
-            <div class="c-body">
-              <div class="group">
-                <label>הוצאות מזונות</label>
-                <input type="number" id="alimonyExpenses" placeholder="הזן הוצאות מזונות">
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="group">
-              <label>הוצאות חריגות (רפואיות וכו')</label>
-              <input type="number" id="unusualExpenses" placeholder="הזן הוצאות">
-            </div>
-            <div class="group">
-              <label>הוצאות טיפול וצהרונים</label>
-              <input type="number" id="childcareExpenses" placeholder="הזן הוצאות">
-            </div>
+        <div class="group">
+          <label>מי בהליך?</label>
+          <div class="chips" id="chips">
+            <label class="chip" id="chipMale"><input type="radio" name="debtor" id="debtorMale" checked>חייב</label>
+            <label class="chip" id="chipFemale"><input type="radio" name="debtor" id="debtorFemale">חייבת</label>
+            <label class="chip red" id="chipJoint"><input type="checkbox" id="jointProceeding">שני בני הזוג בהליך</label>
           </div>
         </div>
-      </form>
-    </div>
-
-    <!-- עמודת תוצאות -->
-    <div class="results-col">
-      <!-- סרגל כפתורים קבוע בדסקטופ -->
-      <div class="actions-bar">
-        <button class="btn" id="btnShotDesk">📸 צילום/PNG</button>
-        <button class="btn" id="btnPrintDesk">🖨️ הדפסה</button>
-        <button class="btn" id="btnMailDesk">✉️ מייל</button>
-        <button class="btn" id="btnResetDesk">↺ איפוס</button>
-        <button class="btn" id="btnSave">💾 שמירה</button>
       </div>
 
-      <div class="results">
-        <h3>תוצאות החישוב</h3>
+      <h2 class="sec">הכנסות והוצאות (₪)</h2>
 
-        <div class="r-grid">
-          <div><div class="r-label">קצבת ביטוח לאומי</div><div class="r-val" id="ssAllow">0 ₪</div></div>
-          <div><div class="r-label">סך הכנסות</div><div class="r-val" id="sumIncome">0 ₪</div></div>
-        </div>
+      <div class="row2">
+        <div class="group"><label id="salaryDebtorLabel">הכנסה (חייב)</label><input type="number" id="salaryDebtor" placeholder="הזן הכנסה"></div>
+        <div class="group" id="salaryPartnerWrap"><label id="salaryPartnerLabel">הכנסה (בת זוג)</label><input type="number" id="salaryPartner" placeholder="הזן הכנסה"></div>
+      </div>
 
-        <div class="r-grid" style="margin-top:10px">
-          <div><div class="r-label">דמי מחייה בכבוד</div><div class="r-val" id="livingCost">0 ₪</div></div>
-          <div><div class="r-label">סך הוצאות</div><div class="r-val" id="sumExpenses">0 ₪</div></div>
-        </div>
+      <div class="row2">
+        <div class="group"><label id="otherDebtorLabel">הכנסות אחרות (חייב)</label><input type="number" id="otherIncomeDebtor" placeholder="הזן הכנסות אחרות"></div>
+        <div class="group" id="otherPartnerWrap"><label id="otherPartnerLabel">הכנסות אחרות (בת זוג)</label><input type="number" id="otherIncomePartner" placeholder="הזן הכנסות אחרות"></div>
+      </div>
 
-        <div class="r-disposable" style="margin:12px 0">
-          <div class="r-label">הכנסה פנויה לתא המשפחתי</div>
-          <div class="r-val" id="disposable">0 ₪</div>
+      <div class="collapse" id="collAllow">
+        <div class="c-head" data-toggle="#collAllow"><span>הכנסות מקצבאות</span><span>▼</span></div>
+        <div class="c-body">
+          <div class="row2">
+            <div class="group"><label>קצבה (חייב/ת)</label><input type="number" id="debtorAllowance" placeholder="הזן קצבה"></div>
+            <div class="group" id="partnerAllowanceWrap"><label>קצבה (בן/בת זוג)</label><input type="number" id="partnerAllowance" placeholder="הזן קצבה"></div>
+          </div>
         </div>
+      </div>
 
-        <div class="r-grid">
-          <div><div class="r-label" id="debtorRatioLabel">אחוז הכנסה (חייב)</div><div class="r-val" id="debtorRatio">0%</div></div>
-          <div><div class="r-label" id="partnerRatioLabel">אחוז הכנסה (בת זוג)</div><div class="r-val" id="partnerRatio">0%</div></div>
+      <div class="collapse" id="collAlimony">
+        <div class="c-head" data-toggle="#collAlimony"><span>הוצאות מזונות</span><span>▼</span></div>
+        <div class="c-body">
+          <div class="group"><label>הוצאות מזונות</label><input type="number" id="alimonyExpenses" placeholder="הזן הוצאות מזונות"></div>
         </div>
+      </div>
 
-        <div class="r-grid" style="margin-top:10px">
-          <div><div class="r-label" id="debtorPayLabel">תשלום מוצע (חייב)</div><div class="r-val" id="debtorPay">0 ₪</div></div>
-          <div><div class="r-label" id="partnerPayLabel">תשלום מוצע (בת זוג)</div><div class="r-val" id="partnerPay">0 ₪</div></div>
-        </div>
+      <div class="row2">
+        <div class="group"><label>הוצאות חריגות (רפואיות וכו')</label><input type="number" id="unusualExpenses" placeholder="הזן הוצאות"></div>
+        <div class="group"><label>הוצאות טיפול וצהרונים</label><input type="number" id="childcareExpenses" placeholder="הזן הוצאות"></div>
+      </div>
+    </div>
 
-        <div class="r-line r-total" style="margin-top:8px">
-          <div class="r-label" id="familyPayLabel">תשלום חודשי לתא משפחתי</div>
-          <div class="r-val" id="familyPay">0 ₪</div>
+    <!-- תוצאות -->
+    <div class="results">
+      <!-- סרגל חמישייה בדסקטופ -->
+      <div class="actions">
+        <button class="btn" id="btnShotDesk">📸 צילום (PNG)</button>
+        <button class="btn" id="btnPrintDesk">🖨️ הדפסה</button>
+        <button class="btn" id="btnMailDesk">✉️ שלח מייל</button>
+        <button class="btn" id="btnResetDesk">↺ איפוס</button>
+        <button class="btn" id="btnReportDesk">📄 פרטי דו״ח</button>
+      </div>
+
+      <!-- פנל פרטי דו״ח (נסגר כברירת מחדל) -->
+      <div class="collapse" id="reportPanel" style="display:none;margin-bottom:10px">
+        <div class="c-head">
+          <span>פרטי דו״ח</span>
+          <button class="btn" id="btnToggleNote" style="margin:0">🗒️ הערה</button>
         </div>
+        <div class="c-body">
+          <div class="row2">
+            <div class="group"><label>מס׳ תיק</label><input type="text" id="caseId" placeholder="לדוגמה: 12345/25"></div>
+            <div class="group"><label>שם עורך/ת החישוב</label><input type="text" id="authorName" placeholder="שם מלא"></div>
+          </div>
+          <div class="row2">
+            <div class="group"><label>תאריך</label><input type="text" id="calcDate" readonly></div>
+          </div>
+          <div class="collapse" id="notePanel" style="margin-top:10px">
+            <div class="c-head" data-toggle="#notePanel"><span>הערה (עד 500 תווים)</span><span>▼</span></div>
+            <div class="c-body">
+              <textarea id="calcNotes" maxlength="500" placeholder="הערה קצרה..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="sec" style="margin-top:0">תוצאות החישוב</h2>
+
+      <div class="r-grid">
+        <div class="r-box"><div class="lbl">קצבת ביטוח לאומי</div><div class="val" id="ssAllow">0 ₪</div></div>
+        <div class="r-box"><div class="lbl">סך הכנסות</div><div class="val" id="sumIncome">0 ₪</div></div>
+      </div>
+
+      <div class="r-grid" style="margin-top:10px">
+        <div class="r-box"><div class="lbl">דמי מחייה בכבוד</div><div class="val" id="livingCost">0 ₪</div></div>
+        <div class="r-box"><div class="lbl">סך הוצאות</div><div class="val" id="sumExpenses">0 ₪</div></div>
+      </div>
+
+      <div class="r-mid">
+        <div class="lbl">הכנסה פנויה לתא המשפחתי</div>
+        <div class="val" id="disposable">0 ₪</div>
+      </div>
+
+      <div class="r-grid">
+        <div class="r-box"><div class="lbl" id="debtorRatioLabel">אחוז הכנסה (חייב)</div><div class="val" id="debtorRatio">0%</div></div>
+        <div class="r-box"><div class="lbl" id="partnerRatioLabel">אחוז הכנסה (בת זוג)</div><div class="val" id="partnerRatio">0%</div></div>
+      </div>
+
+      <div class="r-grid" style="margin-top:10px">
+        <div class="r-box"><div class="lbl" id="debtorPayLabel">תשלום מוצע (חייב)</div><div class="val" id="debtorPay">0 ₪</div></div>
+        <div class="r-box"><div class="lbl" id="partnerPayLabel">תשלום מוצע (בת זוג)</div><div class="val" id="partnerPay">0 ₪</div></div>
+      </div>
+
+      <div class="r-total" style="margin-top:6px">
+        <div class="lbl" id="familyPayLabel">תשלום חודשי לתא משפחתי</div>
+        <div class="val" id="familyPay">0 ₪</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- כפתורים צפים – מובייל -->
-<div class="floating-actions">
+<!-- מובייל: כפתורים צפים -->
+<div class="fab-wrap">
   <button class="fab" id="btnShot">📸 צילום</button>
   <button class="fab" id="btnMail">✉️ מייל</button>
   <button class="fab" id="btnReset">↺ איפוס</button>
 </div>
 
 <script>
+/* === ייבוא שנה ותאריך === */
 document.getElementById('yearTag').textContent = new Date().getFullYear();
+document.getElementById('calcDate').value = new Date().toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'});
 
-/* ===== נתונים ===== */
+/* === נתונים קבועים === */
 const lookup = {
-  "יחיד/נשוי חי בנפרד": { kids: 0, livingCost: 4556 },
-  "רווק/גרוש/אלמן + ילד": { kids: 1, livingCost: 6056 },
-  "זוג": { kids: 0, livingCost: 6024 },
-  "זוג+ילד": { kids: 1, livingCost: 7524 },
-  "זוג+ 2 ילדים": { kids: 2, livingCost: 9024 },
-  "זוג+ 3 ילדים": { kids: 3, livingCost: 10524 },
-  "זוג+ 4 ילדים": { kids: 4, livingCost: 12024 },
-  "זוג+ 5 ילדים": { kids: 5, livingCost: 13324 },
-  "זוג+ 6 ילדים": { kids: 6, livingCost: 14624 },
-  "זוג+ 7 ילדים": { kids: 7, livingCost: 15924 },
-  "זוג+ 8 ילדים": { kids: 8, livingCost: 17224 },
-  "זוג+ 9 ילדים": { kids: 9, livingCost: 18524 },
-  "זוג+ 10 ילדים": { kids: 10, livingCost: 19824 }
+  "יחיד/נשוי חי בנפרד": { kids:0, livingCost:4556 },
+  "רווק/גרוש/אלמן + ילד": { kids:1, livingCost:6056 },
+  "זוג": { kids:0, livingCost:6024 },
+  "זוג+ילד": { kids:1, livingCost:7524 },
+  "זוג+ 2 ילדים": { kids:2, livingCost:9024 },
+  "זוג+ 3 ילדים": { kids:3, livingCost:10524 },
+  "זוג+ 4 ילדים": { kids:4, livingCost:12024 },
+  "זוג+ 5 ילדים": { kids:5, livingCost:13324 },
+  "זוג+ 6 ילדים": { kids:6, livingCost:14624 },
+  "זוג+ 7 ילדים": { kids:7, livingCost:15924 },
+  "זוג+ 8 ילדים": { kids:8, livingCost:17224 },
+  "זוג+ 9 ילדים": { kids:9, livingCost:18524 },
+  "זוג+ 10 ילדים": { kids:10, livingCost:19824 }
 };
 const childAllow = {0:0,1:169,2:383,3:597,4:811,5:980,6:1149,7:1318,8:1487,9:1656,10:1825};
-const round10 = n => Math.floor((+n||0)/10)*10;
-const fmt = n => new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS',minimumFractionDigits:0}).format(+n||0);
+const fmt = n=>new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS',minimumFractionDigits:0}).format(+n||0);
+const r10 = n=>Math.floor((+n||0)/10)*10;
 
-/* ===== DOM ===== */
-const statusEl = document.getElementById('status');
-const debtorMaleEl = document.getElementById('debtorMale');
-const debtorFemaleEl = document.getElementById('debtorFemale');
-const chipMale = document.getElementById('chipMale');
-const chipFemale = document.getElementById('chipFemale');
-const jointEl = document.getElementById('jointProceeding');
-const chipJoint = document.getElementById('chipJoint');
+/* === DOM קיצורי דרך === */
+const $ = id=>document.getElementById(id);
+const statusEl = $('status');
+const chipMale=$('chipMale'), chipFemale=$('chipFemale'), chipJoint=$('chipJoint');
+const debtorMale=$('debtorMale'), debtorFemale=$('debtorFemale'), jointEl=$('jointProceeding');
 
-const salaryDebtorEl = document.getElementById('salaryDebtor');
-const salaryPartnerEl = document.getElementById('salaryPartner');
-const otherDebtorEl = document.getElementById('otherIncomeDebtor');
-const otherPartnerEl = document.getElementById('otherIncomePartner');
-const debtorAllowEl = document.getElementById('debtorAllowance');
-const partnerAllowEl = document.getElementById('partnerAllowance');
-const unusualEl = document.getElementById('unusualExpenses');
-const childcareEl = document.getElementById('childcareExpenses');
-const alimonyEl = document.getElementById('alimonyExpenses');
+const salaryDebtor=$('salaryDebtor'), salaryPartner=$('salaryPartner');
+const otherDebtor=$('otherIncomeDebtor'), otherPartner=$('otherIncomePartner');
+const debtorAllowance=$('debtorAllowance'), partnerAllowance=$('partnerAllowance');
+const unusual=$('unusualExpenses'), childcare=$('childcareExpenses'), alimony=$('alimonyExpenses');
 
-const salaryPartnerWrap = document.getElementById('salaryPartnerWrap');
-const otherPartnerWrap = document.getElementById('otherPartnerWrap');
-const partnerAllowanceWrap = document.getElementById('partnerAllowanceWrap');
+const salaryPartnerWrap=$('salaryPartnerWrap'), otherPartnerWrap=$('otherPartnerWrap'), partnerAllowanceWrap=$('partnerAllowanceWrap');
 
-const salaryDebtorLabel = document.getElementById('salaryDebtorLabel');
-const salaryPartnerLabel = document.getElementById('salaryPartnerLabel');
-const otherDebtorLabel = document.getElementById('otherDebtorLabel');
-const otherPartnerLabel = document.getElementById('otherPartnerLabel');
+const salaryDebtorLabel=$('salaryDebtorLabel'), salaryPartnerLabel=$('salaryPartnerLabel');
+const otherDebtorLabel=$('otherDebtorLabel'), otherPartnerLabel=$('otherPartnerLabel');
 
-const ssAllow = document.getElementById('ssAllow');
-const sumIncome = document.getElementById('sumIncome');
-const livingCost = document.getElementById('livingCost');
-const sumExpenses = document.getElementById('sumExpenses');
-const disposable = document.getElementById('disposable');
-const debtorRatio = document.getElementById('debtorRatio');
-const partnerRatio = document.getElementById('partnerRatio');
-const debtorPay = document.getElementById('debtorPay');
-const partnerPay = document.getElementById('partnerPay');
-const familyPay = document.getElementById('familyPay');
-const familyPayLabel = document.getElementById('familyPayLabel');
+const ssAllow=$('ssAllow'), sumIncome=$('sumIncome'), livingCost=$('livingCost'), sumExpenses=$('sumExpenses'),
+      disposable=$('disposable'), debtorRatio=$('debtorRatio'), partnerRatio=$('partnerRatio'),
+      debtorPay=$('debtorPay'), partnerPay=$('partnerPay'), familyPay=$('familyPay');
 
-/* ===== UI ===== */
-function refreshUI(){
+/* === צ׳יפים – בחירה ועיצוב === */
+function refreshChips(){
+  chipMale.classList.toggle('active', debtorMale.checked);
+  chipFemale.classList.toggle('active', debtorFemale.checked);
+  chipJoint.classList.toggle('active', jointEl.checked);
+}
+chipMale.addEventListener('click', ()=>{debtorMale.checked=true; debtorFemale.checked=false; refreshChips(); updateLabels(); calc();});
+chipFemale.addEventListener('click', ()=>{debtorFemale.checked=true; debtorMale.checked=false; refreshChips(); updateLabels(); calc();});
+chipJoint.addEventListener('click', ()=>{jointEl.checked=!jointEl.checked; refreshChips(); updateLabels(); calc();});
+
+/* === תוויות דינמיות והסתרות === */
+function updateLabels(){
   const st = statusEl.value||'';
   const isSingle = st.includes('יחיד') || st.includes('רווק');
+  const male = debtorMale.checked;
 
-  // צ'יפים – הדגשה
-  chipMale.classList.toggle('active', debtorMaleEl.checked);
-  chipFemale.classList.toggle('active', debtorFemaleEl.checked);
-  chipJoint.classList.toggle('active', jointEl.checked);
+  salaryPartnerWrap.style.display = isSingle ? 'none' : '';
+  otherPartnerWrap.style.display  = isSingle ? 'none' : '';
+  partnerAllowanceWrap.style.display = isSingle ? 'none' : '';
 
-  // הצגת בן/בת זוג
-  salaryPartnerWrap.style.display = isSingle ? 'none' : 'flex';
-  otherPartnerWrap.style.display = isSingle ? 'none' : 'flex';
-  partnerAllowanceWrap.style.display = isSingle ? 'none' : 'flex';
+  salaryDebtorLabel.textContent = isSingle ? 'הכנסה (חייב/ת)' : male ? 'הכנסה (חייב)' : 'הכנסה (חייבת)';
+  salaryPartnerLabel.textContent = isSingle ? 'הכנסה (בן/בת זוג)' : male ? 'הכנסה (בת זוג)' : 'הכנסה (בן זוג)';
+  otherDebtorLabel.textContent   = isSingle ? 'הכנסות אחרות (חייב/ת)' : male ? 'הכנסות אחרות (חייב)' : 'הכנסות אחרות (חייבת)';
+  otherPartnerLabel.textContent  = isSingle ? 'הכנסות אחרות (בן/בת זוג)' : male ? 'הכנסות אחרות (בת זוג)' : 'הכנסות אחרות (בן זוג)';
 
-  const male = debtorMaleEl.checked;
-  if(isSingle){
-    salaryDebtorLabel.textContent='הכנסה (חייב/ת)';
-    salaryPartnerLabel.textContent='הכנסה (בן/בת זוג)';
-    otherDebtorLabel.textContent='הכנסות אחרות (חייב/ת)';
-    otherPartnerLabel.textContent='הכנסות אחרות (בן/בת זוג)';
-  }else{
-    salaryDebtorLabel.textContent = male?'הכנסה (חייב)':'הכנסה (חייבת)';
-    salaryPartnerLabel.textContent = male?'הכנסה (בת זוג)':'הכנסה (בן זוג)';
-    otherDebtorLabel.textContent  = male?'הכנסות אחרות (חייב)':'הכנסות אחרות (חייבת)';
-    otherPartnerLabel.textContent = male?'הכנסות אחרות (בת זוג)':'הכנסות אחרות (בן זוג)';
-  }
-
-  familyPayLabel.textContent = (jointEl.checked && !isSingle) ? 'תשלום חודשי לתא משפחתי:' :
-                                (isSingle?'תשלום חודשי (חייב/ת):':'תשלום חודשי (חייב/ת):');
+  $('debtorRatioLabel').textContent = `אחוז הכנסה (${isSingle?'חייב/ת':(male?'חייב':'חייבת')})`;
+  $('partnerRatioLabel').textContent= `אחוז הכנסה (${isSingle?'בן/בת זוג':(male?'בת זוג':'בן זוג')})`;
+  $('debtorPayLabel').textContent   = `תשלום מוצע (${isSingle?'חייב/ת':(male?'חייב':'חייבת')})`;
+  $('partnerPayLabel').textContent  = `תשלום מוצע (${isSingle?'בן/בת זוג':(male?'בת זוג':'בן זוג')})`;
 }
 
-/* ===== חישוב ===== */
+/* === חישוב === */
 function calc(){
   const st = statusEl.value||'';
+  const data = lookup[st] || {kids:0,livingCost:0};
+  const kids = data.kids, baseLC=data.livingCost;
+
+  const sD=+salaryDebtor.value||0, sP=+salaryPartner.value||0;
+  const oD=+otherDebtor.value||0,  oP=+otherPartner.value||0;
+  const aD=+debtorAllowance.value||0, aP=+partnerAllowance.value||0;
+  const un=+unusual.value||0, ch=+childcare.value||0, al=+alimony.value||0;
+
+  const childA = childAllow[kids]||0;
+
+  livingCost.textContent = fmt(baseLC);
+  ssAllow.textContent = fmt(childA);
+
+  const totalIncome = sD+sP+oD+oP+aD+aP+childA;
+  sumIncome.textContent = fmt(totalIncome);
+
+  const totalExp = baseLC+un+ch+al;
+  sumExpenses.textContent = fmt(totalExp);
+
+  const disp = totalIncome-totalExp;
+  disposable.textContent = disp<0 ? 'אין הכנסה פנויה' : fmt(disp);
+
+  const totalForRatio = sD+oD+sP+oP;
+  const rDeb = totalForRatio>0 ? (sD+oD)/totalForRatio : 0;
+  const rPar = totalForRatio>0 ? (sP+oP)/totalForRatio : 0;
+  debtorRatio.textContent = (rDeb*100).toFixed(1)+'%';
+  partnerRatio.textContent = (rPar*100).toFixed(1)+'%';
+
+  const propDeb = r10((disp * rDeb)/2);
+  const propPar = r10((disp * rPar)/2);
+  debtorPay.textContent = fmt(Math.max(0,propDeb));
+  partnerPay.textContent= fmt(Math.max(0,propPar));
+
   const isSingle = st.includes('יחיד') || st.includes('רווק');
   const isJoint = jointEl.checked && !isSingle;
 
-  const sD = +salaryDebtorEl.value||0;
-  const sP = +salaryPartnerEl.value||0;
-  const oD = +otherDebtorEl.value||0;
-  const oP = +otherPartnerEl.value||0;
-  const aD = +debtorAllowEl.value||0;
-  const aP = +partnerAllowEl.value||0;
+  // "תיק אפס" – רק אם יש הכנסות אך ורק מקצבאות ולחייב אין הכנסה/הכנסות אחרות
+  const wagesAndOther = sD+sP+oD+oP;
+  const allowancesOnly = (aD+aP+childA) > 0 && wagesAndOther === 0;
 
-  const u  = +unusualEl.value||0;
-  const cc = +childcareEl.value||0;
-  const al = +alimonyEl.value||0;
-
-  const kids = (lookup[st]?.kids)||0;
-  const base = (lookup[st]?.livingCost)||0;
-  const childA = childAllow[kids]||0;
-
-  livingCost.textContent = fmt(base);
-  ssAllow.textContent = fmt(childA);
-
-  const totalIncomeForRatio = sD+oD+sP+oP;
-  const rD = totalIncomeForRatio>0 ? (sD+oD)/totalIncomeForRatio : 0;
-  const rP = totalIncomeForRatio>0 ? (sP+oP)/totalIncomeForRatio : 0;
-
-  debtorRatio.textContent  = (rD*100).toFixed(1)+'%';
-  partnerRatio.textContent = (rP*100).toFixed(1)+'%';
-
-  const incomes = sD+sP+oD+oP + aD+aP + childA;
-  const expenses = base + u + cc + al;
-
-  sumIncome.textContent  = fmt(incomes);
-  sumExpenses.textContent = fmt(expenses);
-
-  const DI = incomes - expenses;
-  disposable.textContent = DI<0 ? 'אין הכנסה פנויה' : fmt(DI);
-
-  const payD = rD>0 ? round10((DI*rD)/2) : 0;
-  const payP = rP>0 ? round10((DI*rP)/2) : 0;
-  debtorPay.textContent  = fmt(Math.max(0,payD));
-  partnerPay.textContent = fmt(Math.max(0,payP));
-
-  let final = 0;
-  if(isSingle){
-    final = Math.max(0,payD);
-  }else if(isJoint){
-    const mid = (DI/2) - payP;
-    final = round10(Math.max(0,(mid * rD) + payP));
+  let family = 0;
+  if(isJoint){
+    // נוסחה: (דיספ / 2 - תשלום בת/בן זוג) * יחס חייב  +  תשלום בת/בן זוג
+    const baseHalf = Math.max(0, disp/2 - propPar);
+    const debtorPort = r10(baseHalf * rDeb);
+    family = Math.max(0, debtorPort + propPar);
   }else{
-    final = Math.max(0,payD);
+    family = Math.max(0, propDeb);
   }
 
-  const hasOnlyAllowances = (sD+oD+sP+oP)===0 && (aD+aP)>0;
-  familyPay.classList.remove('zero-case');
-  if(hasOnlyAllowances && final===0){
-    familyPay.textContent = 'תיק אפס';
-    familyPay.classList.add('zero-case');
-  }else{
-    familyPay.textContent = fmt(final);
+  const famEl = familyPay;
+  famEl.classList.remove('zero-case');
+  if (allowancesOnly && sD+oD===0){  // רק קצבאות ולחייב אין הכנסה
+    famEl.textContent = 'תיק אפס';
+    famEl.classList.add('zero-case');
+  } else {
+    famEl.textContent = fmt(family);
   }
 }
 
-/* אירועים */
-[
-  statusEl, salaryDebtorEl, salaryPartnerEl, otherDebtorEl, otherPartnerEl,
-  debtorAllowEl, partnerAllowEl, unusualEl, childcareEl, alimonyEl
-].forEach(el=>el.addEventListener('input', ()=>{refreshUI(); calc();}));
-
-chipMale.addEventListener('click', ()=>{debtorMaleEl.checked=true; refreshUI(); calc();});
-chipFemale.addEventListener('click', ()=>{debtorFemaleEl.checked=true; refreshUI(); calc();});
-chipJoint.addEventListener('click', e=>{
-  if(e.target.tagName.toLowerCase()!=='input') jointEl.checked=!jointEl.checked;
-  refreshUI(); calc();
-});
-jointEl.addEventListener('change', ()=>{refreshUI(); calc();});
-statusEl.addEventListener('change', ()=>{refreshUI(); calc();});
-
-refreshUI(); calc();
-
-/* מתקפלים */
+/* === מתקפלים === */
 document.querySelectorAll('.c-head').forEach(h=>{
-  h.addEventListener('click', ()=>{
-    const box = document.querySelector(h.dataset.toggle);
-    box.classList.toggle('open');
+  h.addEventListener('click', e=>{
+    const host = h.parentElement;
+    if (host.id==='reportPanel' || h.id==='btnToggleNote') return; // מנוהל ידנית
+    host.classList.toggle('open');
   });
 });
-// ברירת מחדל: סגור
-document.getElementById('collapseAllow').classList.remove('open');
-document.getElementById('collapseAlimony').classList.remove('open');
 
-/* צילום מסך + הדפסה – מוקטן לשני עמודים לכל היותר */
-async function shotAndPrint(){
-  try{
-    const node = document.getElementById('captureRoot');
-    window.scrollTo({top:0, behavior:'auto'});
-    const canvas = await html2canvas(node,{
-      useCORS:true, backgroundColor:'#ffffff', scale:1,  /* scale קטן כדי לצמצם אורך */
-      windowWidth:document.documentElement.scrollWidth,
-      windowHeight:document.documentElement.scrollHeight,
-      scrollX:0, scrollY:-window.scrollY
-    });
-    const url = canvas.toDataURL('image/png');
-    const w = window.open('', '_blank');
-    w.document.write(`
-      <html><head><title>צילום מסך המחשבון</title>
-      <style>
-        html,body{margin:0;padding:0}
-        @page{size:A4 portrait; margin:8mm}
-        img{width:auto; height:190vh; display:block; page-break-inside:avoid}
-        @media print{img{height:190vh}}
-      </style></head>
-      <body><img src="${url}" alt="shot" /></body></html>
-    `);
-    w.document.close(); w.focus();
-    setTimeout(()=>{ try{ w.print(); }catch(e){} }, 400);
-  }catch(e){
-    alert('שגיאה ביצירת צילום המסך'); console.error(e);
-  }
+/* === אירועים === */
+document.querySelectorAll('input,select,textarea').forEach(el=>{
+  el.addEventListener('input', ()=>{ updateLabels(); calc(); });
+});
+statusEl.addEventListener('change', ()=>{ updateLabels(); calc(); });
+
+/* === פרטי דו״ח / הערה === */
+$('btnReportDesk').addEventListener('click', ()=>{
+  const p = $('reportPanel');
+  p.style.display = p.style.display==='none'?'block':'none';
+  p.classList.add('open');
+});
+$('btnToggleNote').addEventListener('click', ()=>{
+  $('notePanel').classList.toggle('open');
+});
+
+/* === איפוס === */
+function doReset(){
+  $('form').reset();
+  $('collAllow').classList.remove('open');
+  $('collAlimony').classList.remove('open');
+  $('reportPanel').style.display='none';
+  $('notePanel').classList.remove('open');
+  debtorMale.checked=true; debtorFemale.checked=false; jointEl.checked=false;
+  refreshChips(); updateLabels(); calc();
 }
+$('btnResetDesk').addEventListener('click', doReset);
+$('btnReset').addEventListener('click', doReset);
 
-/* מייל */
-function sendMail(){
-  const gt = id => (document.getElementById(id)?.textContent||'').trim();
-  const subject = 'מחשבון צו תשלומים – תקציר תוצאות';
+/* === צילום עמוד אחד (PNG) === */
+async function shotOnePage(){
+  const root = $('captureRoot');
+  // מסתירים כפתורים צפים בצילום
+  document.querySelector('.fab-wrap').style.visibility='hidden';
+  const canvas = await html2canvas(root, {scale:1.3, useCORS:true, windowWidth:root.scrollWidth, windowHeight:root.scrollHeight});
+  document.querySelector('.fab-wrap').style.visibility='';
+
+  // התאמה לעמוד אחד: גובה יעד ~ 1400px
+  const MAX_H = 1400;
+  const ratio = Math.min(1, MAX_H / canvas.height);
+  const w = Math.round(canvas.width * ratio);
+  const h = Math.round(canvas.height * ratio);
+  const out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  out.getContext('2d').drawImage(canvas, 0, 0, w, h);
+  const url = out.toDataURL('image/png');
+
+  const win = window.open('','_blank');
+  win.document.write(`
+    <html dir="rtl"><head><meta charset="utf-8">
+    <title>צילום מסך המחשבון</title>
+    <style>
+      @page{size:A4 portrait; margin:8mm}
+      body{margin:0; display:flex; justify-content:center; align-items:flex-start}
+      img{width:100%; height:auto; max-height:98vh; page-break-inside:avoid}
+    </style>
+    </head><body>
+      <img src="${url}" alt="capture">
+      <script>window.onload=()=>window.print();<\/script>
+    </body></html>
+  `);
+  win.document.close();
+}
+$('btnShotDesk').addEventListener('click', shotOnePage);
+$('btnShot').addEventListener('click', shotOnePage);
+
+/* === הדפסה רגילה של הדף (למי שמעדיף) === */
+$('btnPrintDesk').addEventListener('click', ()=>window.print());
+
+/* === מייל (mailto) עם תקציר – לצרף ידנית את ה-PNG שנשמר) === */
+function mailSummary(){
+  const get = id=> (document.getElementById(id)?.textContent||'').trim();
+  const subject = 'מחשבון צו תשלומים – תקציר';
   const body = [
-    'שלום,','',
-    'מצורף/ת צילום מסך (PNG) לאחר שמירה ידנית מהמערכת.',
+    'מצורף תקציר. נא לצרף ידנית את קובץ ה-PNG מהכפתור "צילום".',
     '',
-    `סך הכנסות: ${gt('sumIncome')}`,
-    `סך הוצאות: ${gt('sumExpenses')}`,
-    `הכנסה פנויה: ${gt('disposable')}`,
-    `אחוז הכנסה (חייב/ת): ${gt('debtorRatio')}`,
-    `אחוז הכנסה (בן/בת זוג): ${gt('partnerRatio')}`,
-    `תשלום מוצע (חייב/ת): ${gt('debtorPay')}`,
-    `תשלום מוצע (בן/בת זוג): ${gt('partnerPay')}`,
-    `תשלום חודשי לתא משפחתי: ${gt('familyPay')}`,
-    '','בברכה'
+    'סיכום תוצאות:',
+    `סך הכנסות: ${get('sumIncome')}`,
+    `סך הוצאות: ${get('sumExpenses')}`,
+    `הכנסה פנויה: ${get('disposable')}`,
+    `אחוז הכנסה (חייב/ת): ${get('debtorRatio')}`,
+    `אחוז הכנסה (בן/בת זוג): ${get('partnerRatio')}`,
+    `תשלום מוצע (חייב/ת): ${get('debtorPay')}`,
+    `תשלום מוצע (בן/בת זוג): ${get('partnerPay')}`,
+    `תשלום חודשי: ${get('familyPay')}`
   ].join('\n');
   window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
+$('btnMailDesk').addEventListener('click', mailSummary);
+$('btnMail').addEventListener('click', mailSummary);
 
-/* איפוס */
-function doReset(){
-  document.getElementById('form').reset();
-  debtorMaleEl.checked = true; jointEl.checked = false;
-  refreshUI(); calc();
-}
-
-/* שמירה (localStorage) */
-function saveState(){
-  const data = {
-    status: statusEl.value,
-    male: debtorMaleEl.checked, joint: jointEl.checked,
-    sD: salaryDebtorEl.value, sP: salaryPartnerEl.value,
-    oD: otherDebtorEl.value, oP: otherPartnerEl.value,
-    aD: debtorAllowEl.value, aP: partnerAllowEl.value,
-    u: unusualEl.value, cc: childcareEl.value, al: alimonyEl.value
-  };
-  localStorage.setItem('calcState', JSON.stringify(data));
-  alert('נשמר בהצלחה');
-}
-(function loadState(){
-  const raw = localStorage.getItem('calcState');
-  if(!raw) return;
-  try{
-    const d = JSON.parse(raw);
-    if(d.status) statusEl.value = d.status;
-    debtorMaleEl.checked = !!d.male;
-    debtorFemaleEl.checked = !d.male;
-    jointEl.checked = !!d.joint;
-    salaryDebtorEl.value = d.sD||'';
-    salaryPartnerEl.value = d.sP||'';
-    otherDebtorEl.value = d.oD||'';
-    otherPartnerEl.value = d.oP||'';
-    debtorAllowEl.value = d.aD||'';
-    partnerAllowEl.value = d.aP||'';
-    unusualEl.value = d.u||'';
-    childcareEl.value = d.cc||'';
-    alimonyEl.value = d.al||'';
-    refreshUI(); calc();
-  }catch(e){}
-})();
-
-/* חיבורי כפתורים – מובייל */
-document.getElementById('btnShot')?.addEventListener('click', shotAndPrint);
-document.getElementById('btnMail')?.addEventListener('click', sendMail);
-document.getElementById('btnReset')?.addEventListener('click', doReset);
-
-/* חיבורי כפתורים – דסקטופ (סרגל קבוע) */
-document.getElementById('btnShotDesk')?.addEventListener('click', shotAndPrint);
-document.getElementById('btnPrintDesk')?.addEventListener('click', ()=>window.print());
-document.getElementById('btnMailDesk')?.addEventListener('click', sendMail);
-document.getElementById('btnResetDesk')?.addEventListener('click', doReset);
-document.getElementById('btnSave')?.addEventListener('click', saveState);
+/* === אתחול === */
+refreshChips(); updateLabels(); calc();
 </script>
 </body>
 </html>
