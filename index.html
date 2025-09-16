@@ -727,3 +727,66 @@
   </script>
 </body>
 </html>
+/* ======= מובייל קומפקט ======= */
+
+/* ≤ 480px — הכי קומפקטי: עמודה אחת, פונטים/ריווחים קטנים */
+@media (max-width: 480px) {
+  body { padding: 12px; }
+  header { padding: 14px; }
+  header h1 { font-size: 1.25em; }
+  .version { font-size: .8em; }
+
+  .calculator-container { grid-template-columns: 1fr; }
+  .inputs-column, .results-column { padding: 14px; }
+  .form-section { gap: 12px; }
+  .form-section h2 { font-size: 1.1em; padding-bottom: 6px; }
+
+  /* זוגות שדות -> עמודה אחת כדי שלא יצא צפוף מדי */
+  .input-pair-inline { grid-template-columns: 1fr; gap: 12px; }
+
+  /* שדות/כפתורים יותר קטנים מעט */
+  .input-group input, .input-group select, .input-group textarea { 
+    padding: 9px; font-size: .95em; 
+  }
+  .radio-button-label { padding: 6px 12px; font-size: .95em; }
+
+  /* תוצאות – קומפקט אבל ברור */
+  .results-section h2 { font-size: 1.1em; margin-bottom: 10px; }
+  .result-item { padding: 8px 0; font-size: 1em; }
+  .result-item.side-by-side { gap: 12px; }
+  .result-item .value { font-size: 1.05em; }
+
+  /* סרגל פעולות ובלוקים מתקפלים */
+  .actions-bar { gap: 8px; }
+  .action-btn { padding: 7px 10px; border-radius: 8px; }
+  .meta-row { grid-template-columns: 1fr; gap: 8px; }
+}
+
+/* 481–768px — עדיין קומפקטי, אבל זוגות שדות נשארים 2 עמודות כדי לחסוך גלילה */
+@media (min-width: 481px) and (max-width: 768px) {
+  body { padding: 16px; }
+  header { padding: 16px; }
+  header h1 { font-size: 1.4em; }
+  .version { font-size: .85em; }
+
+  .calculator-container { grid-template-columns: 1fr; }
+  .inputs-column, .results-column { padding: 18px; }
+  .form-section { gap: 14px; }
+  .form-section h2 { font-size: 1.2em; }
+
+  /* נשאר 2 עמודות לזוגות כדי לקצר את האורך */
+  .input-pair-inline { grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .input-group input, .input-group select, .input-group textarea { 
+    padding: 10px; font-size: 1em; 
+  }
+  .radio-button-label { padding: 7px 14px; }
+
+  .results-section h2 { font-size: 1.2em; }
+  .result-item { padding: 10px 0; font-size: 1.05em; }
+  .result-item.side-by-side { gap: 16px; }
+
+  .meta-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+}
+
+/* ≥ 769px — אין שינוי: נשאר העיצוב הקיים של דסקטופ */
