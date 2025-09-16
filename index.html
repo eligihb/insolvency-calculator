@@ -20,6 +20,7 @@
     header{grid-column:1 / -1;background:var(--primary-color);color:#fff;padding:20px;text-align:center}
     header h1{margin:0;font-size:1.8em}
     .version{font-size:.7em;font-weight:500;opacity:.9;margin-inline-start:.5rem;white-space:nowrap}
+
     .inputs-column{padding:25px;border-left:1px solid var(--border-color)}
     .results-column{padding:25px;background:var(--result-bg)}
     .form-section{display:grid;gap:20px}
@@ -35,16 +36,16 @@
 
     /* כפתור "?" והפופאבר */
     .info-btn{
-      line-height:1; border:none; cursor:pointer; border-radius:50%;
-      width:20px; height:20px; font-size:.85em; font-weight:700;
-      display:inline-flex; align-items:center; justify-content:center;
-      background:#eef6f6; color:#006d77; box-shadow:0 0 0 1px rgba(0,0,0,.06) inset;
+      line-height:1;border:none;cursor:pointer;border-radius:50%;
+      width:20px;height:20px;font-size:.85em;font-weight:700;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:#eef6f6;color:#006d77;box-shadow:0 0 0 1px rgba(0,0,0,.06) inset;
     }
     .info-btn:hover{background:#e1f0f0}
     .info-popover{
-      position:absolute; z-index:1000; max-width:260px;
-      background:#fff; color:#123; border:1px solid #cfe7e7; border-radius:10px;
-      box-shadow:0 8px 24px rgba(0,0,0,.12); padding:10px 12px; font-size:.95em; direction:rtl;
+      position:absolute;z-index:1000;max-width:260px;
+      background:#fff;color:#123;border:1px solid #cfe7e7;border-radius:10px;
+      box-shadow:0 8px 24px rgba(0,0,0,.12);padding:10px 12px;font-size:.95em;direction:rtl;
     }
 
     .results-section{padding:0}
@@ -61,7 +62,7 @@
     .result-item.disposable-income .value{color:var(--blue-color);font-size:1.5em;font-weight:bold;display:block;margin-top:5px}
     .result-item.total .value{color:var(--danger-color);font-size:1.5em}
 
-    /* זוגות שדות – החייב/ת תמיד בשמאל */
+    /* זוגות שדות – החייב/ת תמיד בשמאל, בן/בת זוג בימין */
     .input-pair-inline{display:grid;grid-template-columns:1fr 1fr;gap:20px}
     .input-group.debtor  {grid-column:1}
     .input-group.partner {grid-column:2}
@@ -71,11 +72,11 @@
     .top-section-buttons-container{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:15px;margin-bottom:15px}
     .debtor-selection-options{display:flex;gap:10px;flex-wrap:nowrap}
     .radio-button-label{background:#f0f0f0;border:1px solid #ccc;padding:8px 16px;border-radius:20px;cursor:pointer;
-      transition:background-color .3s, border-color .3s;font-weight:normal}
+      transition:background-color .3s,border-color .3s;font-weight:normal}
     .radio-button-label.checked{background:var(--secondary-color);color:#fff;border-color:var(--secondary-color)}
     .radio-button-input{display:none}
     #jointProceedingLabel{background:#f0f0f0;border:1px solid #ccc;padding:8px 16px;border-radius:20px;cursor:pointer;
-      transition:background-color .3s, border-color .3s;font-weight:normal;display:inline-block}
+      transition:background-color .3s,border-color .3s;font-weight:normal;display:inline-block}
     #jointProceedingLabel.checked{background:var(--danger-color);color:#fff;border-color:var(--danger-color)}
     #jointProceeding{display:none}
     .debtor-income-input.empty-input{color:orange}
@@ -104,7 +105,7 @@
           <h2>פרטי התא המשפחתי</h2>
           <div class="top-section-buttons-container">
 
-            <!-- סטטוס משפחתי כחלק מהשורה -->
+            <!-- סטטוס משפחתי בשורה אחת -->
             <div class="input-group">
               <select id="status" aria-label="סטטוס משפחתי">
                 <option value="" selected disabled>סטטוס משפחתי — בחר סטטוס...</option>
@@ -120,7 +121,7 @@
                 <option value="זוג+ 7 ילדים">זוג+ 7 ילדים</option>
                 <option value="זוג+ 8 ילדים">זוג+ 8 ילדים</option>
                 <option value="זוג+ 9 ילדים">זוג+ 9 ילדים</option>
-                <option value="זוג+ 10 ילדים">זוג+ 10 ילדים</option>
+                <option value="זוג+ 10 ילדים">ζוג+ 10 ילדים</option>
               </select>
             </div>
 
@@ -147,13 +148,15 @@
           <!-- שכר -->
           <div class="input-pair-inline" id="pair-salary">
             <div class="input-group debtor" id="salaryDebtorGroup">
-              <label id="salaryDebtorLabel">הכנסה (חייב)
+              <label id="salaryDebtorLabel">
+                <span class="label-text">הכנסה (חייב)</span>
                 <button type="button" class="info-btn" aria-label="מידע על השדה" data-info="ממוצע נטו תלושי שכר">?</button>
               </label>
               <input type="number" id="salaryDebtor" placeholder="הזן הכנסה" value="">
             </div>
             <div class="input-group partner" id="salaryPartnerGroup">
-              <label id="salaryPartnerLabel">הכנסה (בת זוג)
+              <label id="salaryPartnerLabel">
+                <span class="label-text">הכנסה (בת זוג)</span>
                 <button type="button" class="info-btn" aria-label="מידע על השדה" data-info="ממוצע נטו תלושי שכר">?</button>
               </label>
               <input type="number" id="salaryPartner" placeholder="הזן הכנסה" value="">
@@ -329,6 +332,10 @@
       const alimonyButtonEl = document.getElementById('alimonyButton');
       const alimonyFieldsEl = document.getElementById('alimonyFields');
 
+      // אלמנטים של טקסט בתוויות עם אייקון
+      const salaryDebtorLabelTextEl  = document.querySelector('#salaryDebtorLabel .label-text');
+      const salaryPartnerLabelTextEl = document.querySelector('#salaryPartnerLabel .label-text');
+
       const salaryDebtorLabelEl = document.getElementById('salaryDebtorLabel');
       const salaryPartnerLabelEl = document.getElementById('salaryPartnerLabel');
       const otherIncomeDebtorLabelEl = document.getElementById('otherIncomeDebtorLabel');
@@ -389,17 +396,18 @@
         else if (isMaleDebtor) { debtorText = 'חייב'; partnerText = 'בת זוג'; }
         else { debtorText = 'חייבת'; partnerText = 'בן זוג'; }
 
+        // *** מעדכנים רק את הטקסט בתוך ה-span כדי לא למחוק את כפתור ה-"?" ***
+        if (salaryDebtorLabelTextEl)  salaryDebtorLabelTextEl.textContent  = isSingle ? 'הכנסה (חייב/ת)' : (isMaleDebtor ? 'הכנסה (חייב)' : 'הכנסה (חייבת)');
+        if (salaryPartnerLabelTextEl) salaryPartnerLabelTextEl.textContent = isSingle ? 'הכנסה (בן/בת זוג)' : (isMaleDebtor ? 'הכנסה (בת זוג)' : 'הכנסה (בן זוג)');
+
+        // שאר התוויות (ללא אייקון) אפשר לעדכן כרגיל
         if (isSingle) {
-          salaryDebtorLabelEl.textContent = 'הכנסה (חייב/ת)';
           otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב/ת)';
+          otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בן/בת זוג)';
         } else if (isMaleDebtor) {
-          salaryDebtorLabelEl.textContent = 'הכנסה (חייב)';
-          salaryPartnerLabelEl.textContent = 'הכנסה (בת זוג)';
           otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייב)';
           otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בת זוג)';
         } else {
-          salaryDebtorLabelEl.textContent = 'הכנסה (חייבת)';
-          salaryPartnerLabelEl.textContent = 'הכנסה (בן זוג)';
           otherIncomeDebtorLabelEl.textContent = 'הכנסות אחרות (חייבת)';
           otherIncomePartnerLabelEl.textContent = 'הכנסות אחרות (בן זוג)';
         }
@@ -408,8 +416,8 @@
         partnerIncomeRatioLabelEl.textContent = `אחוז הכנסה (${partnerText}):`;
         debtorPaymentLabelEl.textContent      = `תשלום מוצע (${debtorText}):`;
         partnerPaymentLabelEl.textContent     = `תשלום מוצע (${partnerText}):`;
-        if (document.getElementById('debtorAllowanceLabel'))  document.getElementById('debtorAllowanceLabel').textContent  = `קצבה (${debtorText})`;
-        if (document.getElementById('partnerAllowanceLabel')) document.getElementById('partnerAllowanceLabel').textContent = `קצבה (${partnerText})`;
+        if (debtorAllowanceLabelEl)  debtorAllowanceLabelEl.textContent  = `קצבה (${debtorText})`;
+        if (partnerAllowanceLabelEl) partnerAllowanceLabelEl.textContent = `קצבה (${partnerText})`;
 
         if (isJoint) {
           proposedPaymentsDisplayEl.style.display = 'grid';
@@ -461,8 +469,8 @@
 
         const B12_debtorPayment   = B10_debtorRatio  > 0 ? Math.floor(((B11_disposableIncome * B10_debtorRatio ) / 2)/10)*10 : 0;
         const C12_partnerPayment  = C10_partnerRatio > 0 ? Math.floor(((B11_disposableIncome * C10_partnerRatio) / 2)/10)*10 : 0;
-        document.getElementById('debtorPaymentResult').textContent  = formatCurrency(Math.max(0, B12_debtorPayment));
-        document.getElementById('partnerPaymentResult').textContent = formatCurrency(Math.max(0, C12_partnerPayment));
+        debtorPaymentResultEl.textContent  = formatCurrency(Math.max(0, B12_debtorPayment));
+        partnerPaymentResultEl.textContent = formatCurrency(Math.max(0, C12_partnerPayment));
 
         const isSingle = statusEl.value.includes('יחיד') || statusEl.value.includes('רווק');
         const isJointProceeding = jointProceedingEl.checked;
@@ -478,62 +486,39 @@
         } else {
           B13_finalPayment = Math.max(0, B12_debtorPayment);
         }
-        document.getElementById('finalPaymentResult').textContent = formatCurrency(B13_finalPayment);
+        finalPaymentResultEl.textContent = formatCurrency(B13_finalPayment);
       };
 
-      // ---- פופאבר הסבר לשדות ("?") ----
-      let currentPopover = null;
-      let currentBtn = null;
-
+      // פופאבר "?"
+      let currentPopover = null, currentBtn = null;
       function closePopover(){
-        if(currentPopover){
-          currentPopover.remove();
-          currentPopover = null;
-          if (currentBtn) currentBtn.setAttribute('aria-expanded','false');
-          currentBtn = null;
-        }
+        if(currentPopover){ currentPopover.remove(); currentPopover=null; if(currentBtn) currentBtn.setAttribute('aria-expanded','false'); currentBtn=null; }
       }
-
       function openPopover(btn){
         const text = btn.getAttribute('data-info') || '';
         if(!text) return;
-
-        // אם כבר פתוח על אותו הכפתור – סגור
         if(currentBtn === btn){ closePopover(); return; }
-
         closePopover();
-
         const pop = document.createElement('div');
-        pop.className = 'info-popover';
-        pop.textContent = text;
+        pop.className='info-popover';
+        pop.textContent=text;
         document.body.appendChild(pop);
-
         const rect = btn.getBoundingClientRect();
-        // מיקום מתחת לכפתור, מיושר לפי ימין (מתאים ל-RTL)
-        const top  = rect.bottom + window.scrollY + 8;
-        const right = (window.innerWidth - rect.right) + 8; // 8px מרווח מהכפתור
-        pop.style.top = `${top}px`;
-        pop.style.right = `${right}px`;
-
-        currentPopover = pop;
-        currentBtn = btn;
-        btn.setAttribute('aria-expanded','true');
+        const top = rect.bottom + window.scrollY + 8;
+        const right = (window.innerWidth - rect.right) + 8;
+        pop.style.top = `${top}px`; pop.style.right = `${right}px`;
+        currentPopover = pop; currentBtn = btn; btn.setAttribute('aria-expanded','true');
       }
-
-      // האזנה לכל כפתורי ה-"?"
-      document.addEventListener('click', (e)=>{
+      document.addEventListener('click',(e)=>{
         const btn = e.target.closest('.info-btn');
         if(btn){ openPopover(btn); return; }
-        // קליק מחוץ לפופאבר – סגור
         if(currentPopover && !e.target.closest('.info-popover')) closePopover();
       });
       window.addEventListener('scroll', closePopover, {passive:true});
       window.addEventListener('resize', closePopover);
 
-      // ---- מאזינים קיימים ----
-      inputs.forEach(input => {
-        input.addEventListener('input', () => { updateLabelsAndUI(); calculate(); });
-      });
+      // מאזינים קיימים
+      inputs.forEach(input => { input.addEventListener('input', () => { updateLabelsAndUI(); calculate(); }); });
       salaryDebtorEl.addEventListener('input', (e) => {
         const input = e.target;
         if (input.value === '') input.classList.add('empty-input'); else input.classList.remove('empty-input');
