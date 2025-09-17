@@ -519,18 +519,59 @@ function calc(){
 ].forEach(id=>E(id).addEventListener('input',calc));
 
 /* פעולות */
-function doPrint(){ window.print(); }
-function doShot(){
-  const root=E('captureRoot');
+function <script>
+function doPrint(){
+  const root = document.getElementById('captureRoot');
+
+  // כיווץ קל לפני צילום – שומר פרופורציות כמו במסך
   root.classList.add('shot-scale');
-  html2canvas(root,{useCORS:true,allowTaint:true,scale:2,backgroundColor:'#ffffff'})
-    .then(cv=>{
-      root.classList.remove('shot-scale');
-      const data=cv.toDataURL('image/png');
-      const w=window.open('','_blank');
-      w.document.write(`<img src="${data}" style="max-width:100%;display:block;margin:0 auto">`);
-      w.document.title='צילום מסך המחשבון';
-    })
+
+  html2canvas(root, {
+    useCORS: true,
+    allowTaint: true,
+    scale: 2,
+    backgroundColor: '#ffffff'
+  }).then(cv => {
+    root.classList.remove('shot-scale');
+
+    const dataURL = cv.toDataURL('image/png');
+
+    // התאמה לעמוד A4 פורטרט, בלי עיוות יחס גובה/רוחב
+    const pageW = 200;  // מ״מ נטו אחרי שוליים (נתון שמרני)
+    const pageH = 287;  // מ״מ נטו אחרי שוליים
+    const aspect = cv.width / cv.height;
+
+    let imgWmm = pageW;
+    let imgHmm = imgWmm / aspect;
+    if (imgHmm > pageH) {         // אם גובה חורג – מתאימים לגובה
+      imgHmm = pageH;
+      imgWmm = imgHmm * aspect;
+    }
+
+    const html = `
+      <!doctype html><html dir="rtl"><head><meta charset="utf-8">
+      <style>
+        @page { size: A4 portrait; margin:5mm; }
+        html,body { margin:0; padding:0; background:#fff; }
+        img { display:block; margin:0 auto; width:${imgWmm}mm; height:${imgHmm}mm; }
+      </style>
+      </head>
+      <body>
+        <img src="${dataURL}" alt="מחשבון צו תשלומים">
+      </body></html>`;
+
+    const w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    w.print();
+  }).catch(() => {
+    root.classList.remove('shot-scale');
+    alert('אירעה שגיאה בזמן יצירת ה-PDF/הדפסה');
+  });
+}
+</script>
+
     .catch(()=>{ root.classList.remove('shot-scale'); alert('שגיאה ביצירת צילום המסך'); });
 }
 function getTxt(id){return (E(id)?.textContent||'').trim();}
