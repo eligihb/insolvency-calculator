@@ -19,13 +19,29 @@
 
 *{box-sizing:border-box}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);margin:0;padding:10px;display:flex;justify-content:center;min-height:100vh}
-.calculator{width:100%;max-width:1100px;background:var(--panel);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
-header{grid-column:1/-1;background:var(--primary);color:#fff;padding:10px 12px;text-align:center;position:relative}
+
+/* ===== מסגרת ו־Grid עם אזורים ===== */
+.calculator{
+  width:100%;
+  max-width:1100px;
+  background:var(--panel);
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  overflow:hidden;
+
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-areas:
+    "header header"
+    "inputs results";       /* הזנה משמאל, תוצאות מימין */
+}
+
+header{grid-area:header;background:var(--primary);color:#fff;padding:10px 12px;text-align:center;position:relative}
 header h1{margin:0;font-size:1.55rem;line-height:1}
 .year-badge{position:absolute;inset-inline-start:12px;inset-block-start:8px;font-size:.82rem;color:#e6f4f1;background:rgba(255,255,255,.12);padding:4px 8px;border:1px solid rgba(255,255,255,.25);border-radius:10px}
 
-.results-col{background:#eaf6f6;padding:12px;min-width:0}
-.inputs-col{padding:12px;border-inline-start:1px solid var(--border);min-width:0}
+.results-col{grid-area:results;background:#eaf6f6;padding:12px;min-width:0}
+.inputs-col{grid-area:inputs;padding:12px;border-inline-end:1px solid var(--border);min-width:0}
 
 .section-title{margin:2px 0 10px;color:var(--primary);font-size:1.02rem;font-weight:700;text-align:center}
 
@@ -63,9 +79,11 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
 .readonly{background:#f2f6ff;border-color:#cfe0ff;color:#1f3a8a;font-weight:600}
 
 .toggles-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.chip{padding:7px 10px;border:1px solid #cfd8e3;border-radius:999px;background:#fff;cursor:pointer}
+.chip{padding:7px 10px;border:1px solid #cfd8e3;border-radius:999px;background:#fff;cursor:pointer;color:var(--text)}
 .chip.active{background:#0d9488;color:#fff;border-color:#0d9488}
-.chip.alert{background:#ffe8e8;border-color:#ffc4c4;color:#b42318}
+
+/* הכפתור "שני בני הזוג בהליך?" – ניטרלי כברירת מחדל, אדום רק כשהוא פעיל */
+.chip.alert{background:#fff;border-color:#cfd8e3;color:var(--text)}
 .chip.alert.active{background:#b42318;color:#fff;border-color:#b42318}
 
 .info-btn{width:18px;height:18px;border-radius:50%;background:#eef6f6;color:#0d6b6b;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;border:1px solid #d4e7e7;cursor:pointer}
@@ -80,13 +98,18 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
 /* סרגל דביק במובייל */
 .sticky-mobile{display:none}
 
-/* ===== מובייל ===== */
+/* ===== מובייל: הזנה מעל, תוצאות מתחת ===== */
 @media (max-width:768px){
   header h1{font-size:1.28rem}
   .year-badge{display:none}
-  .calculator{grid-template-columns:1fr}
-  .results-col{order:2;padding-bottom:80px}
-  .inputs-col{order:1}
+  .calculator{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "header"
+      "inputs"
+      "results";
+  }
+  .results-col{padding-bottom:80px}
   .row-2,.input-pair{grid-template-columns:repeat(2,minmax(0,1fr))}
   .row-3{grid-template-columns:repeat(2,minmax(0,1fr))}
   .sticky-mobile{
@@ -97,23 +120,18 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
   .controls-top{display:none !important}
 }
 
-/* ===== DESKTOP — 60% רוחב + תוצאות מימין/הזנה משמאל ===== */
+/* ===== DESKTOP — כיווץ ל־60% רוחב ומרכוז ===== */
 @media (min-width:769px){
   .calculator{
     width: min(60vw, 1100px);
     margin-inline:auto;
-  }
-  .results-col{ grid-column:2; }                /* תוצאות מימין */
-  .inputs-col{  grid-column:1;                  /* הזנה משמאל */
-    border-inline-end:1px solid var(--border);
-    border-inline-start:none;
   }
 }
 
 /* כיווץ קל לצילום */
 .shot-scale{transform:scale(.96);transform-origin:top center}
 
-/* ===== הדפסה – להכניס הכל לדף אחד ===== */
+/* ===== הדפסה – לדף אחד ===== */
 @media print{
   @page{ size: A4 portrait; margin:8mm; }
   body{background:#fff;padding:0}
@@ -121,7 +139,7 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
   .calculator{
     box-shadow:none;
     width:100% !important;
-    transform:scale(.80);           /* אם עדיין יוצא 2 דפים – נסה .78 */
+    transform:scale(.80);     /* צריך עוד? נסה .78 או .76 */
     transform-origin:top center;
   }
   .result-grid{break-inside:avoid}
