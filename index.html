@@ -102,10 +102,33 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
 .shot-scale{transform:scale(.96);transform-origin:top center}
 
 /* ===== הדפסה – כיווץ מעט כדי להכניס הכל גם עם הערה ===== */
+/* DESKTOP — 60% רוחב + היפוך עמודות (תוצאות מימין, הזנה משמאל) */
+@media (min-width: 769px){
+  .calculator{ width:60vw; }               /* מקטין את המחשב ל־60% רוחב מסך */
+  .results-col{ grid-column:2; }           /* תוצאות לעמודה הימנית */
+  .inputs-col{
+    grid-column:1;                         /* שדות הזנה לשמאל */
+    border-inline-end:1px solid var(--border);
+    border-inline-start:none;
+  }
+}
+
+/* MOBILE — משחרר שיוך עמודות כדי לשמור על ההתנהגות הנוכחית */
+@media (max-width:768px){
+  .results-col, .inputs-col{ grid-column:auto; }
+}
+
+/* PRINT — מכניס הכל לדף אחד */
 @media print{
-  body{background:#fff;padding:0}
-  .controls-top,.sticky-mobile{display:none!important}
-  .calculator{box-shadow:none;transform:scale(.94);transform-origin:top center}
+  @page{ size:A4 portrait; margin:8mm; }
+  body{ background:#fff; padding:0; }
+  .controls-top, .sticky-mobile{ display:none !important; }
+  .calculator{
+    box-shadow:none;
+    width:100% !important;
+    transform:scale(.82);                  /* אם עדיין יוצא שני דפים – נסה .80 או .78 */
+    transform-origin:top center;
+  }
 }
 </style>
 </head>
