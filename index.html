@@ -15,6 +15,7 @@
   --primary:#005f73; --secondary:#0a9396; --bg:#f4f7f9; --panel:#fff;
   --text:#1f2937; --label:#4b5563; --border:#dbe3ea; --accent:#ee9b00;
   --danger:#ae2012; --blue:#0a58ff; --muted:#6b7280;
+  --maxw:860px; /* מרכז וסוגר מובייל/דסקטופ */
 }
 
 /* בסיס */
@@ -22,7 +23,7 @@
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);margin:0;padding:12px;display:flex;justify-content:center;min-height:100vh}
 
 /* מעטפת כללית */
-.calculator{width:100%;max-width:860px}
+.calculator{width:100%;max-width:var(--maxw)}
 header{
   background:var(--primary);color:#fff;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.08);
   padding:10px 14px;display:flex;align-items:center;justify-content:center;position:relative
@@ -80,14 +81,17 @@ header h1{margin:0;font-size:1.28rem;line-height:1}
 .input-group textarea{min-height:70px;resize:vertical}
 .readonly{background:#f2f6ff;border-color:#cfe0ff;color:#1f3a8a;font-weight:600}
 
-/* שורת סטטוס מצומצמת */
+/* שורת סטטוס מצומצמת בדסקטופ */
 .status-row{max-width:60%;margin-inline:auto}
 
 /* מתגים */
 .toggles-line{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:nowrap}
-.chip{padding:5px 10px;border:1px solid #cfd8e3;border-radius:999px;background:#fff;cursor:pointer;font-size:.88rem}
+.chip{
+  padding:5px 10px;border:1px solid #cfd8e3;border-radius:999px !important;
+  background:#fff;cursor:pointer;font-size:.88rem;line-height:1;color:#0b2239; /* מונע שחור/ברירת דפדפן */
+}
 .chip.active{background:#0d9488;color:#fff;border-color:#0d9488}
-.chip.alert{background:#fff;border-color:#cfd8e3;color:#b42318}   /* כברירת מחדל ללא אדום */
+.chip.alert{background:#fff;border-color:#cfd8e3;color:#b42318}
 .chip.alert.active{background:#b42318;color:#fff;border-color:#b42318}
 
 .info-btn{width:18px;height:18px;border-radius:50%;background:#eef6f6;color:#0d6b6b;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;border:1px solid #d4e7e7;cursor:pointer}
@@ -108,17 +112,32 @@ header h1{margin:0;font-size:1.28rem;line-height:1}
   .calculator{max-width:100%}
   header h1{font-size:1.12rem}
   .year-badge{display:none}
+
   .board{grid-template-columns:1fr;gap:10px}
-  .results-col{order:2;padding-bottom:80px}
   .inputs-col{order:1}
+  .results-col{order:2;padding-bottom:84px}
+
+  /* בלוק הסטטוס – ימין/ממורכז, רוחב מלא של עמודת ההזנה */
+  .status-row{
+    max-width:100%;
+    margin:0 auto 6px auto;
+    justify-items:center;
+  }
+  .status-row .input-group{width:min(420px,100%)}
+  .status-row .toggles-line{justify-content:center;flex-wrap:wrap}
+
   .row-2,.input-pair{grid-template-columns:repeat(2,minmax(0,1fr))}
   .row-3{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .toggles-line{flex-wrap:wrap}
+
+  /* מרכז את הסרגל הדביק לפי רוחב המחשבון */
   .sticky-mobile{
-    position:fixed;left:0;right:0;bottom:0;background:#ffffffcc;backdrop-filter:saturate(1.2) blur(6px);
+    position:fixed;left:50%;transform:translateX(-50%);
+    width:min(100%, var(--maxw)); /* לא בורח לצדדים */
+    bottom:0;background:#ffffffcc;backdrop-filter:saturate(1.2) blur(6px);
     border-top:1px solid #dfe7ee;padding:6px 8px;display:flex;gap:6px;justify-content:space-between;z-index:10
   }
   .btn{flex:1;justify-content:center;padding:9px 6px}
+  /* אין כפילות כפתורים במובייל */
   .controls-top{display:none!important}
 }
 
@@ -137,7 +156,7 @@ header h1{margin:0;font-size:1.28rem;line-height:1}
   <div class="board">
     <!-- הזנה (משמאל) -->
     <div class="inputs-col">
-      <div class="row status-row" style="margin-bottom:6px">
+      <div class="row status-row">
         <div class="input-group">
           <select id="status" aria-label="סטטוס משפחתי">
             <option value="" disabled selected>בחר סטטוס משפחתי…</option>
@@ -340,7 +359,6 @@ const els = {
   reportDate:E('reportDate'), noteToggle:E('noteToggle'), noteRow:E('noteRow'),
 };
 
-/* טבלאות בסיס + קצבת ילדים */
 const lookup = {
   "יחיד/נשוי חי בנפרד":{kids:0, living:4556},
   "רווק/גרוש/אלמן + ילד":{kids:1, living:6056},
@@ -390,8 +408,6 @@ els.joint.onclick=()=>{
   els.joint.setAttribute('aria-pressed', String(joint));
   els.famCard.style.display= joint ? 'block' : 'none';
   els.partnerCard.style.display = joint ? 'block' : 'none';
-
-  // כשאין שני בני הזוג בהליך – התשלום של החייב באמצע (כרטיס בודד)
   els.debtorPayCard.classList.toggle('solo-pay', !joint);
   calc();
 };
@@ -487,7 +503,7 @@ function doShot(){
     .catch(()=>{ root.classList.remove('shot-scale'); alert('שגיאה ביצירת צילום המסך'); });
 }
 
-/* הדפסה/‏PDF – תמונה אחת בדף A4, מדפיס רק אחרי שה-IMG נטען */
+/* הדפסה/‏PDF כאימג׳ בדף A4 */
 function doPrint(){
   const root=document.getElementById('calcRoot');
   root.classList.add('shot-scale');
@@ -495,7 +511,7 @@ function doPrint(){
     root.classList.remove('shot-scale');
     const dataURL=cv.toDataURL('image/png');
 
-    const pageW=200, pageH=287; // מ״מ
+    const pageW=200, pageH=287;
     const aspect=cv.width/cv.height;
     let imgWmm=pageW, imgHmm=imgWmm/aspect;
     if(imgHmm>pageH){ imgHmm=pageH; imgWmm=imgHmm*aspect; }
@@ -546,7 +562,7 @@ E('btnReset').onclick=doReset; E('btnReset_m')?.addEventListener('click',doReset
 /* init */
 document.getElementById('yearBadge').textContent = `מעודכן ל־${new Date().getFullYear()}`;
 setGender('חייב');
-els.debtorPayCard.classList.add('solo-pay'); // כברירת מחדל באמצע
+els.debtorPayCard.classList.add('solo-pay');
 calc();
 </script>
 </body>
