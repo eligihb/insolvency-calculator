@@ -153,17 +153,55 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
 
 /* ===== הדפסה – לעמוד אחד ===== */
 @media print{
-  @page{ size: A4 portrait; margin:8mm; }
-  body{background:#fff;padding:0}
+  /* A4 לרוחב */
+  @page{ size: A4 landscape; margin:8mm; }
+  html,body{ width:297mm; height:210mm; }
+  body{ background:#fff; padding:0; }
+
+  /* לא מדפיסים סרגלים */
   .controls-top,.sticky-mobile{display:none!important}
+
+  /* שתי עמודות קבועות בהדפסה */
   .calculator{
     box-shadow:none;
     width:100% !important;
-    transform:scale(.78);        /* כיווץ כדי להיכנס לעמוד אחד */
-    transform-origin:top center;
+    max-width:none !important;
+    transform:none !important;
+
+    display:grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-areas:
+      "header header"
+      "inputs results" !important;
+    column-gap:10mm;
+    row-gap:6mm;
   }
-  .result-grid{break-inside:avoid}
+
+  /* כותרת קטנה יותר */
+  header{padding:6mm 0}
+  header h1{font-size:16pt}
+  .year-badge{font-size:7pt;padding:1px 4px}
+
+  /* מונע שבירות מגושמות */
+  .inputs-col, .results-col{padding:6mm !important; page-break-inside:avoid; break-inside:avoid}
+
+  /* כרטיסי תוצאות קומפקטיים ואחידים */
+  .result-grid{grid-template-columns:repeat(2,1fr) !important; gap:4mm !important}
+  .result-card{padding:4mm !important}
+
+  /* ביטול פריסות לרוחב בהדפסה כדי שלא "ימרחו" */
+  .result-grid .result-wide,
+  .span2-center,
+  .center-wide{
+    grid-column:auto !important;
+    width:auto !important;
+    justify-self:stretch !important;
+  }
+
+  /* אל תשבור קבוצות באמצע עמוד */
+  .row, .input-pair, .result-grid{page-break-inside:avoid; break-inside:avoid}
 }
+
 </style>
 </head>
 <body>
