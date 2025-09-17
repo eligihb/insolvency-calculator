@@ -52,7 +52,7 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
 
 .input-group label{
   font-weight:600;color:var(--label);display:flex;gap:6px;align-items:center;justify-content:center;
-  margin-bottom:4px;font-size:.95rem;text-align:center;min-height:46px; /* שתי שורות */
+  margin-bottom:4px;font-size:.95rem;text-align:center;min-height:46px; /* שתי שורות לכל היותר */
   line-height:1.2
 }
 .input-group input,.input-group select,.input-group textarea{
@@ -67,7 +67,6 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
 .chip.active{background:#0d9488;color:#fff;border-color:#0d9488}
 .chip.alert{background:#ffe8e8;border-color:#ffc4c4;color:#b42318}
 .chip.alert.active{background:#b42318;color:#fff;border-color:#b42318}
-.forceRed{background:#b42318!important;color:#fff!important;border-color:#b42318!important} /* תיקון ייעודי לצילום */
 
 .info-btn{width:18px;height:18px;border-radius:50%;background:#eef6f6;color:#0d6b6b;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;border:1px solid #d4e7e7;cursor:pointer}
 .pop{position:absolute;z-index:1000;max-width:320px;background:#fff7d6;color:#3b2f00;border:1px solid #ffe6a8;border-radius:12px;box-shadow:0 12px 28px rgba(0,0,0,.15);padding:10px 12px;line-height:1.45}
@@ -95,18 +94,18 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
     border-top:1px solid #dfe7ee;padding:6px 8px;display:flex;gap:6px;justify-content:space-between;z-index:10
   }
   .btn{flex:1;justify-content:center;padding:9px 6px}
-  .controls-top{display:none !important} /* אין כפילות במובייל */
+  /* הסתרת הכפתורים העליונים במובייל כדי שלא יהיו כפולים */
+  .controls-top{display:none !important}
 }
 
-/* כיווץ מתון לצילום – יחס נשמר */
-.shot-scale{transform:scale(.86);transform-origin:top center}
+/* כיווץ מתון לצילום (נוסיף/נוריד מחלקה בזמן צילום) */
+.shot-scale{transform:scale(.96);transform-origin:top center}
 
-/* ===== הדפסה – עמוד אחד ===== */
-@page{size:A4 portrait; margin:6mm}
+/* ===== הדפסה – כיווץ מעט כדי להכניס הכל גם עם הערה ===== */
 @media print{
   body{background:#fff;padding:0}
   .controls-top,.sticky-mobile{display:none!important}
-  .calculator{box-shadow:none;transform:scale(.82);transform-origin:top center}
+  .calculator{box-shadow:none;transform:scale(.94);transform-origin:top center}
 }
 </style>
 </head>
@@ -118,7 +117,7 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
     <h1>מחשבון צו תשלומים</h1>
   </header>
 
-  <!-- תוצאות -->
+  <!-- תוצאות (שמאל) -->
   <div class="results-col">
     <div class="controls-top">
       <button class="btn" id="btnPdf">🖨️ PDF</button>
@@ -145,6 +144,7 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
       <div class="result-card"><div class="k" id="partnerIncomeRatioLabel">אחוז הכנסה (בן/בת זוג)</div><div class="v" id="partnerIncomeRatio">0.0%</div></div>
 
       <div class="result-card"><div class="k" id="debtorPaymentLabel">תשלום מוצע (חייב/ת)</div><div class="v" id="debtorPaymentResult">₪ 0</div></div>
+      <!-- יופיע רק כשהסימון של "שני בני הזוג בהליך" פעיל -->
       <div class="result-card" id="partnerPaymentCard" style="display:none"><div class="k" id="partnerPaymentLabel">תשלום מוצע (בן/בת זוג)</div><div class="v" id="partnerPaymentResult">₪ 0</div></div>
 
       <div class="result-card result-wide result-danger" id="familyPaymentCard" style="display:none">
@@ -166,7 +166,7 @@ header h1{margin:0;font-size:1.55rem;line-height:1}
     </div>
   </div>
 
-  <!-- הזנה -->
+  <!-- הזנה (ימין) -->
   <div class="inputs-col">
     <div class="row" style="margin-bottom:6px">
       <div class="input-group">
@@ -371,7 +371,7 @@ els.joint.onclick=()=>{
   els.joint.classList.toggle('active', joint);
   els.joint.setAttribute('aria-pressed', String(joint));
   els.famCard.style.display= joint ? 'block' : 'none';
-  els.partnerCard.style.display = joint ? 'block' : 'none';
+  els.partnerCard.style.display = joint ? 'block' : 'none';  // תשלום בן/בת זוג רק כשיש "שני בני הזוג בהליך"
   calc();
 };
 
@@ -455,42 +455,16 @@ function calc(){
 function doPrint(){ window.print(); }
 function doShot(){
   const root=E('captureRoot');
-
-  // לוודא שהכפתור האדום יוצג מלא בצילום
-  let forced=false;
-  if(els.joint.classList.contains('active') && !els.joint.classList.contains('forceRed')){
-    els.joint.classList.add('forceRed'); forced=true;
-  }
-
-  root.classList.add('shot-scale');
+  root.classList.add('shot-scale');      // כיווץ קל כדי להכניס גם הערה
   html2canvas(root,{useCORS:true,allowTaint:true,scale:2,backgroundColor:'#ffffff'})
     .then(cv=>{
       root.classList.remove('shot-scale');
-      if(forced) els.joint.classList.remove('forceRed');
-
       const data=cv.toDataURL('image/png');
-      const w=window.open('','_blank');
-      w.document.write(`
-        <html><head><meta charset="UTF-8">
-        <title>צילום מסך המחשבון</title>
-        <style>
-          html,body{margin:0;padding:0}
-          @page{size:A4 portrait; margin:6mm}
-          img{display:block;margin:0 auto;max-width:100%;height:auto}
-          @media print{img{width:auto; height:95vh}}
-          .wrap{display:flex;align-items:center;justify-content:center;min-height:100vh}
-        </style></head>
-        <body>
-          <div class="wrap"><img src="${data}" alt="screenshot"></div>
-        </body></html>
-      `);
-      w.document.close();
+      const w=window.open('','_blank'); 
+      w.document.write(`<img src="${data}" style="max-width:100%;display:block;margin:0 auto">`);
+      w.document.title='צילום מסך המחשבון';
     })
-    .catch(()=>{
-      root.classList.remove('shot-scale');
-      if(forced) els.joint.classList.remove('forceRed');
-      alert('שגיאה ביצירת צילום המסך');
-    });
+    .catch(()=>{ root.classList.remove('shot-scale'); alert('שגיאה ביצירת צילום המסך'); });
 }
 function getTxt(id){return (E(id)?.textContent||'').trim();}
 function doMail(){
