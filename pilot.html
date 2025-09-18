@@ -12,7 +12,7 @@
     :root{
       --ink:#0B2533; --ink2:#5b6b76; --bg:#f7f9fc; --paper:#ffffff;
       --chip:#eef3f8; --chip-active:#0ea5e9; --chip-active-ink:#ffffff;
-      --line:#e7edf5;
+      --line:#e7edf5; --accent:#0ea5e9;
       --radius:14px; --shadow:0 8px 22px rgba(15,23,42,.06);
     }
     *{box-sizing:border-box}
@@ -20,37 +20,31 @@
     header{background:#0B1D2A;color:#fff;padding:14px;text-align:center;font-size:22px;font-weight:800;border-radius:0 0 14px 14px}
 
 ```
-.container{display:flex;gap:16px;max-width:1200px;margin:18px auto;padding:0 16px}
+.container{display:flex;gap:16px;max-width:1200px;margin:18px auto;padding:0 16px;align-items:flex-start}
 
-/* Right = form */
-.right{flex:0 0 50%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
-.section-title{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 10px}
+/* Right = form column (40% width, half-screen height) */
+.right{flex:0 0 40%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
+.section-title{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 8px}
 
-.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:end;margin-bottom:12px}
+/* Compact two rows */
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:end;margin:10px 0}
 label{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;display:block}
-input[type="date"],input[type="number"],.chips,.toggle{width:100%;}
+input[type="date"],input[type="number"],.chips{width:100%}
 input[type="date"],input[type="number"]{border:1px solid var(--line);border-radius:12px;background:#f3f7fe;padding:10px;font-size:14px}
-
-/* 3-digit compact */
 .num3{max-width:90px;text-align:left;direction:ltr}
-/* 6-digit compact */
 .num6{max-width:140px;text-align:left;direction:ltr}
 
-/* Chips (36/48/60) */
-.chips{display:flex;gap:8px}
+.chips{display:flex;gap:8px;align-items:center}
 .chip{padding:8px 12px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:default;font-weight:800;font-size:13px;color:var(--ink)}
 .chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active)}
 
-/* Tiny helper text */
-.muted{font-size:12px;color:var(--ink2)}
-
 /* Left = KPIs */
-.left{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;justify-content:center}
+.left{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .kpi{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
 .kpi .k{font-size:12px;color:var(--ink2)}
 .bar{height:10px;background:#e9eef6;border-radius:999px;overflow:hidden;margin-top:8px}
-.fill{height:10px;background:#0ea5e9;width:40%}
+.fill{height:10px;background:var(--accent);width:40%}
 
 footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;color:#6b7c88}
 ```
@@ -61,45 +55,44 @@ footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;co
   <header>מחשבון צו שיקום</header>
 
   <div class="container">
-    <!-- Right: compact form UI -->
+    <!-- Right: compact form UI (40% width) -->
     <section class="right">
       <h3 class="section-title">פרטי הצו</h3>
 
 ```
-  <!-- Row 1: תאריך מתן צו + משך (כפתורים) + מספר מותאם -->
+  <!-- Row 1: תאריך מתן צו + 36/48/60 + הזן חודשים -->
   <div class="row">
-    <div style="grid-column: span 4;">
+    <div style="grid-column: span 5;">
       <label>תאריך מתן צו</label>
       <input type="date" placeholder="dd/mm/yyyy" />
     </div>
-    <div style="grid-column: span 5;">
+    <div style="grid-column: span 4;">
       <label>משך תוכנית</label>
       <div class="chips">
-        <div class="chip active">36</div>
-        <div class="chip">48</div>
         <div class="chip">60</div>
+        <div class="chip">48</div>
+        <div class="chip active">36</div>
       </div>
     </div>
     <div style="grid-column: span 3;">
-      <label>אחר (חוד׳)</label>
-      <input type="number" class="num3" placeholder="לדוגמה 42" />
+      <label>הזן חודשים</label>
+      <input type="number" class="num3" placeholder="לדוגמה 45" />
     </div>
   </div>
 
-  <!-- Row 2: סכום חודשי + טקסט "החל מחודש הבא" + מתג מיידי -->
+  <!-- Row 2: סכום חודשי + טקסט החל מחודש הבא + מתג מיידי בלבד -->
   <div class="row" style="align-items:center">
     <div style="grid-column: span 4;">
       <label>סכום חודשי</label>
       <input type="number" class="num6" placeholder="לדוגמה 1800" />
     </div>
-    <div style="grid-column: span 5;">
-      <div class="muted" style="margin-top:24px">החל מחודש הבא</div>
+    <div style="grid-column: span 5;display:flex;align-items:center;gap:8px">
+      <div class="chip" style="cursor:default;background:#f1f5f9;border-color:#f1f5f9;">החל מחודש הבא</div>
     </div>
     <div style="grid-column: span 3;">
       <label>תחולת חיוב</label>
       <div class="chips">
-        <div class="chip active">חודש הבא</div>
-        <div class="chip">מיידי</div>
+        <div class="chip active">מיידי</div>
       </div>
     </div>
   </div>
