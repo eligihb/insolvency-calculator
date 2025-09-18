@@ -23,20 +23,20 @@
 .container{display:flex;gap:16px;max-width:1200px;margin:18px auto;padding:0 16px;align-items:flex-start}
 
 /* Right column (35% width, half-screen height) */
-.right{width:35%;flex:0 0 35%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
-.section-title{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 8px;text-align:center}
+.right{width:35%;flex:0 0 35%;background:linear-gradient(180deg,#ffffff 0%,#f7fbff 100%);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.08);padding:18px;height:50vh;overflow:hidden}
+.section-title{font-size:15px;font-weight:900;color:var(--ink);margin:0 0 10px;text-align:right;letter-spacing:.3px}
 
 /* Compact two rows */
-.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:center;justify-items:center;margin:12px 0}
-label{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;display:block;text-align:center}
-input[type="date"],input[type="number"],.chips{width:100%}
-input[type="date"],input[type="number"]{border:1px solid var(--line);border-radius:12px;background:#f3f7fe;padding:10px;font-size:14px}
-.num3{max-width:110px;text-align:left;direction:ltr}
-.num6{max-width:160px;text-align:left;direction:ltr}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;align-items:center;justify-items:end;margin:14px 0}
+label{font-size:12px;font-weight:800;color:var(--ink2);margin-bottom:6px;display:block;text-align:right}
+input[type="date"],input[type="number"],.chips{display:flex;gap:10px;align-items:center;justify-content:flex-start}
+input[type="date"],input[type="number"]{border:1px solid var(--line);border-radius:12px;background:#f3f7fe;padding:10px 12px;font-size:14px;box-shadow:inset 0 1px 0 #fff}
+.num3{max-width:110px;text-align:left;direction:ltr;margin-inline:auto}
+.num6{max-width:120px;text-align:left;direction:ltr}
 
 .chips{display:flex;gap:8px;align-items:center}
-.chip{padding:8px 12px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:default;font-weight:800;font-size:13px;color:var(--ink)}
-.chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active)}
+.chip{padding:8px 14px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:default;font-weight:800;font-size:13px;color:var(--ink);box-shadow:0 2px 6px rgba(2,6,23,.06)}
+.chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active);box-shadow:0 4px 10px rgba(14,165,233,.25)}
 
 /* Left column */
 .left{width:65%;flex:0 0 65%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
@@ -80,19 +80,17 @@ footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;co
     </div>
   </div>
 
-  <!-- Row 2: סכום חודשי + טקסט החל מחודש הבא + מתג מיידי -->
+  <!-- Row 2: סכום חודשי + שני כפתורי בחירה (חודש הבא / מיידי) -->
   <div class="row">
     <div style="grid-column: span 4; width:100%;">
       <label>סכום חודשי</label>
       <input type="number" class="num6" placeholder="לדוגמה 1800" />
     </div>
-    <div style="grid-column: span 5; width:100%; text-align:center;">
-      <div class="muted" style="margin-top:24px">החל מחודש הבא</div>
-    </div>
-    <div style="grid-column: span 3; width:100%; text-align:center;">
+    <div style="grid-column: span 8; width:100%;">
       <label>תחולת חיוב</label>
-      <div class="chips" style="justify-content:center">
-        <div class="chip active">מיידי</div>
+      <div class="chips">
+        <div class="chip active">חודש הבא</div>
+        <div class="chip">מיידי</div>
       </div>
     </div>
   </div>
