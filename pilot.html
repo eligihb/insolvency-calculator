@@ -3,81 +3,94 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>מחשבון צו שיקום – פריסה שנתית/חודשית</title>
+  <title>צו שיקום – פריסה חודשית</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#0B1D2A;--paper:#F6F7FB;--card:#fff;--ink:#0B2533;--ink2:#4b5b66;--accent:#0EA5E9;--green:#22C55E;--amber:#F59E0B;--red:#EF4444;--muted:#E7F1FF;--radius:16px;--shadow:0 8px 24px rgba(2,6,23,.08)}
+    :root{
+      --bg:#0B1D2A; --paper:#F6F7FB; --card:#fff; --ink:#0B2533; --ink2:#4b5b66;
+      --accent:#0EA5E9; --green:#22C55E; --amber:#F59E0B; --red:#EF4444; --muted:#E7F1FF;
+      --radius:18px; --shadow:0 8px 24px rgba(2,6,23,.08);
+    }
     *{box-sizing:border-box}
     html,body{margin:0;height:100%;font-family:"Heebo",system-ui; background:var(--paper); color:var(--ink)}
     a{color:var(--accent)}
-    .wrap{max-width:1280px;margin:auto;padding:18px 14px 110px}
+    .wrap{max-width:1200px;margin:auto;padding:18px 14px 110px}
     header{background:var(--bg);color:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:12px}
     header h1{margin:0 0 6px;font-weight:800;font-size:clamp(20px,3vw,28px)}
     header p{margin:0;opacity:.9}
 
-    .grid{display:grid;gap:12px;grid-template-columns:360px 1fr}
-    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .grid{display:grid;gap:12px;grid-template-columns:1fr}
+    @media(min-width:980px){.grid{grid-template-columns:380px 1fr}}
 
     .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
     .card h2{margin:0 0 10px;font-size:18px}
-    .row{display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;margin:8px 0}
+    .row{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;margin:8px 0}
     .row label{font-weight:600}
     input[type="number"], input[type="date"], select{width:100%;padding:10px;border-radius:12px;border:1px solid #d7dee6;background:#F3F7FE}
     input[type="number"]{direction:ltr;text-align:left}
     .hint{color:var(--ink2);font-size:12px}
-    .btn{appearance:none;border:0;border-radius:12px;padding:9px 12px;font-weight:800;cursor:pointer;background:#f1f5f9}
+    .pill{display:inline-flex;align-items:center;gap:6px;background:#eef6ff;color:#084c8a;border-radius:999px;padding:6px 10px;font-weight:700;font-size:12px}
+
+    .tabs{display:flex;gap:6px;margin:8px 0 2px}
+    .tab{padding:8px 10px;border-radius:12px;background:#f1f5f9;cursor:pointer;font-weight:700}
+    .tab.active{background:var(--accent);color:#fff}
+    .tabpanel{display:none;margin-top:8px}
+    .tabpanel.active{display:block}
+
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    thead th{font-size:12px;color:#5b6b76;text-align:right;padding:6px 8px}
+    tbody td{background:#fff;padding:10px 8px;vertical-align:middle}
+    tbody tr{box-shadow:var(--shadow);border-radius:12px}
+    tbody tr td:first-child{border-radius:12px 0 0 12px}
+    tbody tr td:last-child{border-radius:0 12px 12px 0}
+
+    .badge{display:inline-block;background:#FFF6CC;color:#8a5a00;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700}
+    .status{font-weight:800}
+    .status.ok{color:var(--green)}
+    .status.late{color:var(--red)}
+    .status.pending{color:#64748B}
+
+    .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    @media(min-width:700px){.kpis{grid-template-columns:repeat(4,1fr)}}
+    .kpi{background:#fff;padding:12px;border-radius:16px;box-shadow:var(--shadow)}
+    .kpi .k{color:#6b7c88;font-size:12px}
+    .kpi .v{font-size:22px;font-weight:900}
+
+    .dock{position:fixed;inset-inline:0;bottom:0;background:#fff;border-top:1px solid #e6ebf2;box-shadow:0 -8px 24px rgba(2,6,23,.07);padding:10px 14px}
+    .dock-inner{max-width:1200px;margin:auto;display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .btn{appearance:none;border:0;border-radius:14px;padding:10px 14px;font-weight:800;cursor:pointer}
     .btn.primary{background:var(--accent);color:#fff}
+    .btn.ghost{background:#f1f5f9}
     .btn.warn{background:var(--amber);color:#fff}
     .btn.success{background:var(--green);color:#fff}
 
     .events{display:flex;flex-direction:column;gap:8px}
-    .event{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end}
-    .badge{display:inline-block;background:#FFF6CC;color:#8a5a00;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800}
-
-    /* לוח שנתי: שורה = שנה, עמודות = 12 חודשים */
-    .year-row{margin:10px 0;background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:10px}
-    .year-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .months{display:grid;grid-template-columns:repeat(12, minmax(90px,1fr));gap:8px}
-    .month{background:#ffffff;border:1px solid #e8edf4;border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;position:relative}
-    .month.disabled{opacity:.35}
-    .m-due{font-size:11px;color:#667785;display:flex;justify-content:space-between}
-    .m-exp{font-weight:800}
-    .m-paid{display:flex;gap:6px;align-items:center}
-    .m-paid input{width:100%;padding:6px;border-radius:8px;border:1px solid #d7dee6;background:#fff}
-    .m-status{font-size:11px}
-    .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-    .ok{color:var(--green)} .late{color:var(--red)} .pending{color:#64748B}
-
-    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-    @media(min-width:900px){.kpis{grid-template-columns:repeat(6,1fr)}}
-    .kpi{background:#fff;padding:12px;border-radius:14px;box-shadow:var(--shadow)}
-    .kpi .k{color:#6b7c88;font-size:12px}
-    .kpi .v{font-size:20px;font-weight:900}
-
-    .dock{position:fixed;inset-inline:0;bottom:0;background:#fff;border-top:1px solid #e6ebf2;box-shadow:0 -8px 24px rgba(2,6,23,.07);padding:10px 14px}
-    .dock-inner{max-width:1280px;margin:auto;display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .event{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center}
+    .event input{background:#fff}
 
     @media print{
       @page{size:A4 landscape;margin:10mm}
       body{background:#fff}
-      .dock{display:none!important}
+      .dock, .tabs{display:none!important}
       .wrap{padding:0}
-      .grid{grid-template-columns:320px 1fr}
+      header{margin-bottom:8px}
+      .grid{grid-template-columns:340px 1fr;gap:8px}
       .card{box-shadow:none;border:1px solid #e9eef5}
+      tbody tr{box-shadow:none}
     }
   </style>
 </head>
 <body>
   <div class="wrap" id="app">
     <header>
-      <h1>מחשבון צו שיקום – פריסה שנתית/חודשית</h1>
-      <p>הזנת נתוני צו (אין חישוב קובע), פריסה אוטומטית, תיעוד תשלומים בפועל, סטטוס ופיגור.</p>
+      <h1>צו שיקום – הזנת צו ופריסה חודשית</h1>
+      <p>המסך הזה מקבל את נתוני ההחלטה (אין חישוב קובע), בונה פריסת חודשים אוטומטית, ומחשב סטטוס/פיגור לפי תשלומים בפועל. <span class="pill">גרסת MVP</span></p>
     </header>
 
     <div class="grid">
-      <!-- צד ימין: פרטי צו + צו תשלומים + אירועי הפחתה -->
+      <!-- צד ימין: פרטי צו + מצב תמחור + אירועים -->
       <section class="card">
         <h2>פרטי צו</h2>
         <div class="row">
@@ -92,71 +105,84 @@
           </select>
         </div>
         <div class="row">
-          <label>מס' חודשי תוכנית</label>
-          <input type="number" id="termMonths" min="1" step="1" placeholder="לדוגמה: 60" />
+          <label>מס' חודשים בתוכנית</label>
+          <input type="number" id="termMonths" min="1" step="1" value="60" />
         </div>
 
-        <h2 style="margin-top:10px">צו תשלומים</h2>
-        <div class="row">
-          <label>מצב</label>
-          <select id="pricingMode">
-            <option value="flat">קבוע</option>
-            <option value="tiered">מדורג</option>
-            <option value="reduction">הפחתת תשלומים</option>
-          </select>
+        <h2 style="margin-top:14px">מצבי תמחור</h2>
+        <div class="tabs" role="tablist">
+          <div class="tab active" data-tab="fixed" role="tab">קבוע</div>
+          <div class="tab" data-tab="tiered" role="tab">מדורגה</div>
+          <div class="tab" data-tab="reductions" role="tab">הפחתה (אירועים)</div>
         </div>
 
         <!-- קבוע -->
-        <div id="flatFields" class="card" style="padding:10px;margin-top:8px">
+        <div id="panel-fixed" class="tabpanel active">
           <div class="row">
             <label>סכום חודשי קבוע</label>
-            <input type="number" id="flatAmount" min="0" step="50" placeholder="₪" />
+            <input type="number" id="flatAmount" min="0" step="50" value="0" />
           </div>
-          <div class="hint">ברירת מחדל: ריק עד להזנה.</div>
+          <div class="hint">במצב קבוע נתעלם ממדרגות. אירועי הפחתה (אם מוגדרים) יכולים לדרוס מסכום זה החל מתחולתם.</div>
         </div>
 
-        <!-- מדורג (שתי מדרגות) -->
-        <div id="tierFields" class="card" style="padding:10px;margin-top:8px;display:none">
+        <!-- מדורגה -->
+        <div id="panel-tiered" class="tabpanel">
           <div class="row">
             <label>חודשי מדרגה 1</label>
-            <input type="number" id="tier1Months" min="0" step="1" placeholder="לדוגמה: 10" />
+            <input type="number" id="tier1Months" min="0" step="1" value="10" />
           </div>
           <div class="row">
             <label>סכום חודשי – מדרגה 1</label>
-            <input type="number" id="tier1Amount" min="0" step="50" placeholder="₪" />
+            <input type="number" id="tier1Amount" min="0" step="50" value="1000" />
           </div>
           <div class="row">
             <label>סכום חודשי – מדרגה 2</label>
-            <input type="number" id="tier2Amount" min="0" step="50" placeholder="₪" />
+            <input type="number" id="tier2Amount" min="0" step="50" value="4000" />
           </div>
-          <div class="hint">מדרגה 2 תחול אוטומטית על יתרת החודשים (Term − חודשי מדרגה 1).</div>
+          <div class="hint">מדרגה 2 תחול אוטומטית על יתרת החודשים (Term − חודשי מדרגה 1). אירועי הפחתה יכולים לדרוס מסכומים אלו מרגע תחולתם.</div>
         </div>
 
-        <!-- הפחתות -->
-        <div id="reductionFields" class="card" style="padding:10px;margin-top:8px;display:none">
-          <button class="btn" id="addEventBtn">➕ הפחתת תשלומים</button>
-          <div class="events" id="events" style="margin-top:8px"></div>
-          <div class="hint">כל אירוע מגדיר סכום חודשי חדש החל מתאריך התחולה ועד סוף התקופה, או עד תאריך שתבחר. אפשר לסמן "חזור לסכום המקורי" בסיום.</div>
+        <!-- אירועי הפחתה -->
+        <div id="panel-reductions" class="tabpanel">
+          <div class="events" id="events"></div>
+          <button class="btn ghost" id="addEventBtn" style="margin-top:6px">➕ הוסף אירוע הפחתה</button>
+          <div class="hint">כל אירוע מגדיר סכום חודשי חדש החל מתאריך התחולה ועד סוף התקופה (או עד אירוע מאוחר יותר).</div>
         </div>
+
       </section>
 
-      <!-- צד שמאל: KPI + פריסה שנת/חודש + אזור פיגור יומי -->
+      <!-- צד שמאל: KPIs + טבלת פריסה -->
       <section class="card">
         <h2>מדדי התקדמות</h2>
         <div class="kpis">
           <div class="kpi"><div class="k">התחלה → סיום</div><div class="v" id="rangeKPI">—</div></div>
-          <div class="kpi"><div class="k">משך (שנים/חוד׳)</div><div class="v" id="durationKPI">—</div></div>
+          <div class="kpi"><div class="k">משך התוכנית</div><div class="v" id="durationKPI">—</div></div>
           <div class="kpi"><div class="k">עבר / נותר (חוד׳)</div><div class="v" id="elapsedLeftKPI">—</div></div>
           <div class="kpi"><div class="k">צפוי עד היום / שולם עד היום</div><div class="v" id="expectedPaidKPI">—</div></div>
-          <div class="kpi"><div class="k">פיגור (₪)</div><div class="v" id="arrearsKPI">—</div></div>
+          <div class="kpi"><div class="k">פיגור</div><div class="v" id="arrearsKPI">—</div></div>
           <div class="kpi"><div class="k">סך התוכנית</div><div class="v" id="totalKPI">—</div></div>
         </div>
 
-        <h2 style="margin-top:12px">פריסה שנתית (השנה העדכנית למעלה)</h2>
-        <div id="yearsWrap"></div>
-
-        <h2 style="margin-top:12px">פיגור לפי ימים</h2>
-        <div id="lateDaysWrap" class="card" style="padding:10px"></div>
+        <h2 style="margin-top:14px">פריסה חודשית</h2>
+        <div style="overflow:auto;max-height:60vh;border:1px solid #e7edf5;border-radius:12px">
+          <table id="scheduleTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>שנה</th>
+                <th>מועד חיוב</th>
+                <th>סכום צפוי</th>
+                <th>שולם בפועל</th>
+                <th>צפוי מצטבר</th>
+                <th>שולם מצטבר</th>
+                <th>Delta</th>
+                <th>סטטוס</th>
+                <th>הערה</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+        </div>
       </section>
     </div>
   </div>
@@ -164,7 +190,7 @@
   <div class="dock">
     <div class="dock-inner">
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn" id="resetBtn">איפוס</button>
+        <button class="btn ghost" id="resetBtn">איפוס</button>
         <button class="btn warn" id="fillDemoBtn">נתוני דוגמה</button>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -175,23 +201,23 @@
   </div>
 
   <script>
-    // ===== Utilities =====
     const els = {
       orderDate: document.getElementById('orderDate'),
       startMode: document.getElementById('startMode'),
       termMonths: document.getElementById('termMonths'),
-      pricingMode: document.getElementById('pricingMode'),
-      flatFields: document.getElementById('flatFields'),
-      tierFields: document.getElementById('tierFields'),
-      reductionFields: document.getElementById('reductionFields'),
       flatAmount: document.getElementById('flatAmount'),
       tier1Months: document.getElementById('tier1Months'),
       tier1Amount: document.getElementById('tier1Amount'),
       tier2Amount: document.getElementById('tier2Amount'),
-      addEventBtn: document.getElementById('addEventBtn'),
+      tabs: Array.from(document.querySelectorAll('.tab')),
+      panels: {
+        fixed: document.getElementById('panel-fixed'),
+        tiered: document.getElementById('panel-tiered'),
+        reductions: document.getElementById('panel-reductions')
+      },
       eventsWrap: document.getElementById('events'),
-      yearsWrap: document.getElementById('yearsWrap'),
-      lateDaysWrap: document.getElementById('lateDaysWrap'),
+      addEventBtn: document.getElementById('addEventBtn'),
+      scheduleBody: document.getElementById('scheduleBody'),
       rangeKPI: document.getElementById('rangeKPI'),
       durationKPI: document.getElementById('durationKPI'),
       elapsedLeftKPI: document.getElementById('elapsedLeftKPI'),
@@ -203,9 +229,9 @@
       resetBtn: document.getElementById('resetBtn'),
       fillDemoBtn: document.getElementById('fillDemoBtn')
     };
-    const KEY_STATE = 'rehabOrder.v4.state';
-    const KEY_PAID  = 'rehabOrder.v4.paid';
-    const KEY_PAID_DATE = 'rehabOrder.v4.paidDate';
+
+    const KEY_STATE = 'rehabOrder.v2.state';
+    const KEY_PAID  = 'rehabOrder.v2.paid';
 
     function num(v){ return Number(String(v||'').replace(/[^\d.-]/g,'')||0); }
     function fmtN(n){ return new Intl.NumberFormat('he-IL').format(Math.round(n||0)); }
@@ -213,257 +239,263 @@
     function toISODate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
     function addMonths(d, n){ const dt=new Date(d.getTime()); dt.setMonth(dt.getMonth()+n); return dt; }
 
-    function getStartDate(orderDate, mode){ if(!orderDate) return null; const d=new Date(orderDate); return (mode==='next')? addMonths(d,1): d; }
+    function getStartDate(orderDate, mode){
+      if(!orderDate) return null;
+      const d = new Date(orderDate);
+      return (mode==='next') ? addMonths(d,1) : d;
+    }
 
-    // ===== Events (reductions) =====
     function readEvents(){
-      const rows = Array.from(els.eventsWrap.querySelectorAll('.event'));
-      const list = rows.map(r=>({
-        effective: r.querySelector('[data-f=eff]').value,
-        amount: num(r.querySelector('[data-f=amt]').value),
-        dur: r.querySelector('[data-f=dur]').value, // end | until
-        until: r.querySelector('[data-f=until]').value,
-        revert: r.querySelector('[data-f=revert]').checked
+      const blocks = Array.from(els.eventsWrap.querySelectorAll('.event'));
+      const list = blocks.map(b=>({
+        effective: b.querySelector('input[type="date"]').value,
+        amount: num(b.querySelector('input[type="number"]').value)
       })).filter(e=>e.effective);
+      // sort by date asc
       return list.sort((a,b)=> new Date(a.effective)-new Date(b.effective));
     }
 
-    function renderEventRow(eff='', amt='', dur='end', until='', revert=true){
+    function renderEventRow(eff=null, amt=''){
       const row = document.createElement('div');
       row.className='event';
       row.innerHTML = `
-        <div>
-          <label>תחולה</label>
-          <input type="date" data-f="eff" value="${eff}" />
-        </div>
-        <div>
-          <label>סכום חדש</label>
-          <input type="number" data-f="amt" min="0" step="50" placeholder="₪" value="${amt}" />
-        </div>
-        <div>
-          <label>משך</label>
-          <select data-f="dur">
-            <option value="end" ${dur==='end'?'selected':''}>עד סוף התקופה</option>
-            <option value="until" ${dur==='until'?'selected':''}>עד תאריך…</option>
-          </select>
-        </div>
-        <div>
-          <label>תאריך סיום</label>
-          <input type="date" data-f="until" value="${until}" ${dur==='until'?'' : 'disabled'} />
-        </div>
-        <div>
-          <label style="visibility:hidden">חזור</label>
-          <div><input type="checkbox" data-f="revert" ${revert?'checked':''}/> חזור לסכום המקורי בסיום</div>
-        </div>`;
-      row.querySelector('[data-f=dur]').addEventListener('change', e=>{
-        const off = e.target.value!=='until';
-        row.querySelector('[data-f=until]').disabled = off;
-      });
-      row.addEventListener('change', ()=> build());
-      const del = document.createElement('button'); del.className='btn'; del.textContent='🗑️'; del.title='מחק אירוע';
-      del.addEventListener('click', ()=>{ row.remove(); build(); });
-      row.appendChild(del);
+        <input type="date" value="${eff?eff:''}"/>
+        <input type="number" min="0" step="50" value="${amt}" placeholder="סכום חודשי חדש"/>
+        <button class="btn ghost" title="מחק">🗑️</button>
+      `;
+      row.querySelector('button').addEventListener('click',()=>{ row.remove(); build(); });
+      row.addEventListener('input', ()=> build());
       els.eventsWrap.appendChild(row);
     }
 
-    els.addEventBtn?.addEventListener('click', ()=> renderEventRow());
+    els.addEventBtn.addEventListener('click', ()=>{ renderEventRow(); });
 
-    // ===== Paid storage =====
-    function readPaid(){ try{ return JSON.parse(localStorage.getItem(KEY_PAID))||{} }catch{ return {} } }
+    // tabs
+    els.tabs.forEach(t=> t.addEventListener('click', ()=>{
+      els.tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const which = t.dataset.tab;
+      Object.entries(els.panels).forEach(([k,p])=> p.classList.toggle('active', k===which));
+      build();
+    }));
+
+    // paid map: { 'YYYY-MM-01': amount }
+    function readPaid(){
+      try{ return JSON.parse(localStorage.getItem(KEY_PAID))||{} }catch{ return {} }
+    }
     function writePaid(map){ localStorage.setItem(KEY_PAID, JSON.stringify(map)); }
-    function readPaidDate(){ try{ return JSON.parse(localStorage.getItem(KEY_PAID_DATE))||{} }catch{ return {} } }
-    function writePaidDate(map){ localStorage.setItem(KEY_PAID_DATE, JSON.stringify(map)); }
 
-    // ===== State =====
     function saveState(){
       const state = {
         orderDate: els.orderDate.value,
         startMode: els.startMode.value,
         termMonths: num(els.termMonths.value),
-        pricingMode: els.pricingMode.value,
         flatAmount: num(els.flatAmount.value),
         tier1Months: num(els.tier1Months.value),
         tier1Amount: num(els.tier1Amount.value),
         tier2Amount: num(els.tier2Amount.value),
+        activeTab: document.querySelector('.tab.active')?.dataset.tab,
         events: readEvents()
       };
       localStorage.setItem(KEY_STATE, JSON.stringify(state));
     }
+
     function loadState(){
       const raw = localStorage.getItem(KEY_STATE); if(!raw) return;
       try{
         const s = JSON.parse(raw);
         els.orderDate.value = s.orderDate||'';
         els.startMode.value = s.startMode||'next';
-        els.termMonths.value = s.termMonths||'';
-        els.pricingMode.value = s.pricingMode||'flat';
-        els.flatAmount.value = s.flatAmount||'';
-        els.tier1Months.value = s.tier1Months||'';
-        els.tier1Amount.value = s.tier1Amount||'';
-        els.tier2Amount.value = s.tier2Amount||'';
-        togglePanels();
+        els.termMonths.value = s.termMonths||60;
+        els.flatAmount.value = s.flatAmount||0;
+        els.tier1Months.value = s.tier1Months||10;
+        els.tier1Amount.value = s.tier1Amount||1000;
+        els.tier2Amount.value = s.tier2Amount||4000;
+        // events
         els.eventsWrap.innerHTML='';
-        (s.events||[]).forEach(ev=> renderEventRow(ev.effective, ev.amount, ev.dur, ev.until, ev.revert));
+        (s.events||[]).forEach(ev=> renderEventRow(ev.effective, ev.amount));
+        // tab
+        const targetTab = s.activeTab||'fixed';
+        els.tabs.forEach(x=> x.classList.toggle('active', x.dataset.tab===targetTab));
+        Object.entries(els.panels).forEach(([k,p])=> p.classList.toggle('active', k===targetTab));
       }catch{}
     }
 
-    function togglePanels(){
-      const mode = els.pricingMode.value;
-      els.flatFields.style.display = (mode==='flat' || mode==='reduction')? 'block':'none';
-      els.tierFields.style.display = (mode==='tiered' || mode==='reduction')? 'block':'none';
-      els.reductionFields.style.display = (mode==='reduction')? 'block':'none';
-    }
-
-    // ===== Core build =====
-    function baseAmount(idx){
-      const t1m = num(els.tier1Months.value);
-      const a1  = num(els.tier1Amount.value);
-      const a2  = num(els.tier2Amount.value);
-      if(t1m>0 || a1>0 || a2>0){ return (idx < t1m) ? a1 : a2; }
-      return num(els.flatAmount.value)||0;
-    }
-
+    // schedule building
     function build(){
       saveState();
       const paidMap = readPaid();
-      const paidDateMap = readPaidDate();
 
       const orderDate = els.orderDate.value ? new Date(els.orderDate.value) : null;
+      const startMode = els.startMode.value;
       const term = num(els.termMonths.value)||0;
-      if(!orderDate || term<=0){ els.yearsWrap.innerHTML=''; els.lateDaysWrap.innerHTML=''; updateKPIs([],{},{}) ; return; }
+      if(!orderDate || term<=0){ els.scheduleBody.innerHTML=''; updateKPIs([],paidMap); return; }
 
-      const startDate = getStartDate(orderDate, els.startMode.value);
+      const startDate = getStartDate(orderDate, startMode);
       const events = readEvents();
+      const activeTab = document.querySelector('.tab.active')?.dataset.tab;
 
-      const months = [];
-      for(let i=0;i<term;i++){
-        const due = addMonths(startDate, i);
-        let expected = baseAmount(i);
-        for(const ev of events){
-          const eff = new Date(ev.effective);
-          const dueM = new Date(due.getFullYear(), due.getMonth(), 1);
-          const effM = new Date(eff.getFullYear(), eff.getMonth(), 1);
-          let inRange = effM <= dueM;
-          if(ev.dur==='until' && ev.until){
-            const until = new Date(ev.until);
-            const untilM = new Date(until.getFullYear(), until.getMonth(), 1);
-            inRange = inRange && (dueM <= untilM);
-          }
-          if(inRange){ expected = ev.amount; }
+      // base function
+      function baseAmount(idx){ // idx = 0..term-1
+        if(activeTab==='tiered'){
+          const t1m = num(els.tier1Months.value)||0;
+          const a1 = num(els.tier1Amount.value)||0;
+          const a2 = num(els.tier2Amount.value)||0;
+          return (idx < t1m) ? a1 : a2;
         }
-        const key = `${due.getFullYear()}-${pad(due.getMonth()+1)}-01`;
-        const paid = num(paidMap[key]);
-        const paidDate = paidDateMap[key] || '';
-        months.push({ idx:i, due, key, expected, paid, paidDate });
+        // default fixed
+        return num(els.flatAmount.value)||0;
       }
 
-      const groups = new Map();
-      months.forEach(m=>{ const y = m.due.getFullYear(); if(!groups.has(y)) groups.set(y, []); groups.get(y).push(m); });
-      const yearsDesc = Array.from(groups.keys()).sort((a,b)=> b-a);
-
-      els.yearsWrap.innerHTML='';
-      const todayM = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-      yearsDesc.forEach(year=>{
-        const row = document.createElement('div'); row.className='year-row';
-        const list = groups.get(year); list.sort((a,b)=> a.due - b.due);
-        const head = document.createElement('div'); head.className='year-head'; head.innerHTML = `<div><strong>${year}</strong></div>`; row.appendChild(head);
-        const monthsWrap = document.createElement('div'); monthsWrap.className='months';
-        for(let m=0;m<12;m++){
-          const item = document.createElement('div'); item.className='month';
-          const monthData = list.find(x=> x.due.getMonth()===m);
-          if(!monthData){ item.classList.add('disabled'); item.innerHTML = `<div class="m-due"><span>${m+1}</span><span>—</span></div>`; monthsWrap.appendChild(item); continue; }
-          const due = monthData.due;
-          const dueM = new Date(due.getFullYear(), due.getMonth(), 1);
-          const allUntil = months.filter(x=> new Date(x.due.getFullYear(), x.due.getMonth(),1) <= dueM);
-          const cumExp = allUntil.reduce((s,x)=> s+x.expected, 0);
-          const cumPaid = allUntil.reduce((s,x)=> s+x.paid, 0);
-          const status = (dueM>todayM)?'pending': (cumPaid>=cumExp? 'ok':'late');
-          const arrearsMonth = Math.max(0, cumExp - cumPaid);
-          let lateDays = 0;
-          if(monthData.paidDate){
-            const payD = new Date(monthData.paidDate);
-            const dueEnd = new Date(due.getFullYear(), due.getMonth()+1, 0);
-            if(payD > dueEnd){
-              const diffMs = payD - dueEnd; lateDays = Math.ceil(diffMs / (1000*60*60*24));
-            }
-          }
-          item.innerHTML = `
-            <div class="m-due"><span>${due.toLocaleDateString('he-IL',{month:'2-digit'})}/${String(year).slice(-2)}</span>
-              <span class="m-exp">₪ ${fmtN(monthData.expected)}</span></div>
-            <div class="m-paid">
-              <input type="number" min="0" step="50" placeholder="שולם" value="${monthData.paid||''}" />
-              <button class="btn" title="תאריך תשלום">⏱️</button>
-            </div>
-            <div class="m-status ${status}">
-              <span class="dot" style="background:${status==='ok'?'#22C55E':(status==='late'?'#EF4444':'#94A3B8')}"></span>
-              ${status==='pending'?'טרם הגיע מועד':(status==='ok'?'בזמן/עודף':`פיגור: ₪ ${fmtN(arrearsMonth)}`)}
-              ${lateDays>0?` · איחור ${lateDays} ימים`:''}
-            </div>
-          `;
-          const inp = item.querySelector('input');
-          inp.addEventListener('change', ()=>{ const map = readPaid(); map[monthData.key]= num(inp.value); writePaid(map); build(); });
-          const btn = item.querySelector('button');
-          btn.addEventListener('click', ()=>{ const d = prompt('הזן תאריך תשלום בפורמט YYYY-MM-DD', monthData.paidDate||''); if(d!==null){ const map=readPaidDate(); map[monthData.key]=d; writePaidDate(map); build(); } });
-          monthsWrap.appendChild(item);
+      // schedule array
+      const rows = [];
+      for(let i=0;i<term;i++){
+        const due = addMonths(startDate, i);
+        const y = due.getFullYear();
+        const m = due.getMonth()+1;
+        const key = `${y}-${pad(m)}-01`; // month key
+        // expected
+        let expected = baseAmount(i);
+        // override by latest reduction event <= due
+        for(const ev of events){
+          const eff = new Date(ev.effective);
+          const effMonth = new Date(eff.getFullYear(), eff.getMonth(), 1);
+          const dueMonth = new Date(due.getFullYear(), due.getMonth(), 1);
+          if(effMonth <= dueMonth){ expected = ev.amount; } else { break; }
         }
-        row.appendChild(monthsWrap);
-        els.yearsWrap.appendChild(row);
+        const paid = num(paidMap[key]);
+        rows.push({ idx:i+1, year:y, due, key, expected, paid });
+      }
+
+      // cumulative + status
+      let cumExp=0, cumPaid=0;
+      const today = new Date();
+      rows.forEach(r=>{
+        cumExp += r.expected;
+        cumPaid += r.paid;
+        r.cumExp = cumExp;
+        r.cumPaid = cumPaid;
+        const dueMonth = new Date(r.due.getFullYear(), r.due.getMonth(), 1);
+        const todayMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        if(dueMonth > todayMonth){ r.status = 'pending'; }
+        else { r.status = (r.cumPaid >= r.cumExp) ? 'ok' : 'late'; }
+        // note badge if event starts exactly on this due month
+        r.note = events.some(ev=>{
+          const eff = new Date(ev.effective);
+          return eff.getFullYear()===r.due.getFullYear() && eff.getMonth()===r.due.getMonth();
+        }) ? 'צו מעודכן' : '';
       });
 
-      const lateLines = months.map(m=>{
-        if(!m.paidDate) return null;
-        const dueEnd = new Date(m.due.getFullYear(), m.due.getMonth()+1, 0);
-        const payD = new Date(m.paidDate);
-        const diff = Math.ceil((payD-dueEnd)/(1000*60*60*24));
-        return diff>0 ? `${m.due.getFullYear()}-${pad(m.due.getMonth()+1)}: איחור של ${diff} ימים` : null;
-      }).filter(Boolean);
-      els.lateDaysWrap.innerHTML = lateLines.length? lateLines.map(x=>`<div>• ${x}</div>`).join('') : '<div class="hint">אין איחורים עם תאריך תשלום שנקלט.</div>';
+      // render table
+      els.scheduleBody.innerHTML = '';
+      rows.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.idx}</td>
+          <td>${r.year}</td>
+          <td>${toISODate(r.due)}</td>
+          <td>₪ ${fmtN(r.expected)} ${r.note?`<span class="badge">${r.note}</span>`:''}</td>
+          <td>
+            <input type="number" min="0" step="50" style="width:120px" value="${r.paid||''}" />
+          </td>
+          <td>₪ ${fmtN(r.cumExp)}</td>
+          <td>₪ ${fmtN(r.cumPaid)}</td>
+          <td>${fmtN(r.expected - r.paid)}</td>
+          <td class="status ${r.status}">${r.status==='pending'?'טרם הגיע מועד':(r.status==='ok'?'בזמן/עודף':'פיגור')}</td>
+          <td>${r.note? 'צו מעודכן':''}</td>
+        `;
+        const input = tr.querySelector('input');
+        input.addEventListener('input', ()=>{
+          const v = num(input.value);
+          const map = readPaid();
+          map[r.key] = v;
+          writePaid(map);
+          build(); // rebuild to refresh cumulatives & status
+        });
+        els.scheduleBody.appendChild(tr);
+      });
 
-      updateKPIs(months, readPaid(), readPaidDate());
+      updateKPIs(rows, readPaid());
     }
 
-    function updateKPIs(months, paidMap, paidDateMap){
-      if(!months.length){ els.rangeKPI.textContent='—'; els.durationKPI.textContent='—'; els.elapsedLeftKPI.textContent='—'; els.expectedPaidKPI.textContent='—'; els.arrearsKPI.textContent='—'; els.totalKPI.textContent='—'; return; }
-      const start = months[0].due, end = months[months.length-1].due;
+    function updateKPIs(rows, paidMap){
+      if(!rows.length){
+        els.rangeKPI.textContent = '—';
+        els.durationKPI.textContent = '—';
+        els.elapsedLeftKPI.textContent = '—';
+        els.expectedPaidKPI.textContent = '—';
+        els.arrearsKPI.textContent = '—';
+        els.totalKPI.textContent = '—';
+        return;
+      }
+      const start = rows[0].due, end = rows[rows.length-1].due;
       els.rangeKPI.textContent = `${toISODate(start)} → ${toISODate(end)}`;
-      const totalMonths = months.length; const years = Math.floor(totalMonths/12), rem= totalMonths%12; els.durationKPI.textContent = `${years} שנים ו-${rem} חודשים`;
-      const todayM = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-      const elapsed = months.filter(r=> new Date(r.due.getFullYear(), r.due.getMonth(),1) <= todayM).length; const left = Math.max(0, totalMonths - elapsed);
+      // duration in years & months
+      const months = rows.length;
+      const years = Math.floor(months/12), remM = months%12;
+      els.durationKPI.textContent = `${years} שנים ו-${remM} חודשים`;
+      const today = new Date();
+      const elapsed = rows.filter(r=> new Date(r.due.getFullYear(), r.due.getMonth(), 1) <= new Date(today.getFullYear(), today.getMonth(), 1)).length;
+      const left = Math.max(0, months - elapsed);
       els.elapsedLeftKPI.textContent = `${elapsed} / ${left}`;
-      const expectedToDate = months.filter(r=> new Date(r.due.getFullYear(), r.due.getMonth(),1) <= todayM).reduce((s,r)=> s+r.expected, 0);
-      const paidToDate = months.filter(r=> new Date(r.due.getFullYear(), r.due.getMonth(),1) <= todayM).reduce((s,r)=> s+num(paidMap[r.key]), 0);
+      const expectedToDate = rows.slice(0, elapsed).reduce((s,r)=> s+r.expected, 0);
+      const paidToDate = rows.slice(0, elapsed).reduce((s,r)=> s+num(paidMap[r.key]), 0);
       els.expectedPaidKPI.textContent = `₪ ${fmtN(expectedToDate)} / ₪ ${fmtN(paidToDate)}`;
-      els.arrearsKPI.textContent = `₪ ${fmtN(Math.max(0, expectedToDate - paidToDate))}`;
-      const total = months.reduce((s,r)=> s+r.expected, 0);
+      const arrears = Math.max(0, expectedToDate - paidToDate);
+      els.arrearsKPI.textContent = `₪ ${fmtN(arrears)}`;
+      const total = rows.reduce((s,r)=> s+r.expected, 0);
       els.totalKPI.textContent = `₪ ${fmtN(total)}`;
     }
 
-    document.addEventListener('change', e=>{ if(e.target.matches('input, select')){ if(e.target.closest('.event')){ saveState(); } build(); } }, true);
-    els.pricingMode.addEventListener('change', ()=>{ togglePanels(); build(); });
+    // listeners
+    ['input','change'].forEach(ev=>document.addEventListener(ev, e=>{
+      if(e.target.closest('.event') || e.target.matches('input, select')) build();
+    }, true));
 
     els.printBtn.addEventListener('click', ()=> window.print());
     els.exportBtn.addEventListener('click', ()=>{
       const state = JSON.parse(localStorage.getItem(KEY_STATE)||'{}');
       const paid  = JSON.parse(localStorage.getItem(KEY_PAID)||'{}');
-      const paidDates = JSON.parse(localStorage.getItem(KEY_PAID_DATE)||'{}');
-      const blob = new Blob([JSON.stringify({state, paid, paidDates}, null, 2)], {type:'application/json'});
+      const blob = new Blob([JSON.stringify({state, paid}, null, 2)], {type:'application/json'});
       const url = URL.createObjectURL(blob);
       const a = Object.assign(document.createElement('a'), {href:url, download:'rehab-order-snapshot.json'});
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 1500);
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 1500);
     });
 
-    els.resetBtn.addEventListener('click', ()=>{ if(!confirm('לאפס הכל?')) return; localStorage.removeItem(KEY_STATE); localStorage.removeItem(KEY_PAID); localStorage.removeItem(KEY_PAID_DATE); els.eventsWrap.innerHTML=''; build(); });
-
-    els.fillDemoBtn.addEventListener('click', ()=>{
-      els.orderDate.value = '2020-01-01'; els.startMode.value = 'next'; els.termMonths.value = '60';
-      els.pricingMode.value = 'tiered'; togglePanels();
-      els.tier1Months.value = '10'; els.tier1Amount.value = '1000'; els.tier2Amount.value = '4000';
-      els.reductionFields.style.display='block'; els.eventsWrap.innerHTML='';
-      renderEventRow('2022-07-01','2800','end','',true);
+    els.resetBtn.addEventListener('click', ()=>{
+      if(!confirm('לאפס הכל?')) return;
+      localStorage.removeItem(KEY_STATE);
+      localStorage.removeItem(KEY_PAID);
+      els.eventsWrap.innerHTML='';
+      initDefaults();
       build();
     });
 
+    els.fillDemoBtn.addEventListener('click', ()=>{
+      // demo: order 2020-01-01, next month start, 60 months, tiered 10x1000 -> rest 4000, reductions from 2022-07-01 to 2800
+      els.orderDate.value = '2020-01-01';
+      els.startMode.value = 'next';
+      els.termMonths.value = 60;
+      // switch to tiered tab
+      document.querySelector('.tab[data-tab="tiered"]').click();
+      els.tier1Months.value = 10;
+      els.tier1Amount.value = 1000;
+      els.tier2Amount.value = 4000;
+      // add reduction
+      els.eventsWrap.innerHTML='';
+      renderEventRow('2022-07-01', 2800);
+      build();
+    });
+
+    function initDefaults(){
+      if(!els.orderDate.value){ els.orderDate.value = toISODate(new Date()); }
+      if(!document.querySelector('.event')){ /* no default events */ }
+    }
+
+    // boot
     loadState();
+    initDefaults();
     build();
   </script>
 </body>
