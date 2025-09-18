@@ -20,7 +20,7 @@
     h2{margin:0 0 8px;font-size:18px}
     label{font-weight:700;display:block;margin:6px 0 4px}
     input,select,button{font-family:inherit}
-    input[type="number"],input[type="date"],select,input[type="text"]{width:100%;max-width:420px;padding:10px;border:1px solid #d7dee6;border-radius:14px;background:#F3F7FE;text-align:left;direction:ltr}
+    input[type="number"],input[type="date"],select,input[type="text"]{width:100%;max-width:360px;padding:10px;border:1px solid #d7dee6;border-radius:14px;background:#F3F7FE;text-align:left;direction:ltr}
     .row{display:grid;grid-template-columns:180px 1fr;gap:10px;align-items:center;margin:8px 0}
     .seg{display:flex;gap:6px;flex-wrap:wrap}
     .seg .pill{padding:9px 12px;border-radius:999px;background:#eef2f7;font-weight:800;cursor:pointer;border:1px solid #e3e8ef}
@@ -427,7 +427,36 @@
       const startRaw = orderDate.value? new Date(orderDate.value): null; if(!startRaw){ alert('חסר תאריך צו'); return; }
       const start = new Date(startRaw); if(getStartMode()==='next') start.setMonth(start.getMonth()+1);
       const monthsCount = num(termMonths.value)||0; const months=[];
+      for(let i=0;i<monthsendBtn.addEventListener('click', async ()=>{
+      const currentName = localStorage.getItem(SHEET_NAME_KEY)||'';
+      const name = prompt('שם גיליון חדש בשיטס (לדוגמה: צו_12345)', currentName);
+      if(name===null) return; localStorage.setItem(SHEET_NAME_KEY, name);
+
+      const startRaw = orderDate.value? new Date(orderDate.value): null; if(!startRaw){ alert('חסר תאריך צו'); return; }
+      const start = new Date(startRaw); if(getStartMode()==='next') start.setMonth(start.getMonth()+1);
+      const monthsCount = num(termMonths.value)||0; const months=[];
       for(let i=0;i<monthsCount;i++){ const due=addMonths(start,i); const key = `${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}-01`; const expected = baseAmount(i); const paid = getPaid()[key]||''; const paidDate = getPaidDate()[key]||''; months.push({due,key,expected,paid,paidDate}); }
+      const rows = monthsToRows(months);
+
+      let url = localStorage.getItem(WEB_APP_KEY)||'';
+      if(!url){
+        url = prompt('הדבק כאן את ה-URL של ה-Web App (Apps Script) לקבלת נתונים', '');
+        if(url===null || url.trim()===''){ alert('לא הוגדר Web App. מבצע הורדת CSV והעתקה לשיטס כחלופה.');
+          downloadCSV(rows); copyTSV(rows); return; }
+        localStorage.setItem(WEB_APP_KEY, url.trim());
+      }
+
+      try{
+        const resp = await fetch(url + '?sheet=' + encodeURIComponent(name), {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(rows)});
+        const text = await resp.text();
+        if(resp.ok && /OK/i.test(text)){ alert('נשלח לגיליון בהצלחה! לשונית: ' + name); }
+        else { throw new Error(text||('HTTP '+resp.status)); }
+      }catch(err){
+        console.error(err);
+        alert('שליחה ישירה נכשלה: '+ err + '\nמוריד CSV ומעתיק לטבלה כגיבוי.');
+        downloadCSV(rows); copyTSV(rows);
+      }
+    });key]||''; const paidDate = getPaidDate()[key]||''; months.push({due,key,expected,paid,paidDate}); }
       copyTSV(monthsToRows(months));
     });
 
@@ -464,7 +493,14 @@
     }); return; }
       const start = new Date(startRaw); if(getStartMode()==='next') start.setMonth(start.getMonth()+1);
       const monthsCount = num(termMonths.value)||0; const months=[];
-      for(let i=0;i<monthsCount;i++){ const due=addMonths(start,i); const key = `${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}-01`; const expected = baseAmount(i); const paid = getPaid()[key]||''; const paidDate = getPaidDate()[key]||''; months.push({due,key,expected,paid,paidDate}); }
+      for(let i=0;i<monthsCount;i++){ const due=addMonths(start,i); const 
+    function setActionsEnabled(on){
+      [exportCSVBtn, copyTSVBtn, sendBtn].forEach(btn=>{ if(!btn) return; btn.disabled = !on; btn.style.opacity = on? '1' : '.6'; });
+    }
+  
+    // עדכון מצב כפתורים גם בזמן הקלדה
+    [orderDate, termMonths].forEach(el=> el.addEventListener('input', ()=> setActionsEnabled(!!(orderDate.value && num(termMonths.value)>0))));
+  </script>due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}-01`; const expected = baseAmount(i); const paid = getPaid()[key]||''; const paidDate = getPaidDate()[key]||''; months.push({due,key,expected,paid,paidDate}); }
       copyTSV(monthsToRows(months));
     });
 
