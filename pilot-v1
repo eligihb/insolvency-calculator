@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>מחשבון צו שיקום</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Heebo', sans-serif; background:#f7f9fc; margin:0; padding:20px; }
+    .card { background:#fff; border-radius:12px; padding:16px; margin-bottom:16px; box-shadow:0 4px 12px rgba(0,0,0,0.06); }
+    h1 { margin:0 0 12px; font-size:24px; }
+    h2 { margin:0 0 10px; font-size:18px; }
+    label { font-weight:600; display:block; margin:6px 0 4px; }
+    input, select { width:100%; padding:8px; border:1px solid #ccc; border-radius:8px; }
+    table { width:100%; border-collapse:collapse; margin-top:12px; }
+    table, th, td { border:1px solid #ddd; }
+    th, td { padding:6px; text-align:center; }
+    th { background:#eef4ff; }
+    .status { font-weight:600; }
+    .arrears { color:red; }
+    .badge { background:#ffe58f; padding:2px 6px; border-radius:6px; font-size:12px; }
+    .eventRow { margin-bottom:10px; padding:8px; border:1px solid #ddd; border-radius:8px; background:#fafafa; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>מחשבון צו שיקום</h1>
+    <label>תאריך מתן הצו</label>
+    <input type="date" id="orderDate">
+
+    <label>תחולת חיוב</label>
+    <select id="startMode">
+      <option value="next">חודש הבא (ברירת מחדל)</option>
+      <option value="immediate">מיידי</option>
+    </select>
+
+    <label>מספר חודשי התוכנית</label>
+    <input type="number" id="termMonths" min="1" value="60">
+
+    <label>צו תשלומים</label>
+    <select id="pricingMode">
+      <option value="flat">קבוע</option>
+      <option value="tiered">מדורג</option>
+      <option value="reduction">הפחתת תשלומים</option>
+    </select>
+
+    <div id="flatFields">
+      <label>סכום חודשי קבוע</label>
+      <input type="number" id="flatAmount" min="0" value="">
+    </div>
+
+    <div id="tierFields" style="display:none">
+      <h2>תשלום מדורג</h2>
+      <label>מספר חודשים מדרגה 1</label>
+      <input type="number" id="tier1Months" min="0" value="">
+      <label>סכום חודשי מדרגה 1</label>
+      <input type="number" id="tier1Amount" min="0" value="">
+      <label>סכום חודשי מדרגה 2</label>
+      <input type="number" id="tier2Amount" min="0" value="">
+    </div>
+
+    <div id="reductionFields" style="display:none">
+      <h2>אירועי הפחתת תשלומים</h2>
+      <button type="button" onclick="addReduction()">➕ הוסף אירוע הפחתה</button>
+      <div id="reductions"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>פריסה חודשית</h2>
+    <div id="scheduleWrap"></div>
+  </div>
+
+  <script>
+    const orderDate = document.getElementById('orderDate');
+    const startMode = document.getElementById('startMode');
+    const termMonths = document.getElementById('termMonths');
+    const pricingMode = document.getElementById('pricingMode');
+    const flatFields = document.getElementById('flatFields');
+    const tierFields = document.getElementById('tierFields');
+    const reductionFields = document.getElementById('reductionFields');
+    const scheduleWrap = document.getElementById('scheduleWrap');
+    let reductions = [];
+
+    pricingMode.addEventListener('change', () => {
+      flatFields.style.display = pricingMode.value === 'flat' ? 'block' : 'none';
+      tierFields.style.display = pricingMode.value === 'tiered' ? 'block' : 'none';
+      reductionFields.style.display = pricingMode.value === 'reduction' ? 'block' : 'none';
+      buildSchedule();
+    });
+
+    function addReduction(){
+      const id = Date.now();
+      reductions.push({id, date:'', amount:'', until:'end', revert:false});
+      renderReductions();
+    }
+
+    function renderReductions(){
+      const div = document.getElementById('reductions');
+      div.innerHTML = '';
+      reductions.forEach(r => {
+        const wrap = document.createElement('div');
+        wrap.className = 'eventRow';
+        wrap.innerHTML = `
+          <label>תאריך תחולה</label>
+          <input type="date" onchange="updateReduction(${r.id}, 'date', this.value)">
+          <label>סכום חדש</label>
+          <input type="number" min="0" onchange="updateReduction(${r.id}, 'amount', this.value)">
+          <label>תחולה</label>
+          <select onchange="updateReduction(${r.id}, 'until', this.value)">
+            <option value="end">עד סוף התקופה</option>
+            <option value="date">עד תאריך מסוים</option>
+          </select>
+          <label><input type="checkbox" onchange="updateReduction(${r.id}, 'revert', this.checked)"> חזור לסכום המקורי בתום ההפחתה</label>
+        `;
+        div.appendChild(wrap);
+      });
+    }
+
+    function updateReduction(id, field, value){
+      const r = reductions.find(x => x.id===id);
+      r[field] = value;
+      buildSchedule();
+    }
+
+    function buildSchedule(){
+      if(!orderDate.value || !termMonths.value) return;
+      const start = new Date(orderDate.value);
+      if(startMode.value==='next') start.setMonth(start.getMonth()+1);
+      const months = parseInt(termMonths.value);
+      
+      scheduleWrap.innerHTML = '';
+      const table = document.createElement('table');
+      const tbody = document.createElement('tbody');
+
+      let yearMap = {};
+      for(let i=0;i<months;i++){
+        const due = new Date(start);
+        due.setMonth(start.getMonth()+i);
+        let amount = 0;
+
+        if(pricingMode.value==='flat'){
+          amount = parseInt(document.getElementById('flatAmount').value)||0;
+        } else if(pricingMode.value==='tiered'){
+          const t1m = parseInt(document.getElementById('tier1Months').value)||0;
+          const t1a = parseInt(document.getElementById('tier1Amount').value)||0;
+          const t2a = parseInt(document.getElementById('tier2Amount').value)||0;
+          amount = i < t1m ? t1a : t2a;
+        }
+
+        if(pricingMode.value==='reduction' && reductions.length>0){
+          const applicable = reductions.filter(r=>r.date && new Date(r.date)<=due).sort((a,b)=>new Date(a.date)-new Date(b.date));
+          if(applicable.length>0){
+            amount = parseInt(applicable[applicable.length-1].amount)||0;
+          }
+        }
+
+        const year = due.getFullYear();
+        if(!yearMap[year]) yearMap[year] = [];
+        yearMap[year].push({month:due.getMonth()+1, amount});
+      }
+
+      const years = Object.keys(yearMap).sort((a,b)=>b-a);
+      years.forEach(year => {
+        const row = document.createElement('tr');
+        let cells = `<th>${year}</th>`;
+        yearMap[year].forEach(m=>{
+          cells += `<td>${m.month}: ${m.amount}</td>`;
+        });
+        row.innerHTML = cells;
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      scheduleWrap.appendChild(table);
+    }
+
+    [orderDate,startMode,termMonths,pricingMode].forEach(el=>el.addEventListener('input',buildSchedule));
+  </script>
+</body>
+</html>
