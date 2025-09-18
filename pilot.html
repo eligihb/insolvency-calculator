@@ -9,39 +9,119 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {margin:0;font-family:'Heebo',sans-serif;background:#f7f9fc;color:#0B2533;}
-    header {background:#0B1D2A;color:#fff;padding:16px;text-align:center;font-size:22px;font-weight:700;}
-    .container {display:flex;gap:16px;max-width:1200px;margin:20px auto;padding:0 16px;}
-    .right-panel {flex:0 0 50%;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);padding:16px;height:50vh;overflow:hidden;}
-    .left-panel {flex:1;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);padding:16px;display:flex;flex-direction:column;justify-content:center;}
-    .progress {margin:12px 0;}
-    .progress-label {margin-bottom:6px;font-weight:600;}
-    .progress-bar {background:#E7E7E7;border-radius:10px;overflow:hidden;height:12px;}
-    .progress-fill {background:#0EA5E9;height:12px;width:40%;}
-    footer {margin-top:30px;text-align:center;color:#555;padding:12px;font-size:14px;}
+    :root{
+      --ink:#0B2533; --ink2:#5b6b76; --bg:#f7f9fc; --paper:#ffffff;
+      --chip:#eef3f8; --chip-active:#0ea5e9; --chip-active-ink:#ffffff;
+      --line:#e7edf5;
+      --radius:14px; --shadow:0 8px 22px rgba(15,23,42,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Heebo',system-ui;background:var(--bg);color:var(--ink)}
+    header{background:#0B1D2A;color:#fff;padding:14px;text-align:center;font-size:22px;font-weight:800;border-radius:0 0 14px 14px}
+
+```
+.container{display:flex;gap:16px;max-width:1200px;margin:18px auto;padding:0 16px}
+
+/* Right = form */
+.right{flex:0 0 50%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
+.section-title{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 10px}
+
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:end;margin-bottom:12px}
+label{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;display:block}
+input[type="date"],input[type="number"],.chips,.toggle{width:100%;}
+input[type="date"],input[type="number"]{border:1px solid var(--line);border-radius:12px;background:#f3f7fe;padding:10px;font-size:14px}
+
+/* 3-digit compact */
+.num3{max-width:90px;text-align:left;direction:ltr}
+/* 6-digit compact */
+.num6{max-width:140px;text-align:left;direction:ltr}
+
+/* Chips (36/48/60) */
+.chips{display:flex;gap:8px}
+.chip{padding:8px 12px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:default;font-weight:800;font-size:13px;color:var(--ink)}
+.chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active)}
+
+/* Tiny helper text */
+.muted{font-size:12px;color:var(--ink2)}
+
+/* Left = KPIs */
+.left{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;justify-content:center}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.kpi .k{font-size:12px;color:var(--ink2)}
+.bar{height:10px;background:#e9eef6;border-radius:999px;overflow:hidden;margin-top:8px}
+.fill{height:10px;background:#0ea5e9;width:40%}
+
+footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;color:#6b7c88}
+```
+
   </style>
 </head>
 <body>
   <header>מחשבון צו שיקום</header>
 
   <div class="container">
-    <div class="right-panel">
-      <h3>פרטי צו</h3>
-      <!-- כאן יבואו שדות ההזנה -->
-    </div>
+    <!-- Right: compact form UI -->
+    <section class="right">
+      <h3 class="section-title">פרטי הצו</h3>
 
 ```
-<div class="left-panel">
-  <h3>סטטוס תשלומים</h3>
-  <div class="progress">
-    <div class="progress-label">התקדמות כללית</div>
-    <div class="progress-bar"><div class="progress-fill"></div></div>
+  <!-- Row 1: תאריך מתן צו + משך (כפתורים) + מספר מותאם -->
+  <div class="row">
+    <div style="grid-column: span 4;">
+      <label>תאריך מתן צו</label>
+      <input type="date" placeholder="dd/mm/yyyy" />
+    </div>
+    <div style="grid-column: span 5;">
+      <label>משך תוכנית</label>
+      <div class="chips">
+        <div class="chip active">36</div>
+        <div class="chip">48</div>
+        <div class="chip">60</div>
+      </div>
+    </div>
+    <div style="grid-column: span 3;">
+      <label>אחר (חוד׳)</label>
+      <input type="number" class="num3" placeholder="לדוגמה 42" />
+    </div>
   </div>
-  <div class="progress">
-    <div class="progress-label">שולם עד כה</div>
-    <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+
+  <!-- Row 2: סכום חודשי + טקסט "החל מחודש הבא" + מתג מיידי -->
+  <div class="row" style="align-items:center">
+    <div style="grid-column: span 4;">
+      <label>סכום חודשי</label>
+      <input type="number" class="num6" placeholder="לדוגמה 1800" />
+    </div>
+    <div style="grid-column: span 5;">
+      <div class="muted" style="margin-top:24px">החל מחודש הבא</div>
+    </div>
+    <div style="grid-column: span 3;">
+      <label>תחולת חיוב</label>
+      <div class="chips">
+        <div class="chip active">חודש הבא</div>
+        <div class="chip">מיידי</div>
+      </div>
+    </div>
   </div>
-</div>
+</section>
+
+<!-- Left: KPIs / progress -->
+<section class="left">
+  <div class="kpis">
+    <div class="kpi">
+      <div class="k">התקדמות כללית</div>
+      <div class="bar"><div class="fill" style="width:55%"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="k">שולם עד כה</div>
+      <div class="bar"><div class="fill" style="width:25%"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="k">נותר לתשלום</div>
+      <div class="bar"><div class="fill" style="width:70%"></div></div>
+    </div>
+  </div>
+</section>
 ```
 
   </div>
