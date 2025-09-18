@@ -23,7 +23,7 @@
 .container{display:flex;gap:16px;max-width:1200px;margin:18px auto;padding:0 16px;align-items:flex-start}
 
 /* Right = form column (40% width, half-screen height) */
-.right{flex:0 0 40%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
+.right{width:40%;flex:0 0 40%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
 .section-title{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 8px}
 
 /* Compact two rows */
@@ -39,7 +39,7 @@ input[type="date"],input[type="number"]{border:1px solid var(--line);border-radi
 .chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active)}
 
 /* Left = KPIs */
-.left{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
+.left{width:60%;flex:0 0 60%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .kpi{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
 .kpi .k{font-size:12px;color:var(--ink2)}
@@ -86,14 +86,12 @@ footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;co
       <label>סכום חודשי</label>
       <input type="number" class="num6" placeholder="לדוגמה 1800" />
     </div>
-    <div style="grid-column: span 5;display:flex;align-items:center;gap:8px">
-      <div class="chip" style="cursor:default;background:#f1f5f9;border-color:#f1f5f9;">החל מחודש הבא</div>
+    <div style="grid-column: span 5;display:flex;align-items:end;">
+      <div class="muted" style="margin-bottom:4px">החל מחודש הבא</div>
     </div>
     <div style="grid-column: span 3;">
       <label>תחולת חיוב</label>
-      <div class="chips">
-        <div class="chip active">מיידי</div>
-      </div>
+      <div class="muted" style="margin-top:8px">מיידי</div>
     </div>
   </div>
 </section>
