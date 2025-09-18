@@ -1,476 +1,70 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>צו שיקום כלכלי וחדלות פירעון – טבלת חישוב</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>צו שיקום – פרטי טופס ושליחה</title>
   <style>
-    :root{
-      --bg:#0B1D2A; --paper:#F6F7FB; --card:#fff; --ink:#0B2533; --ink2:#4b5b66;
-      --accent:#0EA5E9; --green:#22C55E; --amber:#F59E0B; --red:#EF4444; --muted:#E7F1FF;
-      --radius:18px; --shadow:0 8px 24px rgba(2,6,23,.08);
-      --grey:#E8EDF5; --blue:#DBEAFE; --orange:#FFE8B0; --rose:#FFD6D6;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:"Heebo",system-ui;background:var(--paper);color:var(--ink)}
-    a{color:var(--accent)}
-
-    /* Header */
-    header{background:var(--bg);color:#fff;position:sticky;top:0;z-index:5}
-    .hero{max-width:1400px;margin:auto;padding:18px}
-    .hero-title{margin:0;font-weight:900;text-align:center;font-size:clamp(18px,3vw,28px)}
-    .hero-sub{margin:6px 0 0;text-align:center;opacity:.9;font-size:13px}
-
-    /* Layout */
-    .wrap{max-width:1400px;margin:auto;padding:12px 12px 120px}
-    .grid{display:grid;gap:12px;grid-template-columns:1fr}
-    @media(min-width:1100px){.grid{grid-template-columns:420px 1fr}}
-
-    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
-    .card h2{margin:0 0 10px;font-size:18px}
-
-    /* Right pane – top third */
-    .right-pane{position:sticky;top:90px;max-height:33vh;overflow:auto}
-
-    .row{display:grid;grid-template-columns:160px 1fr;gap:10px;align-items:center;margin:8px 0}
-    .row label{font-weight:700}
-    input[type="text"], input[type="number"], input[type="date"], select{width:100%;max-width:200px;padding:8px 10px;border-radius:12px;border:1px solid #d7dee6;background:#F3F7FE}
-    input[type="number"]{direction:ltr;text-align:left}
-
-    .seg{display:flex;gap:6px;flex-wrap:wrap}
-    .pill{padding:6px 10px;border-radius:999px;background:#eef6ff;color:#084c8a;font-weight:800;cursor:pointer;border:1px solid #d7e6ff}
-    .pill.active{background:var(--accent);color:#fff;border-color:transparent}
-
-    .quick{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-    .chip{padding:6px 10px;border-radius:999px;background:#eef2f7;border:1px solid #e3e8ef;cursor:pointer;font-weight:700}
-    .chip.active{background:#cfefff;border-color:#90d9ff}
-
-    .btn{appearance:none;border:0;border-radius:12px;padding:9px 12px;font-weight:900;cursor:pointer}
-    .btn.primary{background:var(--accent);color:#fff}
-    .btn.strong{background:#1f2937;color:#fff}
-    .btn.ghost{background:#eef2f7}
-    .btn.warn{background:var(--amber);color:#fff}
-    .btn.success{background:var(--green);color:#fff}
-
-    /* KPIs */
-    .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-    @media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}
-    .kpi{background:#fff;padding:12px;border-radius:16px;box-shadow:var(--shadow)}
-    .kpi .k{color:#6b7c88;font-size:12px}
-    .kpi .v{font-size:18px;font-weight:900;text-align:left}
-    .bar{height:8px;background:#e8eef6;border-radius:999px;margin-top:6px;overflow:hidden}
-    .bar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#22C55E,#0EA5E9)}
-
-    /* Year grid */
-    .year{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:10px;margin-bottom:10px}
-    .year-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .months{display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
-    .m{border:1px solid #e6ebf2;border-radius:12px;padding:8px;background:#fff;min-height:112px;display:flex;flex-direction:column;gap:6px}
-    .m .top{display:flex;justify-content:space-between;align-items:center;font-size:12px}
-    .m .amt{font-weight:900;text-align:left}
-    .m .paid-row{display:flex;gap:6px;align-items:center}
-    .m .paid-row input[type="number"]{max-width:110px;background:#F8FAFF}
-    .m .paid-row button{border:1px solid #e5eaf2;background:#f7f9fd;border-radius:8px;padding:4px 6px;font-weight:800;cursor:pointer}
-    .m .date{font-size:11px;color:#6b7c88}
-    .m .status{font-size:12px;font-weight:900}
-
-    /* Status backgrounds */
-    .m.default{background:var(--grey)}
-    .m.future{background:var(--blue)}
-    .m.partial{background:var(--orange)}
-    .m.late{background:var(--rose)}
-
-    /* Dock */
-    .dock{position:fixed;inset-inline:0;bottom:0;background:#fff;border-top:1px solid #e6ebf2;box-shadow:0 -8px 24px rgba(2,6,23,.07);padding:10px 14px}
-    .dock-inner{max-width:1400px;margin:auto;display:flex;gap:10px;align-items:center;justify-content:space-between}
-
-    footer{padding:10px 14px;text-align:center;color:#5b6b76}
-
-    @media print{
-      @page{size:A4 landscape;margin:10mm}
-      header,.dock{display:none!important}
-      .wrap{padding:0}
-      .right-pane{max-height:none}
-      .card{box-shadow:none;border:1px solid #e9eef5}
-    }
+    body { font-family: Arial, sans-serif; background:#f7f9fc; margin:0; padding:20px; }
+    h1 { text-align:center; margin-bottom:20px; }
+    .toolbar { display:flex; justify-content:flex-end; gap:10px; margin-bottom:20px; }
+    .btn { padding:8px 12px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+    .btn.primary { background:#0ea5e9; color:#fff; }
+    .btn.print { background:#f59e0b; color:#fff; }
+    .btn.toggle { background:#64748b; color:#fff; }
+    #detailsBox { background:#fff; border:1px solid #ddd; border-radius:10px; padding:15px; margin-bottom:20px; display:none; }
+    #detailsBox input { display:inline-block; margin:6px; padding:8px; border:1px solid #ccc; border-radius:6px; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="hero">
-      <h1 class="hero-title">צו שיקום כלכלי וחדלות פירעון – טבלת חישוב</h1>
-      <div class="hero-sub">הזנת נתוני הצו, פריסה אוטומטית, תיעוד תשלומים בפועל ופיגורים</div>
-    </div>
-  </header>
 
-  <div class="wrap" id="app">
-    <div class="grid">
-      <!-- RIGHT: order details (top third) -->
-      <section class="card right-pane" id="orderPane">
-        <h2>פרטי צו שיקום כלכלי</h2>
+  <h1>צו שיקום כלכלי וחדלות פירעון – טבלת חישוב</h1>
 
-        <div class="row">
-          <label>תאריך מתן הצו</label>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input type="date" id="orderDate" />
-            <button class="btn ghost" id="pickOrder" title="בחר תאריך">📅</button>
-          </div>
-        </div>
-
-        <div class="row">
-          <label>תחולת חיוב</label>
-          <div class="seg" id="startMode">
-            <div class="pill active" data-v="next">חודש הבא</div>
-            <div class="pill" data-v="immediate">מיידי</div>
-          </div>
-        </div>
-
-        <div class="row">
-          <label>משך תוכנית פירעון</label>
-          <div class="quick" id="termQuick">
-            <div class="chip active" data-v="36">36</div>
-            <div class="chip" data-v="48">48</div>
-            <div class="chip" data-v="60">60</div>
-            <input type="number" id="termMonths" min="1" placeholder="אחר..." style="margin-inline-start:6px" />
-          </div>
-        </div>
-
-        <h2 style="margin-top:8px">תוכנית תשלום</h2>
-        <div class="seg" id="planMode">
-          <div class="pill active" data-v="fixed">קבוע</div>
-          <div class="pill" data-v="tiered">מדורג</div>
-          <div class="pill strong" data-v="reduce">הפחתת תשלומים</div>
-          <div class="pill" data-v="prepay">הקדמת תשלומים</div>
-        </div>
-
-        <!-- FIXED -->
-        <div id="panel-fixed" class="panel" style="margin-top:8px">
-          <div class="row"><label>סכום חודשי קבוע</label><input type="number" id="flatAmount" min="0" step="50" /></div>
-        </div>
-
-        <!-- TIERED -->
-        <div id="panel-tiered" class="panel" style="display:none;margin-top:8px">
-          <div class="row"><label>מדרגה 1 – חודשים</label><input type="number" id="t1Months" min="0" step="1" /></div>
-          <div class="row"><label>מדרגה 1 – סכום</label><input type="number" id="t1Amount" min="0" step="50" /></div>
-          <div class="row"><label>מדרגה 2 – חודשים</label><input type="number" id="t2Months" min="0" step="1" /></div>
-          <div class="row"><label>מדרגה 2 – סכום</label><input type="number" id="t2Amount" min="0" step="50" /></div>
-        </div>
-
-        <!-- REDUCTION EVENT -->
-        <div id="panel-reduce" class="panel" style="display:none;margin-top:8px">
-          <h3 style="margin:0 0 6px">אירוע הפחתת תשלומים</h3>
-          <div class="row"><label>תאריך הפחתה</label><div style="display:flex;gap:6px;align-items:center"><input type="date" id="redEff" /><button class="btn ghost" id="pickRedEff">📅</button></div></div>
-          <div class="row"><label>גורם מחליט</label><div class="seg" id="decider"><div class="pill active" data-v="בית משפט">בית משפט</div><div class="pill" data-v="ממונה">ממונה</div></div></div>
-          <div class="row"><label>סכום חודשי חדש</label><input type="number" id="redAmount" min="0" step="50" /></div>
-          <div class="row"><label>עד סוף התקופה</label><div class="seg"><div class="pill active" id="redToEnd" data-v="yes">מסומן</div><div class="pill" id="redCustom" data-v="no">טווח מותאם</div></div></div>
-          <div id="redCustomRow" style="display:none">
-            <div class="row"><label>תאריך סיום</label><div style="display:flex;gap:6px;align-items:center"><input type="date" id="redUntil" /><button class="btn ghost" id="pickRedUntil">📅</button></div></div>
-            <div class="row"><label>סכום לאחר התום</label><input type="number" id="postRedAmount" min="0" step="50" /></div>
-          </div>
-          <div class="row"><button class="btn primary" id="applyReduction">אשר</button></div>
-        </div>
-
-        <!-- PREPAY APPROVAL -->
-        <div id="panel-prepay" class="panel" style="display:none;margin-top:8px">
-          <h3 style="margin:0 0 6px">הקדמת תשלומים</h3>
-          <div class="row"><label>תאריך החלטה (אישור)</label><div style="display:flex;gap:6px;align-items:center"><input type="date" id="prepayApproval" /><button class="btn ghost" id="pickPrepay">📅</button></div></div>
-          <div class="hint">אם יוזנו תשלומים לפני מועד החודש וללא תאריך אישור – יופיע מצב "הקדמת תשלומים ללא אישור" בבלוק.</div>
-        </div>
-
-        <h2 style="margin-top:10px">פרטי פלט</h2>
-        <div class="row"><label>השם שלי</label><input type="text" id="yourName" placeholder="השם שלך" /></div>
-        <div class="row"><label>מס' תיק</label><input type="text" id="caseNumber" placeholder="12345" /></div>
-        <div class="row"><label>שם החייב/ת</label><input type="text" id="debtorName" placeholder="שם מלא" /></div>
-      </section>
-
-      <!-- LEFT: KPIs + schedule -->
-      <section class="card">
-        <h2>מדדי התקדמות</h2>
-        <div class="kpis">
-          <div class="kpi"><div class="k">התחלה ← סיום</div><div class="v" id="rangeKPI">—</div></div>
-          <div class="kpi"><div class="k">משך התוכנית</div><div class="v" id="durationKPI">—</div></div>
-          <div class="kpi"><div class="k">עבר / נותר</div><div class="v" id="elapsedLeftKPI">—</div><div class="bar"><span id="barElapsed"></span></div></div>
-          <div class="kpi"><div class="k">צפוי עד היום / שולם</div><div class="v" id="expectedPaidKPI">—</div><div class="bar"><span id="barPaid"></span></div></div>
-          <div class="kpi"><div class="k">פיגור (₪) / מס'</div><div class="v" id="arrearsKPI">—</div></div>
-          <div class="kpi"><div class="k">סך התוכנית</div><div class="v" id="totalKPI">—</div></div>
-        </div>
-
-        <h2 style="margin-top:12px">פריסה שנתית</h2>
-        <div id="years"></div>
-      </section>
-    </div>
+  <!-- סרגל עליון -->
+  <div class="toolbar">
+    <button class="btn print" id="printBtn">🖨️ הדפסה</button>
+    <button class="btn primary" id="sendBtn">📤 שלח נתונים</button>
+    <button class="btn toggle" id="toggleDetails">📝 פרטי טופס</button>
   </div>
 
-  <div class="dock">
-    <div class="dock-inner">
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn ghost" id="printBtn">🖨️ הדפס</button>
-        <button class="btn success" id="sendBtn">📤 שלח נתונים</button>
-      </div>
-      <div style="font-weight:800">נבנה ע"י EY · גרסה 8566.2.5</div>
-    </div>
+  <!-- תיבת פרטים -->
+  <div id="detailsBox">
+    <input type="text" id="fillerName" placeholder="שם ממלא טופס">
+    <input type="text" id="caseNumber" placeholder="מס' תיק">
+    <input type="text" id="autoDate" readonly>
   </div>
-
-  <footer id="foot"></footer>
 
   <script>
-    // ====== Constants & utils
-    const HEB_MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-    const SHEET_ID="1XjpT0T2d27ISI80fyXTYZtRXQjn5Lu-P_P3NwnlzfQQ"; // מהמשתמש
-    const WEB_APP_KEY='rehab.v9.webapp'; // נשמור URL פעם אחת אחרי הדבקה
-
-    const $=sel=>document.querySelector(sel);
-    const pad=n=>String(n).padStart(2,'0');
-    const toKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-01`;
-    const addMonths=(d,n)=>{const x=new Date(d); x.setMonth(x.getMonth()+n); return x};
-    const num=v=>Number(String(v||'').replace(/[^\d.-]/g,''))||0;
-    const fmt=n=>new Intl.NumberFormat('he-IL').format(Math.round(n||0));
-
-    // State in-memory only
-    const els={
-      orderDate:$('#orderDate'), pickOrder:$('#pickOrder'),
-      startMode:$('#startMode'), termQuick:$('#termQuick'), termMonths:$('#termMonths'),
-      planMode:$('#planMode'),
-      flatAmount:$('#flatAmount'), t1Months:$('#t1Months'), t1Amount:$('#t1Amount'), t2Months:$('#t2Months'), t2Amount:$('#t2Amount'),
-      // reduction
-      redEff:$('#redEff'), pickRedEff:$('#pickRedEff'), decider:$('#decider'), redAmount:$('#redAmount'), redToEnd:$('#redToEnd'), redCustom:$('#redCustom'), redCustomRow:$('#redCustomRow'), redUntil:$('#redUntil'), pickRedUntil:$('#pickRedUntil'), applyReduction:$('#applyReduction'),
-      // prepay
-      prepayApproval:$('#prepayApproval'), pickPrepay:$('#pickPrepay'),
-      // output meta
-      yourName:$('#yourName'), caseNumber:$('#caseNumber'), debtorName:$('#debtorName'),
-      // KPIs & years
-      years:$('#years'), rangeKPI:$('#rangeKPI'), durationKPI:$('#durationKPI'), elapsedLeftKPI:$('#elapsedLeftKPI'), expectedPaidKPI:$('#expectedPaidKPI'), arrearsKPI:$('#arrearsKPI'), totalKPI:$('#totalKPI'), barElapsed:$('#barElapsed'), barPaid:$('#barPaid'),
-      // actions
-      printBtn:$('#printBtn'), sendBtn:$('#sendBtn')
-    };
-
-    const paidMap={}; // {key: amount}
-    const paidDateMap={}; // {key: YYYY-MM-DD}
-    const reductions=[]; // list of {effective, amount, untilDate?, postAmount?}
-
-    // UI handlers
-    els.pickOrder.addEventListener('click',()=> els.orderDate.showPicker?.());
-    els.pickRedEff.addEventListener('click',()=> els.redEff.showPicker?.());
-    els.pickRedUntil.addEventListener('click',()=> els.redUntil.showPicker?.());
-    els.pickPrepay.addEventListener('click',()=> els.prepayApproval.showPicker?.());
-
-    els.startMode.addEventListener('click',e=>{const p=e.target.closest('.pill'); if(!p) return; els.startMode.querySelectorAll('.pill').forEach(x=>x.classList.remove('active')); p.classList.add('active'); build();});
-    els.termQuick.addEventListener('click',e=>{const c=e.target.closest('.chip'); if(!c) return; els.termQuick.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); els.termMonths.value=''; build();});
-    els.termMonths.addEventListener('input',()=>{ if(els.termMonths.value){ els.termQuick.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); } build(); });
-
-    els.planMode.addEventListener('click',e=>{const p=e.target.closest('.pill'); if(!p) return; els.planMode.querySelectorAll('.pill').forEach(x=>x.classList.remove('active')); p.classList.add('active');
-      $('#panel-fixed').style.display = p.dataset.v==='fixed' ? 'block':'none';
-      $('#panel-tiered').style.display = p.dataset.v==='tiered' ? 'block':'none';
-      $('#panel-reduce').style.display = p.dataset.v==='reduce' ? 'block':'none';
-      $('#panel-prepay').style.display = p.dataset.v==='prepay' ? 'block':'none';
-      build();
+    // פותח/סוגר את פרטי הטופס
+    document.getElementById("toggleDetails").addEventListener("click", () => {
+      const box = document.getElementById("detailsBox");
+      box.style.display = (box.style.display === "none" || box.style.display==="") ? "block" : "none";
     });
 
-    els.redToEnd.addEventListener('click',()=>{ els.redToEnd.classList.add('active'); els.redCustom.classList.remove('active'); els.redCustomRow.style.display='none'; });
-    els.redCustom.addEventListener('click',()=>{ els.redCustom.classList.add('active'); els.redToEnd.classList.remove('active'); els.redCustomRow.style.display='block'; });
-    els.decider.addEventListener('click',e=>{const p=e.target.closest('.pill'); if(!p) return; els.decider.querySelectorAll('.pill').forEach(x=>x.classList.remove('active')); p.classList.add('active');});
+    // שדה תאריך אוטומטי
+    document.getElementById("autoDate").value = new Date().toLocaleDateString("he-IL");
 
-    els.applyReduction.addEventListener('click',()=>{
-      const eff=els.redEff.value, amt=num(els.redAmount.value);
-      if(!eff||!amt){ alert('נא למלא תאריך הפחתה וסכום'); return; }
-      const ev={effective:eff, amount:amt};
-      if(els.redCustom.classList.contains('active')){ ev.untilDate = els.redUntil.value||null; ev.postAmount = num($('#postRedAmount').value)||0; }
-      reductions.push(ev); reductions.sort((a,b)=> new Date(a.effective)-new Date(b.effective));
-      alert('אירוע הפחתה נוסף'); build();
+    // שליחת נתונים ל-Google Sheets
+    document.getElementById("sendBtn").addEventListener("click", () => {
+      const payload = {
+        fillerName: document.getElementById("fillerName").value || "",
+        caseNumber: document.getElementById("caseNumber").value || "",
+        date: document.getElementById("autoDate").value
+      };
+
+      fetch("https://docs.google.com/spreadsheets/d/1XjpT0T2d27ISI80fyXTYZtRXQjn5Lu-P_P3NwnlzfQQ/edit?usp=sharing", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(() => alert("✅ הנתונים נשלחו בהצלחה!"))
+      .catch(err => alert("❌ שגיאה בשליחה: " + err.message));
     });
 
-    ['input','change'].forEach(ev=> document.addEventListener(ev, e=>{
-      if(e.target.matches('input,select')) build();
-    }, true));
-
-    function getStart(){ return els.startMode.querySelector('.pill.active').dataset.v; }
-    function plan(){ return els.planMode.querySelector('.pill.active').dataset.v; }
-
-    function getStartDate(){
-      if(!els.orderDate.value) return null;
-      const base=new Date(els.orderDate.value);
-      return getStart()==='next' ? addMonths(base,1) : base;
-    }
-
-    function baseAmount(idx){
-      if(plan()==='tiered'){
-        const t1m=num(els.t1Months.value), t1a=num(els.t1Amount.value), t2m=num(els.t2Months.value), t2a=num(els.t2Amount.value);
-        if(idx < t1m) return t1a; else if(idx < t1m + t2m) return t2a; else return t2a; // מדרגה שניה משתרעת על היתר
-      }
-      return num(els.flatAmount.value)||0;
-    }
-
-    function expectedForMonth(d, idx){
-      let v = baseAmount(idx);
-      // apply reductions
-      for(const ev of reductions){
-        const effM = new Date(new Date(ev.effective).getFullYear(), new Date(ev.effective).getMonth(), 1);
-        const dueM = new Date(d.getFullYear(), d.getMonth(), 1);
-        let inRange = effM<=dueM;
-        if(ev.untilDate){
-          const untilM = new Date(new Date(ev.untilDate).getFullYear(), new Date(ev.untilDate).getMonth(), 1);
-          inRange = inRange && (dueM<=untilM);
-          if(!inRange && ev.postAmount && dueM>untilM){ v = ev.postAmount; }
-        }
-        if(inRange) v = ev.amount;
-      }
-      return v;
-    }
-
-    function monthStatus(d, expected, key){
-      const today=new Date();
-      const monthStart=new Date(d.getFullYear(), d.getMonth(), 1);
-      const endOfMonth=new Date(d.getFullYear(), d.getMonth()+1, 0);
-      const lateThreshold=new Date(endOfMonth); lateThreshold.setDate(lateThreshold.getDate()+20);
-
-      const paid= num(paidMap[key]||0);
-      const paidDate = paidDateMap[key] ? new Date(paidDateMap[key]) : null;
-
-      // early payment without approval
-      if(paid>0 && paidDate && paidDate < monthStart){
-        const appr = els.prepayApproval.value ? new Date(els.prepayApproval.value) : null;
-        if(!appr || appr > paidDate){
-          return {cls:'future', text:'הקדמת תשלומים ללא אישור'}; // כחול + טקסט אזהרה
-        }
-      }
-
-      // future month
-      const todayMonth=new Date(today.getFullYear(), today.getMonth(), 1);
-      if(monthStart > todayMonth){ return {cls:'future', text:'תשלום עתידי'}; }
-
-      if(paid===0){ return {cls:'default', text:'טרם שולם'}; }
-      if(paid>0 && paid<expected){ return {cls:'partial', text:'תשלום חלקי'}; }
-      if(paidDate && paidDate > lateThreshold){ return {cls:'late', text:'פיגור'}; }
-      return {cls:'', text:'בזמן'};
-    }
-
-    function build(){
-      const startDate = getStartDate();
-      const months = els.termMonths.value ? num(els.termMonths.value) : num(els.termQuick.querySelector('.chip.active')?.dataset.v||36);
-      if(!startDate || months<=0){ els.years.innerHTML=''; updateKPIs([]); return; }
-
-      // Build rows newest→oldest
-      const rows=[];
-      for(let i=0;i<months;i++){
-        const due=addMonths(startDate,i);
-        rows.push({idx:i, due, key:toKey(due)});
-      }
-      rows.sort((a,b)=> b.due - a.due); // חדש לישן
-
-      // group by year
-      const groups = new Map();
-      rows.forEach((r,idx)=>{ const y=r.due.getFullYear(); if(!groups.has(y)) groups.set(y,[]); groups.get(y).push({...r, seq:idx}); });
-      const years = Array.from(groups.keys()).sort((a,b)=> b-a);
-
-      // render
-      els.years.innerHTML='';
-      let lateCount=0, arrears=0, expToDate=0, paidToDate=0, totalExpected=0;
-      const todayMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-
-      years.forEach(y=>{
-        const box=document.createElement('div'); box.className='year';
-        box.innerHTML='<div class="year-head"><strong>'+y+'</strong><span class="hint">12 בלוקים קבועים</span></div><div class="months"></div>';
-        const row=box.querySelector('.months');
-
-        // create fixed 12 blocks
-        for(let m=11;m>=0;m--){ // להצגת חודשים בסדר חדש→ישן בתוך השנה
-          const d=new Date(y, m, 1);
-          const seqFromStart = Math.round((d.getFullYear()-startDate.getFullYear())*12 + (d.getMonth()-startDate.getMonth()));
-          if(seqFromStart<0 || seqFromStart>=months){
-            // out of term – render empty disabled cell
-            const cell=document.createElement('div'); cell.className='m default';
-            cell.innerHTML='<div class="top"><span>'+HEB_MONTHS[m]+'</span><span class="amt">—</span></div><div class="date">מחוץ לתקופה</div>';
-            row.appendChild(cell); continue;
-          }
-          const key=toKey(d);
-          const expected=expectedForMonth(d, seqFromStart);
-          totalExpected += expected;
-
-          const stat = monthStatus(d, expected, key);
-          const cell=document.createElement('div'); cell.className='m '+(stat.cls||'');
-          const paidVal = num(paidMap[key]||0);
-          const pdDisp = paidDateMap[key] ? (pad(new Date(paidDateMap[key]).getMonth()+1)+'/'+String(new Date(paidDateMap[key]).getFullYear()).slice(2)) : '';
-
-          // accumulate KPIs
-          const dMonth = new Date(d.getFullYear(), d.getMonth(), 1);
-          if(dMonth <= todayMonth){
-            expToDate += expected;
-            paidToDate += paidVal;
-            if(stat.cls==='late') lateCount++;
-            arrears += Math.max(0, expected - paidVal);
-          }
-
-          cell.innerHTML = '<div class="top"><span>'+HEB_MONTHS[m]+'</span><span class="amt">₪ '+fmt(expected)+'</span></div>'+
-            '<div class="paid-row">\
-              <input type="number" min="0" step="50" placeholder="שולם" value="'+(paidVal||'')+'" data-k="'+key+'">\
-              <button title="תאריך בפועל" data-cal="'+key+'">📅</button>\
-              <button title="סכום מלא" data-full="'+key+'">💯</button>\
-            </div>'+
-            '<div class="date">'+pdDisp+'</div>'+
-            '<div class="status">'+stat.text+'</div>';
-
-          cell.querySelector('[data-full]').addEventListener('click',function(){ paidMap[key]=expected; build(); });
-          cell.querySelector('[data-cal]').addEventListener('click',function(){ var dEl=document.createElement('input'); dEl.type='date'; dEl.style.position='fixed'; dEl.style.opacity='0'; document.body.appendChild(dEl); dEl.addEventListener('change',function(e){ paidDateMap[key]=e.target.value; document.body.removeChild(dEl); build(); }); if(dEl.showPicker) dEl.showPicker(); dEl.focus(); });
-          cell.querySelector('input[type="number"]').addEventListener('change',function(e){ paidMap[key]=num(e.target.value); build(); });
-
-          row.appendChild(cell);
-        }
-        els.years.appendChild(box);
-      });
-
-      // KPIs
-      const monthsTotal = months;
-      const yearsCount = Math.floor(monthsTotal/12), rem = monthsTotal%12;
-      els.rangeKPI.textContent = startDate.toLocaleDateString('he-IL')+' ← '+addMonths(startDate, months-1).toLocaleDateString('he-IL');
-      els.durationKPI.textContent = yearsCount+' שנים ו-'+rem+' חודשים';
-      var elapsed = 0; var baseM=new Date(startDate.getFullYear(), startDate.getMonth(), 1); if(todayMonth>=baseM){ elapsed = (todayMonth.getFullYear()-baseM.getFullYear())*12 + (todayMonth.getMonth()-baseM.getMonth()) + 1; } elapsed = Math.max(0, Math.min(months, elapsed));
-      const left = Math.max(0, months - elapsed);
-      els.elapsedLeftKPI.textContent = elapsed+' / '+left;
-      els.expectedPaidKPI.textContent = '₪ '+fmt(expToDate)+' / ₪ '+fmt(paidToDate);
-      els.arrearsKPI.textContent = '₪ '+fmt(arrears)+' / '+lateCount;
-      els.totalKPI.textContent = '₪ '+fmt(totalExpected);
-      els.barElapsed.style.width = (elapsed/Math.max(1,months))*100+'%';
-      els.barPaid.style.width = (paidToDate/Math.max(1,expToDate))*100+'%';
-    }
-
-    // Actions
-    els.printBtn.addEventListener('click',function(){ window.print(); });
-
-    els.sendBtn.addEventListener('click', async function(){
-      const webApp = localStorage.getItem(WEB_APP_KEY) || prompt('הדבק URL של Web App (Apps Script) לכתיבה לשיטס');
-      if(!webApp){ alert('לא הוגדר Web App.'); return; }
-      localStorage.setItem(WEB_APP_KEY, webApp.trim());
-
-      // build export rows
-      const startDate = getStartDate();
-      const months = els.termMonths.value ? num(els.termMonths.value) : num(els.termQuick.querySelector('.chip.active')?.dataset.v||36);
-      const rows=[["שנה","חודש","מפתח","צפוי","שולם","תאריך בפועל","השם","מס׳ תיק","שם חייב/ת","תאריך יצוא"]];
-      for(let i=0;i<months;i++){
-        const d=addMonths(startDate,i);
-        const key=toKey(d);
-        const expected=expectedForMonth(d,i);
-        const paid= num(paidMap[key]||0);
-        const paidDate = paidDateMap[key] || '';
-        rows.push([d.getFullYear(), HEB_MONTHS[d.getMonth()], key, expected, paid, paidDate, els.yourName.value||'', els.caseNumber.value||'', els.debtorName.value||'', new Date().toLocaleString('he-IL')]);
-      }
-
-      try{
-        const resp = await fetch(webApp+"?sheetId="+encodeURIComponent(SHEET_ID), {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(rows)});
-        const text = await resp.text();
-        if(resp.ok && /OK/i.test(text)) alert('הנתונים נשלחו לשיטס בהצלחה');
-        else throw new Error(text||('HTTP '+resp.status));
-      }catch(err){ alert('שליחה נכשלה: '+err); }
+    // הדפסה
+    document.getElementById("printBtn").addEventListener("click", () => {
+      window.print();
     });
-
-    // Boot defaults
-    (function init(){
-      els.termQuick.querySelector('[data-v="36"]').classList.add('active');
-      ['orderDate','flatAmount','t1Months','t1Amount','t2Months','t2Amount','redAmount','redEff','redUntil','prepayApproval','yourName','caseNumber','debtorName'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('input', build); });
-      build();
-    })();
   </script>
 </body>
 </html>
