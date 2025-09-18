@@ -22,24 +22,24 @@
 ```
 .container{display:flex;gap:16px;max-width:1200px;margin:18px auto;padding:0 16px;align-items:flex-start}
 
-/* Right = form column (40% width, half-screen height) */
-.right{width:40%;flex:0 0 40%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
-.section-title{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 8px}
+/* Right column (35% width, half-screen height) */
+.right{width:35%;flex:0 0 35%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;height:50vh;overflow:hidden}
+.section-title{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 8px;text-align:center}
 
 /* Compact two rows */
-.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:end;margin:10px 0}
-label{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;display:block}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:center;justify-items:center;margin:12px 0}
+label{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;display:block;text-align:center}
 input[type="date"],input[type="number"],.chips{width:100%}
 input[type="date"],input[type="number"]{border:1px solid var(--line);border-radius:12px;background:#f3f7fe;padding:10px;font-size:14px}
-.num3{max-width:90px;text-align:left;direction:ltr}
-.num6{max-width:140px;text-align:left;direction:ltr}
+.num3{max-width:110px;text-align:left;direction:ltr}
+.num6{max-width:160px;text-align:left;direction:ltr}
 
 .chips{display:flex;gap:8px;align-items:center}
 .chip{padding:8px 12px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:default;font-weight:800;font-size:13px;color:var(--ink)}
 .chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active)}
 
-/* Left = KPIs */
-.left{width:60%;flex:0 0 60%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
+/* Left column */
+.left{width:65%;flex:0 0 65%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .kpi{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
 .kpi .k{font-size:12px;color:var(--ink2)}
@@ -55,43 +55,45 @@ footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;co
   <header>מחשבון צו שיקום</header>
 
   <div class="container">
-    <!-- Right: compact form UI (40% width) -->
+    <!-- Right: compact form UI (35% width) -->
     <section class="right">
       <h3 class="section-title">פרטי הצו</h3>
 
 ```
-  <!-- Row 1: תאריך מתן צו + 36/48/60 + הזן חודשים -->
+  <!-- Row 1: תאריך מתן צו + 36/48/60 + שדה הזנה עם placeholder -->
   <div class="row">
-    <div style="grid-column: span 5;">
+    <div style="grid-column: span 4; width:100%;">
       <label>תאריך מתן צו</label>
       <input type="date" placeholder="dd/mm/yyyy" />
     </div>
-    <div style="grid-column: span 4;">
-      <label>משך תוכנית</label>
-      <div class="chips">
+    <div style="grid-column: span 5; width:100%; text-align:center;">
+      <label style="display:block;margin-bottom:6px">משך תוכנית</label>
+      <div class="chips" style="justify-content:center">
         <div class="chip">60</div>
         <div class="chip">48</div>
         <div class="chip active">36</div>
       </div>
     </div>
-    <div style="grid-column: span 3;">
-      <label>הזן חודשים</label>
-      <input type="number" class="num3" placeholder="לדוגמה 45" />
+    <div style="grid-column: span 3; width:100%;">
+      <label class="sr-only" style="position:absolute;left:-9999px">מס' חודשים</label>
+      <input type="number" class="num3" placeholder="הזן מס' חודשים" />
     </div>
   </div>
 
-  <!-- Row 2: סכום חודשי + טקסט החל מחודש הבא + מתג מיידי בלבד -->
-  <div class="row" style="align-items:center">
-    <div style="grid-column: span 4;">
+  <!-- Row 2: סכום חודשי + טקסט החל מחודש הבא + מתג מיידי -->
+  <div class="row">
+    <div style="grid-column: span 4; width:100%;">
       <label>סכום חודשי</label>
       <input type="number" class="num6" placeholder="לדוגמה 1800" />
     </div>
-    <div style="grid-column: span 5;display:flex;align-items:end;">
-      <div class="muted" style="margin-bottom:4px">החל מחודש הבא</div>
+    <div style="grid-column: span 5; width:100%; text-align:center;">
+      <div class="muted" style="margin-top:24px">החל מחודש הבא</div>
     </div>
-    <div style="grid-column: span 3;">
+    <div style="grid-column: span 3; width:100%; text-align:center;">
       <label>תחולת חיוב</label>
-      <div class="muted" style="margin-top:8px">מיידי</div>
+      <div class="chips" style="justify-content:center">
+        <div class="chip active">מיידי</div>
+      </div>
     </div>
   </div>
 </section>
