@@ -20,7 +20,7 @@
     h2{margin:0 0 8px;font-size:18px}
     label{font-weight:700;display:block;margin:6px 0 4px}
     input,select,button{font-family:inherit}
-    input[type="number"],input[type="date"],select,input[type="text"]{width:100%;padding:10px;border:1px solid #d7dee6;border-radius:14px;background:#F3F7FE;text-align:left;direction:ltr}
+    input[type="number"],input[type="date"],select,input[type="text"]{width:100%;max-width:420px;padding:10px;border:1px solid #d7dee6;border-radius:14px;background:#F3F7FE;text-align:left;direction:ltr}
     .row{display:grid;grid-template-columns:180px 1fr;gap:10px;align-items:center;margin:8px 0}
     .seg{display:flex;gap:6px;flex-wrap:wrap}
     .seg .pill{padding:9px 12px;border-radius:999px;background:#eef2f7;font-weight:800;cursor:pointer;border:1px solid #e3e8ef}
@@ -83,7 +83,7 @@
       <h1>צו שיקום כלכלי – חדלות פירעון</h1>
       <div class="row">
         <label>שם ממלא הטופס</label>
-        <input type="text" id="fillerName" placeholder="לדוגמה: אליאב" />
+        <input type="text" id="fillerName" placeholder="השם שלך" />
       </div>
       <div class="row">
         <label>תאריך מילוי</label>
@@ -149,9 +149,9 @@
       </div>
 
       <div class="quick" style="margin-top:10px; gap:8px">
-        <button class="event-btn" id="exportCSV">ייצוא ל-Google Sheets (CSV)</button>
-        <button class="event-btn" id="copyTSV">העתקה לשיטס (טבלאי)</button>
-        <button class="event-btn primary" id="sendToSheet">שלח נתונים</button>
+        <button class="event-btn" id="exportCSV" disabled>ייצוא ל-Google Sheets (CSV)</button>
+        <button class="event-btn" id="copyTSV" disabled>העתקה לשיטס (טבלאי)</button>
+        <button class="event-btn primary" id="sendToSheet" disabled>שלח נתונים</button>
       </div>
     </div>
 
@@ -197,6 +197,7 @@
     const copyTSVBtn = document.getElementById('copyTSV');
     const sendBtn = document.getElementById('sendToSheet');
     const SHEET_NAME_KEY = 'rehab.v6.sheetName';
+    const WEB_APP_KEY = 'rehab.v6.webAppUrl';
 
     // KPI els
     const rangeKPI=document.getElementById('rangeKPI'), durationKPI=document.getElementById('durationKPI'), elapsedLeftKPI=document.getElementById('elapsedLeftKPI'), expectedPaidKPI=document.getElementById('expectedPaidKPI'), arrearsKPI=document.getElementById('arrearsKPI'), totalKPI=document.getElementById('totalKPI');
@@ -299,9 +300,13 @@
     }
 
     function build(){
+      // save state
       write(SKEY, {orderDate:orderDate.value, start:getStartMode(), term:num(termMonths.value), mode:getMode(), flat:num(flatAmount.value), t1m:num(t1m.value), t1a:num(t1a.value), t2a:num(t2a.value), fillerName:fillerName.value});
 
       const startRaw = orderDate.value? new Date(orderDate.value): null; const monthsCount = num(termMonths.value);
+      const ready = !!(startRaw && monthsCount>0);
+      setActionsEnabled(ready);
+      if(!ready){ document.getElementById('years').innerHTML=''; rangeKPI.textContent='—'; durationKPI.textContent='—'; elapsedLeftKPI.textContent='—'; expectedPaidKPI.textContent='—'; arrearsKPI.textContent='—'; totalKPI.textContent='—'; return; }
       if(!startRaw || monthsCount<=0){ document.getElementById('years').innerHTML=''; rangeKPI.textContent='—'; return; }
       const start = new Date(startRaw); if(getStartMode()==='next') start.setMonth(start.getMonth()+1);
 
@@ -426,24 +431,36 @@
       copyTSV(monthsToRows(months));
     });
 
-    // "שלח נתונים" – מבקש שם גיליון, שומר אותו, ומוריד CSV בשם זה + מעתיק טבלה להדבקה מיידית
-    sendBtn.addEventListener('click', ()=>{
-      const current = localStorage.getItem(SHEET_NAME_KEY)||'';
-      const name = prompt('שם גיליון חדש בשיטס (לדוגמה: צו_12345)', current);
+    // "שלח נתונים" – ישלח ישירות ל-Apps Script (אם הוגדר URL), אחרת יציע להגדיר
+    sendBtn.addEventListener('click', async ()=>{
+      const currentName = localStorage.getItem(SHEET_NAME_KEY)||'';
+      const name = prompt('שם גיליון חדש בשיטס (לדוגמה: צו_12345)', currentName);
       if(name===null) return; localStorage.setItem(SHEET_NAME_KEY, name);
+
       const startRaw = orderDate.value? new Date(orderDate.value): null; if(!startRaw){ alert('חסר תאריך צו'); return; }
       const start = new Date(startRaw); if(getStartMode()==='next') start.setMonth(start.getMonth()+1);
       const monthsCount = num(termMonths.value)||0; const months=[];
       for(let i=0;i<monthsCount;i++){ const due=addMonths(start,i); const key = `${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}-01`; const expected = baseAmount(i); const paid = getPaid()[key]||''; const paidDate = getPaidDate()[key]||''; months.push({due,key,expected,paid,paidDate}); }
       const rows = monthsToRows(months);
-      // הורדת CSV בשם הגיליון המבוקש
-      const csv = rows.map(r=> r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('
-');
-      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${name}.csv`; document.body.appendChild(a); a.click(); a.remove();
-      // העתקה לשיטס כהשלמה מיידית
-      copyTSV(rows);
-      alert('הקובץ ירד בשם הגיליון ובנוסף הועתק טבלאי — פתח שיטס חדש, צור לשונית בשם שהזנת, והדבק (Ctrl/Cmd+V).');
+
+      let url = localStorage.getItem(WEB_APP_KEY)||'';
+      if(!url){
+        url = prompt('הדבק כאן את ה-URL של ה-Web App (Apps Script) לקבלת נתונים', '');
+        if(url===null || url.trim()===''){ alert('לא הוגדר Web App. מבצע הורדת CSV והעתקה לשיטס כחלופה.');
+          downloadCSV(rows); copyTSV(rows); return; }
+        localStorage.setItem(WEB_APP_KEY, url.trim());
+      }
+
+      try{
+        const resp = await fetch(url + '?sheet=' + encodeURIComponent(name), {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(rows)});
+        const text = await resp.text();
+        if(resp.ok && /OK/i.test(text)){ alert('נשלח לגיליון בהצלחה! לשונית: ' + name); }
+        else { throw new Error(text||'HTTP '+resp.status); }
+      }catch(err){
+        console.error(err);
+        alert('שליחה ישירה נכשלה: '+ err + '\nמוריד CSV ומעתיק לטבלה כגיבוי.');
+        downloadCSV(rows); copyTSV(rows);
+      }
     }); return; }
       const start = new Date(startRaw); if(getStartMode()==='next') start.setMonth(start.getMonth()+1);
       const monthsCount = num(termMonths.value)||0; const months=[];
@@ -458,6 +475,10 @@
       document.querySelectorAll('input,select').forEach(el=> el.addEventListener('change', build));
       build();
     })();
+
+    function setActionsEnabled(on){
+      [exportCSVBtn, copyTSVBtn, sendBtn].forEach(btn=>{ if(!btn) return; btn.disabled = !on; btn.style.opacity = on? '1' : '.6'; });
+    }
   </script>
 </body>
 </html>
