@@ -10,43 +10,62 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --ink:#0B2533; --ink2:#5b6b76; --bg:#f7f9fc; --paper:#ffffff;
-      --chip:#eef3f8; --chip-active:#0ea5e9; --chip-active-ink:#ffffff;
-      --line:#e7edf5; --accent:#0ea5e9;
-      --radius:14px; --shadow:0 8px 22px rgba(15,23,42,.06);
+      /* Palette: Slate + Indigo */
+      --ink:#0f172a; --ink2:#475569; --bg:#f5f7fb; --paper:#ffffff;
+      --chip:#e8ecf6; --chip-active:#4f46e5; --chip-active-ink:#ffffff;
+      --line:#e6eaf3; --accent:#4f46e5; --muted:#eef2ff;
+      --radius:16px; --shadow:0 10px 30px rgba(2,6,23,.08);
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:'Heebo',system-ui;background:var(--bg);color:var(--ink)}
-    header{background:#0B1D2A;color:#fff;padding:14px;text-align:center;font-size:22px;font-weight:800;border-radius:0 0 14px 14px}
+    header{background:#0b1220;color:#fff;padding:14px;text-align:center;font-size:22px;font-weight:800;border-radius:0 0 16px 16px}
 
 ```
 .container{display:flex;gap:16px;max-width:1200px;margin:18px auto;padding:0 16px;align-items:flex-start}
 
 /* Right column (35% width, half-screen height) */
-.right{width:35%;flex:0 0 35%;background:linear-gradient(180deg,#ffffff 0%,#f7fbff 100%);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.08);padding:18px;height:50vh;overflow:hidden}
-.section-title{font-size:15px;font-weight:900;color:var(--ink);margin:0 0 10px;text-align:right;letter-spacing:.3px}
+.right{width:35%;flex:0 0 35%;background:linear-gradient(180deg,#ffffff 0%,#f7f9ff 100%);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px 18px 8px;height:50vh;overflow:hidden}
+.section-title{font-size:15px;font-weight:900;color:var(--ink);margin:0 0 6px;text-align:right}
 
-/* Compact two rows */
-.row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;align-items:center;justify-items:end;margin:14px 0}
+/* rows */
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;align-items:center;justify-items:end;margin:10px 0}
 label{font-size:12px;font-weight:800;color:var(--ink2);margin-bottom:6px;display:block;text-align:right}
-input[type="date"],input[type="number"],.chips{display:flex;gap:10px;align-items:center;justify-content:flex-start}
-input[type="date"],input[type="number"]{border:1px solid var(--line);border-radius:12px;background:#f3f7fe;padding:10px 12px;font-size:14px;box-shadow:inset 0 1px 0 #fff}
-.num3{max-width:110px;text-align:left;direction:ltr;margin-inline:auto}
-.num6{max-width:120px;text-align:left;direction:ltr}
 
-.chips{display:flex;gap:8px;align-items:center}
-.chip{padding:8px 14px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:default;font-weight:800;font-size:13px;color:var(--ink);box-shadow:0 2px 6px rgba(2,6,23,.06)}
-.chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active);box-shadow:0 4px 10px rgba(14,165,233,.25)}
+input[type="date"],input[type="number"],.chips{width:100%}
+input[type="date"],input[type="number"]{border:1px solid var(--line);border-radius:12px;background:#f4f7fe;padding:10px 12px;font-size:14px;box-shadow:inset 0 1px 0 #fff}
+.num3{max-width:110px;text-align:left;direction:ltr;margin-inline:auto}
+.num6{max-width:110px;text-align:left;direction:ltr}
+
+.chips{display:flex;gap:8px;align-items:center;justify-content:flex-start;flex-wrap:wrap}
+.chip{padding:6px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:pointer;font-weight:800;font-size:12px;color:var(--ink);box-shadow:0 2px 6px rgba(2,6,23,.06);line-height:1.1}
+.chip.small{padding:6px 8px;font-size:11px}
+.chip.active{background:var(--chip-active);color:var(--chip-active-ink);border-color:var(--chip-active);box-shadow:0 4px 10px rgba(79,70,229,.25)}
+
+/* currency suffix */
+.input-wrap{position:relative;display:inline-block}
+.input-wrap input{padding-left:36px}
+.input-wrap .suffix{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-weight:800;color:#64748b}
 
 /* Left column */
-.left{width:65%;flex:0 0 65%;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
+.left{width:65%;flex:0 0 65%;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.kpi{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;background:#fff}
 .kpi .k{font-size:12px;color:var(--ink2)}
 .bar{height:10px;background:#e9eef6;border-radius:999px;overflow:hidden;margin-top:8px}
 .fill{height:10px;background:var(--accent);width:40%}
 
+.divider{height:1px;background:var(--line);margin:8px 0 0}
+
 footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;color:#6b7c88}
+
+/* collapsible tiered panel */
+.tier-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.checkbox{width:18px;height:18px;border-radius:4px;border:2px solid var(--accent);display:inline-flex;align-items:center;justify-content:center}
+.checkbox svg{opacity:0;transition:.15s}
+.checkbox.active{background:var(--accent)}
+.checkbox.active svg{opacity:1;fill:#fff}
+.tiered{display:none;background:#fff;border:1px dashed var(--line);border-radius:12px;padding:10px;margin-top:8px}
+.tiered.show{display:block}
 ```
 
   </style>
@@ -66,34 +85,80 @@ footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;co
       <label>תאריך מתן צו</label>
       <input type="date" placeholder="dd/mm/yyyy" />
     </div>
-    <div style="grid-column: span 5; width:100%; text-align:center;">
+    <div style="grid-column: span 5; width:100%; text-align:right;">
       <label style="display:block;margin-bottom:6px">משך תוכנית</label>
-      <div class="chips" style="justify-content:center">
-        <div class="chip">60</div>
-        <div class="chip">48</div>
-        <div class="chip active">36</div>
+      <div class="chips" id="termChips" style="align-items:center">
+        <div class="chip small" data-v="60">60</div>
+        <div class="chip small" data-v="48">48</div>
+        <div class="chip small active" data-v="36">36</div>
       </div>
     </div>
-    <div style="grid-column: span 3; width:100%;">
+    <div style="grid-column: span 3; width:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:center">
       <label class="sr-only" style="position:absolute;left:-9999px">מס' חודשים</label>
       <input type="number" class="num3" placeholder="הזן מס' חודשים" />
     </div>
   </div>
 
-  <!-- Row 2: סכום חודשי + שני כפתורי בחירה (חודש הבא / מיידי) -->
+  <!-- Row 2: תשלום חודשי (קבוע) + תחולת חיוב: חודש הבא / מיידי -->
   <div class="row">
     <div style="grid-column: span 4; width:100%;">
-      <label>סכום חודשי</label>
-      <input type="number" class="num6" placeholder="לדוגמה 1800" />
+      <label>תשלום חודשי (קבוע)</label>
+      <div class="input-wrap">
+        <input type="number" class="num6" placeholder="לדוגמה 1800" />
+        <span class="suffix">₪</span>
+      </div>
     </div>
     <div style="grid-column: span 8; width:100%;">
       <label>תחולת חיוב</label>
-      <div class="chips">
-        <div class="chip active">חודש הבא</div>
-        <div class="chip">מיידי</div>
+      <div class="chips" id="startChips">
+        <div class="chip small active" data-v="next">חודש<br>הבא</div>
+        <div class="chip small" data-v="immediate">מיידי</div>
       </div>
     </div>
   </div>
+
+  <!-- Row 3: לתשלום מדורג (toggle) -->
+  <div class="row" style="margin-top:2px">
+    <div style="grid-column: span 12; width:100%; display:flex; align-items:center; justify-content:space-between;">
+      <div class="tier-toggle" id="tierToggle">
+        <div class="checkbox" id="tierCheck" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <strong>לתשלום מדורג</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="tiered" id="tierPanel">
+    <div class="row" style="margin-top:4px">
+      <div style="grid-column: span 6; width:100%">
+        <label>מדרגה ראשונה – סכום</label>
+        <div class="input-wrap">
+          <input type="number" class="num6" placeholder="לדוגמה 1000" />
+          <span class="suffix">₪</span>
+        </div>
+      </div>
+      <div style="grid-column: span 6; width:100%">
+        <label>מדרגה ראשונה – מס' חודשים</label>
+        <input type="number" class="num3" placeholder="לדוגמה 10" />
+      </div>
+    </div>
+    <div class="row" style="margin-top:0">
+      <div style="grid-column: span 6; width:100%">
+        <label>מדרגה שניה – סכום</label>
+        <div class="input-wrap">
+          <input type="number" class="num6" placeholder="לדוגמה 4000" />
+          <span class="suffix">₪</span>
+        </div>
+      </div>
+      <div style="grid-column: span 6; width:100%">
+        <label>מדרגה שניה – מס' חודשים</label>
+        <input type="number" class="num3" placeholder="שאר התוכנית" />
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
 </section>
 
 <!-- Left: KPIs / progress -->
@@ -118,5 +183,30 @@ footer{max-width:1200px;margin:14px auto 0;padding:8px 16px;text-align:center;co
   </div>
 
   <footer>נבנה על ידי YE גרסה 8566.002</footer>
+
+  <script>
+    // Toggle active chip within a group (visual only)
+    function activateChip(containerId){
+      const el = document.getElementById(containerId);
+      el?.addEventListener('click', (e)=>{
+        const chip = e.target.closest('.chip');
+        if(!chip) return;
+        el.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    }
+    activateChip('termChips');
+    activateChip('startChips');
+
+    // Tiered toggle
+    const tierToggle = document.getElementById('tierToggle');
+    const tierCheck  = document.getElementById('tierCheck');
+    const tierPanel  = document.getElementById('tierPanel');
+    tierToggle?.addEventListener('click', ()=>{
+      tierCheck.classList.toggle('active');
+      tierPanel.classList.toggle('show');
+    });
+  </script>
+
 </body>
 </html>
